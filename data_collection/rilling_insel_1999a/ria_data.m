@@ -1,13 +1,14 @@
-ria_dir = fileparts(which(mfilename));
-ria_datafile = fullfile(ria_dir, 'ria_data.mat');
+function vars = ria_data(validate_data)
+%
+% Cross-species primate brain data from Rilling & Insel (1999a), 
+%   largely complementary to callosal data in 1999b.
+% Includes:
+% * Brain volume
+% * Grey & white matter volumes
 
-if exist(ria_datafile, 'file')
-    load(ria_datafile);
+    if ~exist('validate_data', 'var'), validate_data = true; end;
 
-else
-    addpath(genpath(fullfile(ria_dir, '..', '..', '_lib'))); 
-
-    %% Static data
+    %% Set variables
     ria_table1_species = {'h. sapiens', 'p. paniscus', 'p. troglodytes', 'g. gorilla', 'P. pygmaeus', 'H. lar', 'P. cynocephalus', 'M. mulatta', 'C. atys', 'C. apella', 'S. sciureus'};
     ria_table1_bodyweight = [67.7 45.4 55.4 61.7 73.5 5.4 21.9 10.4 8.8 3.2 0.9]; % how can brain vol & body vol diverge for gorilla?
     ria_table1_spine_area = [103.0 70.9 106.4 117.6 110.5 43.6 73.4 51.2 nan 38.6 18.8];
@@ -17,6 +18,14 @@ else
     ria_table1_families = {'humans' 'pongids' 'pongids' 'pongids' 'pongids' 'hylobatids' 'cercopithecids' 'cercopithecids' 'cercopithecids' 'cebids' 'cebids'};
     
     ria_table6_gi = [2.57 2.17 2.19 2.07 2.29 1.90 2.03 1.73 1.84 1.60 1.56];
-    vars = who('ria_*');
-    save(ria_datafile, vars{:});
-end;
+
+    
+    %% Reconstruct outputs
+    varnames = who('ria_*');
+    varvals = cellfun(@eval, varnames, 'UniformOutput', false);
+    vars = cell2struct(varvals, varnames);
+
+    
+    %% Validate data
+    if validate_data
+    end;

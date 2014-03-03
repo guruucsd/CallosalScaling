@@ -1,10 +1,9 @@
-lra_dir = fileparts(which(mfilename));
-lra_hist_datafile = fullfile(lra_dir, 'lra_histograms.mat');
+function vars = lra_histograms(validate_data)
+%
 
-
-if exist(lra_hist_datafile, 'file')
-    load(lra_hist_datafile);
-else
+    if ~exist('validate_data', 'var'), validate_data = true; end;
+    
+    lra_dir = fileparts(which(mfilename));
     imgdir = fullfile(lra_dir, 'img');
     
     lra_fig7_sectors = {'2' '4' '6'};
@@ -22,8 +21,15 @@ else
 
     % mean thickness
     lra_fig8_mean_thickness = nan(1,10);
-    lra_fig8_mean_thickness(    [2 4 6]) = sum(lra_fig7_data_distn.*repmat(lra_fig7_xbar_vals, [3 1]),2) ;
+    lra_fig8_mean_thickness([2 4 6]) = sum(lra_fig7_data_distn.*repmat(lra_fig7_xbar_vals, [3 1]),2) ;
     
-    vars = who('lra_*');
-    save(lra_hist_datafile, vars{:});
-end;
+
+    %% Reconstruct outputs
+    varnames = who('lra_*');
+    varvals = cellfun(@eval, varnames, 'UniformOutput', false);
+    vars = cell2struct(varvals, varnames);
+
+    
+    %% Validate data
+    if validate_data
+    end;

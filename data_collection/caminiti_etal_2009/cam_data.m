@@ -1,13 +1,12 @@
-cam_dir = fileparts(which(mfilename));
-cam_datafile = fullfile(cam_dir, 'cam_data.mat');
+function vars = cam_data(validate_data)
+%
 
-if exist(cam_datafile, 'file')
-    load(cam_datafile);
+    if ~exist('validate_data', 'var'), validate_data = true; end;
+
+    cam_dir = fileparts(which(mfilename));
+
     
-else
-    if ~exist('get_img_by_color','file'), addpath(genpath(fullfile(cam_dir, '..','..','_lib'))); end;
-    
-    
+    %% Collect data
     cam_species       = {'macaque' 'chimpanzee' 'human'};
     cam_vel_from_diam = @(diam) (5.5/0.7)*diam;
     cam_diam_from_vel = @(vel)  (0.7/5.5)*vel;
@@ -21,7 +20,6 @@ else
     cam_tabS2_factors(1) = 1;                       % (by definition) 
     cam_tabS2_factors(2) = mean(cam_tabS2_data(2, 1, :))/mean(cam_tabS2_data(1, 1, :));
     cam_tabS2_factors(3) = mean(cam_tabS2_data(3, 1, :))/mean(cam_tabS2_data(1, 1, :));
-    
     
     
     %% parse Fig 2a-c
@@ -127,42 +125,46 @@ else
     cam_figS5_data = data;
         
     
-    % Now reconstruct figure S5
-    figure('position', [149    -5   897   689]);
-    for ri=1:length(figS5_img)
-        subplot(2,2,ri); set(gca, 'FontSize',14);
-        hold on;grid on;
-        for si=1:3
-            ph = plot(cam_figS5_xvals, cam_figS5_data{ri}(si,:), 'LineWidth', 2);
-            set(ph, 'color', figS5_colors{si});
-        end;
-        set(gca, 'xlim', cam_figS5_xvals([1 end]));
-        title(cam_figS5_regions{ri});
-        
-        if ri==1, legend(cam_species); end;
-    end;
-
+    %% Reconstruct outputs
+    varnames = who('cam_*');
+    varvals = cellfun(@eval, varnames, 'UniformOutput', false);
+    vars = cell2struct(varvals, varnames);
     
-    % Now redo figure S5, but divide by the brain size factor
-    figure('position', [149    -5   897   689]);
-    for ri=1:length(figS5_img)
-        subplot(2,2,ri); set(gca, 'FontSize',14);
-        hold on;grid on;
-        for si=1:3
-            ss_xvals = cam_figS5_xvals/cam_tabS2_factors(si);
-            mean_diam = ss_xvals*cam_figS5_data{ri}(si,:)';
-            ph = plot(cam_figS5_xvals/cam_tabS2_factors(si), cam_tabS2_factors(si)*cam_figS5_data{ri}(si,:), 'LineWidth', 2);
-            lh = plot(mean_diam*[1 1], [0 1], 'k--', 'LineWidth', 2);
-            set(ph, 'color', figS5_colors{si});
-            set(lh, 'color', figS5_colors{si})
-        end;
-        set(gca, 'xlim', cam_figS5_xvals([1 end]));
-        title(cam_figS5_regions{ri});
-        
-        if ri==1, legend(cam_species); end;
-    end;
-
     
-    vars = who('cam_*');
-    save(cam_datafile, vars{:});
-end;
+    %% Validate data
+    if validate_data
+        % Now reconstruct figure S5
+        figure('position', [149    -5   897   689]);
+        for ri=1:length(figS5_img)
+            subplot(2,2,ri); set(gca, 'FontSize',14);
+            hold on;grid on;
+            for si=1:3
+                ph = plot(cam_figS5_xvals, cam_figS5_data{ri}(si,:), 'LineWidth', 2);
+                set(ph, 'color', figS5_colors{si});
+            end;
+            set(gca, 'xlim', cam_figS5_xvals([1 end]));
+            title(cam_figS5_regions{ri});
+
+            if ri==1, legend(cam_species); end;
+        end;
+
+
+        % Now redo figure S5, but divide by the brain size factor
+        figure('position', [149    -5   897   689]);
+        for ri=1:length(figS5_img)
+            subplot(2,2,ri); set(gca, 'FontSize',14);
+            hold on;grid on;
+            for si=1:3
+                ss_xvals = cam_figS5_xvals/cam_tabS2_factors(si);
+                mean_diam = ss_xvals*cam_figS5_data{ri}(si,:)';
+                ph = plot(cam_figS5_xvals/cam_tabS2_factors(si), cam_tabS2_factors(si)*cam_figS5_data{ri}(si,:), 'LineWidth', 2);
+                lh = plot(mean_diam*[1 1], [0 1], 'k--', 'LineWidth', 2);
+                set(ph, 'color', figS5_colors{si});
+                set(lh, 'color', figS5_colors{si})
+            end;
+            set(gca, 'xlim', cam_figS5_xvals([1 end]));
+            title(cam_figS5_regions{ri});
+
+            if ri==1, legend(cam_species); end;
+        end;
+    end;

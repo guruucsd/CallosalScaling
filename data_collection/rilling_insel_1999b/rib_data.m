@@ -1,11 +1,13 @@
-rib_dir = fileparts(which(mfilename));
-rib_datafile = fullfile(rib_dir, 'rib_data.mat');
+function vars = rib_data(validate_data)
+%
+% Extract cross-primate callosal data from Rilling & Insel (1999b)
+% images, including:
+% * Callosal and grey matter surface areas
 
-if exist(rib_datafile, 'file')
-    load(rib_datafile);
+    rib_dir = fileparts(which(mfilename));
 
-else
-    addpath(genpath(fullfile(rib_dir, '..', '..', '_lib')));
+    if ~exist('validate_data', 'var'), validate_data = true; end;
+
 
     %% Static data
     rib_table1_species = {'h. sapiens', 'p. paniscus', 'p. troglodytes', 'g. gorilla', 'P. pygmaeus', 'H. lar', 'P. cynocephalus', 'M. mulatta', 'C. atys', 'C. apella', 'S. sciureus'};
@@ -74,7 +76,7 @@ else
 
     data_xpix_wmv = [data_xpix_wmv(1:8); data_xpix_wmv(8:end)]; %duplication of an overlapping guy
     data_ypix_wmv = [data_ypix_wmv(1:8); data_ypix_wmv(8:end)];
-    sort(data_xpix_wmv'-data_xpix_cca')
+    sort(data_xpix_wmv'-data_xpix_cca');
     [img]   = scrub_image(fullfile(rib_dir, 'img', 'Fig2.png'));
 
     % Get the (b&w) axes
@@ -82,9 +84,9 @@ else
     [xaxis_idx,xaxis_width]=get_groups(sum(img,2)>0.75*size(img,2));
 
     % Grab the ticks
-    xticks     = get_groups(img(floor(xaxis_idx(2)-xaxis_width(2)/2)-2,:)); xticks = xticks([5 7:9])
-    yticks_cca = get_groups(img(:,floor(yaxis_idx(1)+yaxis_width(1)/2)+2,:)); yticks_cca = yticks_cca([1:3 5])
-    yticks_wmv = get_groups(img(:,ceil(yaxis_idx(2)-yaxis_width(2)/2)-2,:)); yticks_wmv = yticks_wmv([1:4])%end-1)
+    xticks     = get_groups(img(floor(xaxis_idx(2)-xaxis_width(2)/2)-2,:)); xticks = xticks([5 7:9]);
+    yticks_cca = get_groups(img(:,floor(yaxis_idx(1)+yaxis_width(1)/2)+2,:)); yticks_cca = yticks_cca([1:3 5]);
+    yticks_wmv = get_groups(img(:,ceil(yaxis_idx(2)-yaxis_width(2)/2)-2,:)); yticks_wmv = yticks_wmv([1:4]);
     figure; imshow(img); hold on; plot(yaxis_idx(1), yticks_cca, 'r*');
     plot(yaxis_idx(2), yticks_wmv, 'g*'); plot(xticks, xaxis_idx(2), 'b*');
 
@@ -121,9 +123,8 @@ else
     rib_data_names = {'CCA (fig1b)' 'CCA (fig2)' 'Brain Volume' 'Grey Matter Volume' 'White Matter Volume'};
     rib_database = [rib_fig1b_ccas rib_fig2_ccas rib_fig1b_brain_volumes rib_fig2_gmas rib_fig2_wmvs]; % the database
 
-
-    vars = who('rib_*');
-    save(rib_datafile, vars{:});
-end;
-
-
+  
+    % Reconstruct outputs
+    varnames = who('rib_*');
+    varvals = cellfun(@eval, varnames, 'UniformOutput', false);
+    vars = cell2struct(varvals, varnames);

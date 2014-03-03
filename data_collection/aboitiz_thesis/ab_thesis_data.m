@@ -1,12 +1,12 @@
-ab_thesis_path = fileparts(which(mfilename));
-data_file = fullfile(ab_thesis_path, 'ab_thesis_data.mat');
+function vars = ab_thesis_data(validate_data)
+%
 
-consistency_check = false;
+    if ~exist('validate_data', 'var'), validate_data = true; end;
 
-if exist(data_file,'file') && false
-    load(data_file)
+    ab_thesis_path = fileparts(which(mfilename));
 
-else
+    
+    %% Collect data
     ab_thesis_appendix1_subj = {'F1' 'F2' 'F3' 'F4' 'F5' 'F6' 'F7' 'F8' 'F9' 'F10' 'F11' 'F12' 'F13' 'F15' 'F16' 'F17' 'F18' 'F19' 'F20' 'F21' ...
                              'M1' 'M2' 'M3' 'M4' 'M5' 'M6' 'M7' 'M8' 'M9' 'M11' 'M12' 'M13' 'M15' 'M16' 'M17' 'M18' 'M19' 'M20' 'M21' 'M22'};
 
@@ -127,39 +127,42 @@ else
 
     [~,idx8to2] = ismember(ab_thesis_appendix8_subj, ab_thesis_appendix2_subj);
 
-    vars = who('ab_thesis_*');
-    save(data_file, vars{:});
-end;
+    
+    %% Reconstruct outputs
+    varnames = who('ab_thesis_*');
+    varvals = cellfun(@eval, varnames, 'UniformOutput', false);
+    vars = cell2struct(varvals, varnames);
+    
+    
+    %% Validate data
+    if validate_data
+        pct_area = ab_thesis_appendix8_data./repmat(ab_thesis_appendix2_data(idx8to2,1), [1 10])
+        pct_area(18,:)
 
-% debug consistency
-if consistency_check
-    pct_area = ab_thesis_appendix8_data./repmat(ab_thesis_appendix2_data(idx8to2,1), [1 10])
-    pct_area(18,:)
+        % Search for discrepencies
+        d2v2   = ab_thesis_appendix2_data(:,1) - sum(ab_thesis_appendix2_data(:,2:end),2);
+        d2v2idx = find(abs(d2v2)>1);
 
-    % Search for discrepencies
-    d2v2   = ab_thesis_appendix2_data(:,1) - sum(ab_thesis_appendix2_data(:,2:end),2);
-    d2v2idx = find(abs(d2v2)>1);
-
-    d2v2(d2v2idx)
-    ab_thesis_appendix_subject(d2v2idx)'
-    ab_thesis_appendix2_data(d2v2idx,:)
-
-
-    d2v8    = ab_thesis_appendix2_data(idx,1) - sum(ab_thesis_appendix8_data,2);
-    d2v8idx = find(abs(d2v8)>1);
-
-    d2v8(d2v8idx)
-    ab_thesis_appendix8_subj(d2v8idx)'
-    ab_thesis_appendix8_data(d2v8idx,:)
-    ab_thesis_appendix2_data(idx8to2(d2v8idx),:)
+        d2v2(d2v2idx)
+        ab_thesis_appendix_subject(d2v2idx)'
+        ab_thesis_appendix2_data(d2v2idx,:)
 
 
-    d2v8_2    = sum(ab_thesis_appendix2_data(idx8to2,2:end),2)- sum(ab_thesis_appendix8_data,2);
-    d2v8idx_2 = find(abs(d2v8_2)>1);
+        d2v8    = ab_thesis_appendix2_data(idx,1) - sum(ab_thesis_appendix8_data,2);
+        d2v8idx = find(abs(d2v8)>1);
 
-    d2v8_2(d2v8idx_2)
-    ab_thesis_appendix8_subj(d2v8idx_2)'
-    ab_thesis_appendix8_data(d2v8idx_2,:)
-    ab_thesis_appendix2_data(idx8to2(d2v8idx_2),:)
-end;
+        d2v8(d2v8idx)
+        ab_thesis_appendix8_subj(d2v8idx)'
+        ab_thesis_appendix8_data(d2v8idx,:)
+        ab_thesis_appendix2_data(idx8to2(d2v8idx),:)
+
+
+        d2v8_2    = sum(ab_thesis_appendix2_data(idx8to2,2:end),2)- sum(ab_thesis_appendix8_data,2);
+        d2v8idx_2 = find(abs(d2v8_2)>1);
+
+        d2v8_2(d2v8idx_2)
+        ab_thesis_appendix8_subj(d2v8idx_2)'
+        ab_thesis_appendix8_data(d2v8idx_2,:)
+        ab_thesis_appendix2_data(idx8to2(d2v8idx_2),:)
+    end;
 
