@@ -1,13 +1,12 @@
-bi_dir      = fileparts(which(mfilename));
-bi_datafile = fullfile(bi_dir, 'bi_data.mat');
+function vars = bi_data(validate_data)
+%
+% Extract cross-species neuron density from Tower (1954)
+% images
 
+    if ~exist('validate_data', 'var'), validate_data = true; end;
 
-%% Figure 7
-if exist(bi_datafile,'file')% && false
-    
-    load(bi_datafile);
+    bi_dir      = fileparts(which(mfilename));
 
-else
     %% Fig 7
     img_file = fullfile(bi_dir, 'img', 'Fig7_marked.png');
     [tpixy,tpixx] = get_pixels_by_color(img_file, 'r');  % total fibers
@@ -75,7 +74,7 @@ else
         binnum = @(xpix) (round(binnum_raw(xpix)));
         invfn = @(xpix,ypix) (0 + 0.1*(dbaseliney(find(dbaselinex==xpix)) - ypix)/mean(diff(yticks)));
     
-        binnum_raw(upixx')
+        %binnum_raw(upixx')
         % Recalc unmyelinated
         for pi=1:length(upixx), 
             bn = binnum(upixx(pi)); 
@@ -89,9 +88,13 @@ else
         end;
     end;
 
-    sum(bi_fig9_unmyelinated,2)   
-    sum(bi_fig9_myelinated,2)   
 
-    vars = who('bi_*');
-    save(bi_datafile, vars{:});
-end;
+    %% Reconstruct outputs
+    varnames = who('bi_*');
+    varvals = cellfun(@eval, varnames, 'UniformOutput', false);
+    vars = cell2struct(varvals, varnames);
+        
+    if validate_data
+        sum(bi_fig9_unmyelinated,2)   
+        sum(bi_fig9_myelinated,2)   
+    end;

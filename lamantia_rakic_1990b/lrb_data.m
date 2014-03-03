@@ -1,11 +1,10 @@
-lrb_dir = fileparts(which(mfilename));
-lrb_datafile = fullfile(lrb_dir, 'lrb_data.mat');
+function vars = lrb_data(validate_data)
+%
 
-if exist(lrb_datafile,'file')
-    load(lrb_datafile);
-    
-else
 
+    if ~exist('validate_data', 'var'), validate_data = true; end;
+
+    %% Gather static data
     % table 1
     lrb_tab1_age_names    ={'E65' 'E72' 'E85' 'E88' 'E109' 'E120' 'E128' 'E144' 'E156' 'E156' 'E156'};
     lrb_tab1_ages   = str2date(lrb_tab1_age_names, 'macaque');
@@ -35,8 +34,21 @@ else
     
 
     % get histogram data
-    lrb_histograms;
+    vars = lrb_histograms(validate_data);
+    varnames = fieldnames(vars);
+    varvals = struct2cell(vars);
+    for vi=1:length(varnames)
+        eval(sprintf('%s = varvals{%d};', varnames{vi}, vi));
+    end;
 
-    vars = who('lrb_*');
-    save(lrb_datafile, vars{:});
-end;
+    
+    %% Reconstruct outputs
+    varnames = who('lrb_*');
+    varvals = cellfun(@eval, varnames, 'UniformOutput', false);
+    vars = cell2struct(varvals, varnames);
+
+    
+    %% Validate data
+    if validate_data
+    end;
+    
