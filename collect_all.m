@@ -6,8 +6,6 @@ function collect_all(force)
     
     %% Add paths
     script_dir = fileparts(which(mfilename));
-    addpath(genpath(fullfile(script_dir, '..', '..', '_lib')));
-    addpath(genpath(fullfile(script_dir, '..', '_combined')));
     addpath(genpath(fullfile(script_dir, '..', '_lib')));
     addpath(genpath(fullfile(script_dir, '..', '_predict')));
 
