@@ -1,4 +1,5 @@
 function [ncc] = predict_ncc_fibers(brwt, bvol, gmv, ndens, ccdens, cca)
+% Predict # of fibers in the corpus callosum
 
     % convert to native units
     if ~exist('bvol','var'), bvol = predict_bvol(brwt); end;

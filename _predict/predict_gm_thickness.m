@@ -8,8 +8,7 @@ function gmt = predict_gm_thickness(brwt,bvol)
     if ~exist('bvol','var'), bvol = predict_bvol(brwt); end;
 
     if isempty(g_gmt) || true
-        g_gmt.y = @(bvol) 10*(0.026 * log(bvol) + 0.084);
+        g_gmt.y = @(bvol) 10*(0.026 * log(bvol) + 0.084); % where are these from?
     end;
 
     gmt = g_gmt.y(bvol);
-    

@@ -16,7 +16,7 @@ function [nwm,ncc,nintra] = predict_nfibers(brwt, bvol, gmv, ndens, ccdens, cca,
     if ~exist('cca','var') || isempty(cca)           cca      = predict_cca(brwt, bvol); end;
     if ~exist('pct_proj','var') || isempty(pct_proj),pct_proj = predict_pct_proj(brwt, bvol); end;
 
-    nneurons = 1E3*gmv.*ndens;
-    nwm = pct_proj.*nneurons;
-    ncc = 1E6*ccdens .* cca;
-    nintra = nwm-ncc;
+    nneurons = 1E3 * gmv .* ndens;
+    nwm = pct_proj .* nneurons;
+    ncc = 1E6 * ccdens .* cca;
+    nintra = nwm - ncc;

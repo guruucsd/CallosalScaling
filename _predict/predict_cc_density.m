@@ -1,5 +1,6 @@
 function [dens] = predict_cc_density(brwt, bvol)
-%
+% Predict cc density using wang et al (2008) data
+%   and corrected aboitiz data for humans
 
     global p_ccdens g_ccdens;
 
@@ -9,10 +10,10 @@ function [dens] = predict_cc_density(brwt, bvol)
     if isempty(g_ccdens)
         %% Compare # neurons to # cc connections
         % Function for computing cc density from brain volume
-        pd_dir = fileparts(which(mfilename));
-        addpath(fullfile(pd_dir, '..', '..', 'wang_etal_2008')); w_data; close all;
-        
-        human_dens_ab_raw = 3.717*1E5*(1-0.35)^(1); %correct for shrinkage
+        an_dir = fullfile(fileparts(which(mfilename)), '..', 'analysis');
+        load(fullfile(an_dir, 'wang_etal_2008', 'w_data.mat'));
+
+        human_dens_ab_raw = 3.717 * 1E5 * (1-0.35)^(1); %correct for shrinkage
         human_dens_ab   = human_dens_ab_raw*1.21;  %  correct for 20% missing fibers
         human_dens_abcor= human_dens_ab*1.2;       % correct for age
 

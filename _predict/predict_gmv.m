@@ -1,18 +1,18 @@
 function [gmv,gma,gmt] = predict_gmv(brwt, bvol, collation)
 %function [gmv,gma,gmt] = predict_gmv(brwt, bvol)
 %
-% Predict grey matter volume, based on GMA from rilling & insel, and 
+% Predict grey matter volume, based on GMA from rilling & insel, and
 
     global g_gmv g_gma
 
     if ~exist('collation','var'), collation='individual'; end;
-    
+
     if isempty(g_gmv)
-        pd_dir = fileparts(which(mfilename));
+        an_dir = fullfile(fileparts(which(mfilename)), '..', 'analysis');
 
         %
-        addpath(fullfile(pd_dir, '..', '..', 'rilling_insel_1999a')); ria_data;
-        addpath(fullfile(pd_dir, '..', '..', 'rilling_insel_1999b')); rib_data;
+        load(fullfile(an_dir, 'rilling_insel_1999a', 'ria_data.mat'));
+        load(fullfile(an_dir, 'rilling_insel_1999b', 'rib_data.mat'));
 
         %%
         [~,famidxa] = ismember(ria_table1_families, rib_families);
@@ -66,17 +66,17 @@ function [gmv,gma,gmt] = predict_gmv(brwt, bvol, collation)
 
                 gmas = rib_fig2_gmas.*gis;
         end;
-        
+
         % Now, do the regressions
         gmts = predict_gm_thickness([], bvol);
         [~,g_gma] = allometric_regression(bvols, gmas);
         [~,g_gmv] = allometric_regression(bvols, gmas.*gmts);
     end;
-    
+
     if ~exist('bvol','var'), bvol = predict_bvol(brwt); end;
 
     % Now use the functions to compute # cc fibers and # neurons
     gmt = predict_gm_thickness(brwt, bvol);
     gma = g_gma.y(bvol);
     gmv = g_gmv.y(bvol);
-    
+

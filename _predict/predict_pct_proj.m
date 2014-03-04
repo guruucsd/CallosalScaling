@@ -8,4 +8,4 @@ function [pct_proj] = predict_pct_proj(brwt,bvol)
     if ~exist('bvol','var') || isempty(bvol), bvol = predict_bvol(brwt); end;
     if ~exist('brwt','var') || isempty(brwt), brwt = predict_bwt(bvol); end;
 
-    pct_proj = 0.3*ones(size(brwt));
+    pct_proj = 0.3 * ones(size(brwt));
