@@ -1,44 +1,55 @@
 function collect_datasets(datasets, force)
 %
 % Collect all datasets
-    if ~exist('datasets', 'var'), datasets =
-    if ~exist('force', 'var'), force = false; end;
 
     %% Add paths
     script_dir = fileparts(which(mfilename));
-    addpath(genpath(fullfile(script_dir, '..', '_lib')));
-    addpath(genpath(fullfile(script_dir, '..', '_predict')));
+    rilling_dir = fullfile(script_dir, '..');
+    addpath(genpath(fullfile(rilling_dir, '_lib')));
+    addpath(genpath(fullfile(rilling_dir, '_predict')));
+
+    % Default values
+    if ~exist('datasets', 'var'), 
+        local_files = dir(script_dir);
+        local_dirs = local_files([local_files.isdir]);
+        datasets = { local_dirs.name };
+    end;
+    if ~exist('force', 'var'), force = false; end;
 
 
     %% Loop over all directories and mat files to create datasets
-    local_files = dir(script_dir);
-    local_dirs = local_files([local_files.isdir]);
-    for di = 1:length(local_dirs)
-        local_dir = local_dirs(di);
+    for di = 1:length(datasets)
+        dataset = datasets{di};
 
-        if ismember(local_dir.name, {'.', '..', 'riise_pakkenerg_2011'})% || ~ismember(local_dir.name, {'herculano-houzel_etal_2010'})
-            fprintf('Skipping directory "%s"\n', local_dir.name);
+        if ismember(dataset, {'.', '..', 'riise_pakkenerg_2011'})% || ~ismember(dataset, {'herculano-houzel_etal_2010'})
+            fprintf('Skipping directory "%s"\n', dataset);
             continue;
         end;
 
         % Find files for doing computations
-        data_mfiles = dir(fullfile(script_dir, local_dir.name, '*_data.m'));
+        local_dir = fullfile(script_dir, dataset);
+        if ~exist(dataset)
+            fprintf('WARNING: files for creating requested dataset do not exist: %s', dataset);
+            continue;
+        end;
+        
+        data_mfiles = dir(fullfile(local_dir, '*_data.m'));
         if isempty(data_mfiles)
             continue;
         end;
 
         % Run each file
         cur_dir = pwd;
-        cd(fullfile(script_dir, local_dir.name));
+        cd(local_dir);
         for fi=1:length(data_mfiles)
 
             % MAT file is put in the 'analysis' directory;
             %  if it's there, nothing left to do.
             data_mfile = data_mfiles(fi);
             [~, cwd_name] = fileparts(script_dir);
-            mat_filepath = fullfile(strrep(script_dir, cwd_name, 'analysis'), local_dir.name, sprintf('%s.mat', data_mfile.name(1:end-2)));
+            mat_filepath = fullfile(strrep(script_dir, cwd_name, 'analysis'), dataset, sprintf('%s.mat', data_mfile.name(1:end-2)));
             if exist(mat_filepath, 'file') && ~force
-                fprintf('Found existing mat file for %s\n', fullfile(local_dir.name, data_mfile.name));
+                fprintf('Found existing mat file for %s\n', fullfile(dataset, data_mfile.name));
                 continue;
             end;
 
@@ -46,7 +57,7 @@ function collect_datasets(datasets, force)
             %   then to dump the vars to a MAT file.
             %try
                 % Run the data collection; output is a struct
-                fprintf('Running "%s" ... ', fullfile(local_dir.name, data_mfile.name));
+                fprintf('Running "%s" ... ', fullfile(dataset, data_mfile.name));
                 vars = eval(sprintf('%s(false);', data_mfile.name(1:end-2))); % run as a matlab script
                 close all;  % in case any plots were generated
 
