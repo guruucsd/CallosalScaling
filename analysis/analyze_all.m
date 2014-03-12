@@ -3,13 +3,14 @@ function analyze_all()
 % Collect all datasets
 
     if ~exist('force', 'var'), force = false; end;
-    
+
     %% Add paths
     script_dir = fileparts(which(mfilename));
-    addpath(genpath(fullfile(script_dir, '..', '_lib')));
-    addpath(genpath(fullfile(script_dir, '..', '_predict')));
+    rilling_dir = fullfile(script_dir, '..');
+    addpath(genpath(fullfile(rilling_dir, '_lib')));
+    addpath(genpath(fullfile(rilling_dir, '_predict')));
 
-    
+
     %% Loop over all directories and mat files to create datasets
     local_files = dir(script_dir);
     local_dirs = local_files([local_files.isdir]);
@@ -26,7 +27,7 @@ function analyze_all()
         if isempty(analysis_mfiles), continue; end;
 
         data_matfiles = dir(fullfile(script_dir, local_dir.name, '*_data.mat'));
-        if isempty(data_matfiles), 
+        if isempty(data_matfiles),
             fprintf('Skipping directory with no data "%s"\n', local_dir.name);
         end;
 
@@ -34,13 +35,13 @@ function analyze_all()
         cur_dir = pwd;
         cd(fullfile(script_dir, local_dir.name));
         for fi=1:length(analysis_mfiles)
-            
-            % MAT file is put in the 'analysis' directory; 
+
+            % MAT file is put in the 'analysis' directory;
             %  if it's there, nothing left to do.
             analysis_mfile = analysis_mfiles(fi);
 
-        
-            % Load data 
+
+            % Load data
             varnames = {};
             varvals = {};
             for mfi=1:length(data_matfiles)
@@ -51,7 +52,7 @@ function analyze_all()
             end;
             vars = cell2struct(varvals, varnames);
 
-            
+
             % Need to run the mfile to get the vars out,
             %   then to dump the vars to a MAT file.
             %try

@@ -5,11 +5,11 @@ function iDEV_figs(fig_list, saving)
     rilling_dir = fullfile(script_dir, '..');
     GURU_dir = fullfile(rilling_dir, '..');
     analysis_dir = fullfile(rilling_dir, 'analysis');
-    
+
     addpath(genpath(fullfile(rilling_dir, '_lib')));
     addpath(genpath(fullfile(rilling_dir, '_predict')));
-    
-    
+
+
     if ~exist('fig_list','var'), fig_list={'all'}; end;
     if ~exist('saving','var'),   saving  = false; end;
     if ~iscell(fig_list), fig_list = {fig_list}; end;
@@ -47,7 +47,7 @@ function iDEV_figs(fig_list, saving)
                 rib_response(collation{1}, 'intra_vs_cc_scaling_linear');
                 if saving, export_fig(gcf, sprintf('./ri_intra_vs_cc_scaling_linear_%s.png',collation{1}), '-transparent'); end;
             end;
-        end; 
+        end;
 
         % Predict ADD
         if ismember('all', fig_list) || strcmp(fig_list{fi}, 'predict_add')

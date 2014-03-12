@@ -4,11 +4,11 @@ function Rinsel_paper(fig_list, saving)
     script_dir  = fileparts(which(mfilename));
     rilling_dir = fullfile(script_dir, '..');
     analysis_dir = fullfile(rilling_dir, 'analysis');
-    
+
     addpath(genpath(fullfile(rilling_dir, '_lib')));
     addpath(genpath(fullfile(rilling_dir, '_predict')));
-    
-    
+
+
     if ~exist('fig_list','var'), fig_list={'all'}; end;
     if ~exist('saving','var'),   saving  = false; end;
     if ~exist('collation','var'), collation = 'individual'; end;
@@ -47,9 +47,9 @@ function Rinsel_paper(fig_list, saving)
     chimp_ncc = chimp_cca.*chimp_dens;
 
 
-    
-    
-    
+
+
+
     for fi = 1:length(fig_list)
         % Rilling & Insel brain volume vs. inter- connections regression
         if ismember('all', fig_list) || strcmp(fig_list{fi}, 'ri_basic_compare')
@@ -72,8 +72,8 @@ function Rinsel_paper(fig_list, saving)
             collation = 'species';
             rib_response(collation, 'intra_vs_cc_scaling_linear');
             if saving, export_fig(gcf, sprintf('./ri_intra_vs_cc_scaling_linear_%s.png',collation), '-transparent'); end;
-        end; 
-        
+        end;
+
 
         if ismember('all',fig_list) || strcmp(fig_list{fi}, 'nwmfib_vs_cc')
             [p,g] = allometric_regression(bvols, ncc_fibers./nwm_fibers, 'log', 1, false, '2');
@@ -189,7 +189,7 @@ function Rinsel_paper(fig_list, saving)
             figure;
             semilogx(lrs_age, 1E4*lrs_dens, 'o', 'MarkerSize', 4, 'LineWidth',4); hold on;
             semilogx(156*[1 1], get(gca, 'ylim'), 'r--', 'LineWidth', 2); hold on;
-            
+
             set(gca, 'FontSize', 14);
             set(gca, 'xlim', xl, 'xtick', 10.^[2:5]); axis square;
             xlabel('Age (days since conception)');

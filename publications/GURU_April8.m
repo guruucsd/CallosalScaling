@@ -6,7 +6,6 @@ function GURU_April8(fig_list, saving)
     if ~iscell(fig_list), fig_list = {fig_list}; end;
 
     rilling_dir = fullfile(fileparts(which(mfilename)), '..');
-    GURU_dir = fullfile(rilling_dir, '..');
 
     % Add paths
     addpath(genpath(fullfile(rilling_dir, '_lib')))
@@ -291,12 +290,12 @@ function GURU_April8(fig_list, saving)
         if ismember('all',fig_list) || strcmp(fig_list{fi}, 'lms_dens')            % Lamantia & Rakic (1990a): density decreases with age
             plot(bi_fig7_dates, bi_fig7_total_fibers./bi_fig7_cca, 'ro');
             xl = get(gca, 'xlim');
-            
+
             figure; set(gcf, 'Position', [ 69         258        1212         405]);
             subplot(1,3,3); set(gca, 'FontSize', 14);
             semilogx(lrs_age, 1E4*lrs_dens, 'o', 'MarkerSize', 4, 'LineWidth',4); hold on;
             semilogx(156*[1 1], get(gca, 'ylim'), 'r--', 'LineWidth', 2); hold on;
-            
+
             set(gca, 'xlim', xl, 'xtick', 10.^[2:5]); axis square;
             xlabel('Age (days since conception)');
             ylabel('axons/ \mu m^2');
