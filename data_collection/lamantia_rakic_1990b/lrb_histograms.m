@@ -1,15 +1,12 @@
-lrb_dir = fileparts(which(mfilename));
-lrb_histograms_datafile = fullfile(lrb_dir, 'lrb_histograms.mat');
-addpath(genpath(fullfile(lrb_dir, '..', '_lib')));
+function vars = lrb_histograms(validate_data)
+%
 
-if exist(lrb_histograms_datafile,'file')
-    load(lrb_histograms_datafile);
+    if ~exist('validate_data', 'var'), validate_data = true; end;
     
-else
+    lrb_dir = fileparts(which(mfilename));
 
-
+    
     %% Parse histograms from Lamantia & Rakic, 1990a
-
     % Figure 3
     if ~exist('lrb_fig3_data','var') || any(~all(sum(lrb_fig3_data,3)))
         lrb_fig3_sectors = {'2' '4' '6' '10'};
@@ -46,8 +43,13 @@ else
         end;
     end;
 
-    vars = who('lrb_*');
-    save(lrb_histograms_datafile, vars{:});
-end;
+    
+    %% Reconstruct outputs
+    varnames = who('lrb_*');
+    varvals = cellfun(@eval, varnames, 'UniformOutput', false);
+    vars = cell2struct(varvals, varnames);
 
- 
+    
+    %% Validate data
+    if validate_data
+    end;

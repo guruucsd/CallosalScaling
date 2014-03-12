@@ -1,12 +1,12 @@
-% abc
-lut_dir = fileparts(which(mfilename));
-data_file = fullfile(lut_dir, [mfilename '.mat']);
+function vars = lut_data(validate_data)
+%
+% Luttenberg (1965)
+% Human developmental data on corpus callosum
 
-if exist(data_file, 'file')
-    load(data_file);
+    if ~exist('validate_data', 'var'), validate_data = true; end;
 
-else
 
+    %% Collect data
     lut_table1_age = [[10 11 13 13.5 14 15 17 19 21 26 30 36 40]*7 (9*30+[3 5]*30)];
     lut_table1_crlen = [53 62 89 102 110 124 149 175 200 250 290 330 365 nan nan];
     lut_table1_density = [24 32 37 44 49 52 62 65 65 65 62 62 61 59 59
@@ -101,32 +101,36 @@ else
                        nan nan nan nan nan nan;
                        37.8 33.4 23.2 4.2 1.1 0.3];
 
-    %validate data
-
-    % Figure 2
-    lut_subj_idx = [2 9 13];
-    lut_area_proportions = lut_table2_areas(:,1:3)./repmat(lut_table2_areas(:,4),[1 3]);
-    lut_area_proportions(isnan(lut_area_proportions)) = 1/3;
-    lut_distn = lut_table3_genu.*repmat(lut_area_proportions(:,1),[1 size(lut_table3_genu,2)]) ...
-            + lut_table3_truncus.*repmat(lut_area_proportions(:,2),[1 size(lut_table3_truncus,2)]) ...
-            + lut_table3_splenium.*repmat(lut_area_proportions(:,3),[1 size(lut_table3_splenium,2)]);
-
-    lut_density = sum(lut_area_proportions.*lut_table1_density', 2);
-
-    % Reproduce figure 2
-    figure; set(gca, 'FontSize', 14);
-    title('Luttenberg (1965), Figure 2');
-    hold on;
-    plot([0 lut_table3_diameters], [zeros(length(lut_subj_idx),1) lut_distn(lut_subj_idx,:)]', 'LineWidth', 2);
-    legend({'11 weeks','21 weeks','40 weeks (newborn)'})
-    xlabel('axon diameter ({\mu}m)'); ylabel('percent');
     
-    % Show all, as a waterfall plot
-    [Y,X] = meshgrid([0 lut_table3_diameters], lut_table1_age);
-    figure;
-    waterfall(X,Y,[zeros(size(lut_distn,1),1) lut_distn]);
+    %% Reconstruct outputs
+    varnames = who('lut_*');
+    varvals = cellfun(@eval, varnames, 'UniformOutput', false);
+    vars = cell2struct(varvals, varnames);
 
-    vars = who('lut_*');
-    save(data_file, vars{:});
-end;
+    
+    %% validate data
+    if validate_data
+        % Figure 2
+        lut_subj_idx = [2 9 13];
+        lut_area_proportions = lut_table2_areas(:,1:3)./repmat(lut_table2_areas(:,4),[1 3]);
+        lut_area_proportions(isnan(lut_area_proportions)) = 1/3;
+        lut_distn = lut_table3_genu.*repmat(lut_area_proportions(:,1),[1 size(lut_table3_genu,2)]) ...
+                + lut_table3_truncus.*repmat(lut_area_proportions(:,2),[1 size(lut_table3_truncus,2)]) ...
+                + lut_table3_splenium.*repmat(lut_area_proportions(:,3),[1 size(lut_table3_splenium,2)]);
+
+        lut_density = sum(lut_area_proportions.*lut_table1_density', 2);
+
+        % Reproduce figure 2
+        figure; set(gca, 'FontSize', 14);
+        title('Luttenberg (1965), Figure 2');
+        hold on;
+        plot([0 lut_table3_diameters], [zeros(length(lut_subj_idx),1) lut_distn(lut_subj_idx,:)]', 'LineWidth', 2);
+        legend({'11 weeks','21 weeks','40 weeks (newborn)'})
+        xlabel('axon diameter ({\mu}m)'); ylabel('percent');
+
+        % Show all, as a waterfall plot
+        [Y,X] = meshgrid([0 lut_table3_diameters], lut_table1_age);
+        figure;
+        waterfall(X,Y,[zeros(size(lut_distn,1),1) lut_distn]);
+    end;
 

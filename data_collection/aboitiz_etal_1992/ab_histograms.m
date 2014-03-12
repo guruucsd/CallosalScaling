@@ -1,10 +1,13 @@
-ab_dir = fileparts(which(mfilename));
-ab_hist_datafile = fullfile(ab_dir, 'ab_histograms.mat');
+function vars = tow_data(validate_data)
+%
+% Extract cross-species neuron density from Tower (1954)
+% images
 
-if exist(ab_hist_datafile,'var')
-    load(ab_hist_datafile);
-    
-else
+    if ~exist('validate_data', 'var'), validate_data = true; end;
+
+    ab_dir = fileparts(which(mfilename));
+
+    %% Collect data
     
     % Figure 4
     ab_fig4_areas = {'genu' 'ant_midbody' 'midbody' 'post_midbody' 'splenium'};
@@ -20,7 +23,13 @@ else
         ab_fig4_data(ai,:) = process_ab_histogram(fullfile(ab_dir,'img',fn), ab_fig4_xtick_vals, ab_fig4_ytick_vals(1:ab_fig4_n_yticks(ai)), ab_fig4_rots(ai));
     end;
 
-    vars = who('ab_*');
-    save(ab_hist_datafile, vars{:});
-    %'ab_histograms.mat', 'ab_fig4_areas', 'ab_fig4_xbin_vals','ab_fig4_data');
-end;
+
+    %% Reconstruct outputs
+    varnames = who('ab_*');
+    varvals = cellfun(@eval, varnames, 'UniformOutput', false);
+    vars = cell2struct(varvals, varnames);
+    
+    
+    %% Do validation
+    if validate_data
+    end;

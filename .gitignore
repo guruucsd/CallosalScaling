@@ -1,5 +1,4 @@
 *.m~
-data_collection/*.png
-analysis/*.mat
-analysis/*.png
+*.png
+*.psd
 

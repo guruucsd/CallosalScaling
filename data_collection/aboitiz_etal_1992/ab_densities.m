@@ -1,11 +1,11 @@
-if ~exist('scrub_image','file'), addpath('../_lib'); end;
-ab_dir = fileparts(which(mfilename));
-ab_dens_datafile = fullfile(ab_dir, 'ab_densities.mat');
+function vars = ab_data(validate_data)
+%
 
-if exist(ab_dens_datafile, 'file')
-    load(ab_dens_datafile);
+    if ~exist('validate_data', 'var'), validate_data = true; end;
 
-else
+    ab_dir = fileparts(which(mfilename));
+
+    
     %% Create diameter => weight mapping function
     [img,orig_img] = scrub_image(fullfile(ab_dir, 'img','Fig1b-1.png'), -0.1);
     
@@ -96,7 +96,14 @@ else
     ab_fig1_cc_areas = [27554 12007 12106 7952 7806 9128 8969 10858 15946 13889];
     ab_fig1_cc_rel_areas = ab_fig1_cc_areas./sum(ab_fig1_cc_areas);
 
-    vars = who('ab_*');
-    save(ab_dens_datafile, vars{:});
-end;
+ 
     
+    %% Reconstruct outputs
+    varnames = who('ab_*');
+    varvals = cellfun(@eval, varnames, 'UniformOutput', false);
+    vars = cell2struct(varvals, varnames);
+    
+    
+    %% Validate data
+    if validate_data
+    end;
