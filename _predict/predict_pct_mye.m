@@ -9,7 +9,7 @@ function pct_mye = predict_pct_mye(brwt, bvol)
 
     %% Predict the % myelination
     if isempty(g_gmye)
-        an_dir = fullfile(fileparts(which(mfilename), '..', 'analysis'));
+        an_dir = fullfile(fileparts(which(mfilename)), '..', 'analysis');
 
         % Collect data, then predict!
         load(fullfile(an_dir, 'aboitiz_etal_1992', 'ab_data.mat'));

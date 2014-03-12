@@ -1,15 +1,15 @@
-function collect_all(force)
+function collect_datasets(datasets, force)
 %
 % Collect all datasets
-
+    if ~exist('datasets', 'var'), datasets =
     if ~exist('force', 'var'), force = false; end;
-    
+
     %% Add paths
     script_dir = fileparts(which(mfilename));
     addpath(genpath(fullfile(script_dir, '..', '_lib')));
     addpath(genpath(fullfile(script_dir, '..', '_predict')));
 
-    
+
     %% Loop over all directories and mat files to create datasets
     local_files = dir(script_dir);
     local_dirs = local_files([local_files.isdir]);
@@ -31,11 +31,12 @@ function collect_all(force)
         cur_dir = pwd;
         cd(fullfile(script_dir, local_dir.name));
         for fi=1:length(data_mfiles)
-            
-            % MAT file is put in the 'analysis' directory; 
+
+            % MAT file is put in the 'analysis' directory;
             %  if it's there, nothing left to do.
             data_mfile = data_mfiles(fi);
-            mat_filepath = fullfile(strrep(script_dir, 'data_collection', 'analysis'), local_dir.name, sprintf('%s.mat', data_mfile.name(1:end-2)));
+            [~, cwd_name] = fileparts(script_dir);
+            mat_filepath = fullfile(strrep(script_dir, cwd_name, 'analysis'), local_dir.name, sprintf('%s.mat', data_mfile.name(1:end-2)));
             if exist(mat_filepath, 'file') && ~force
                 fprintf('Found existing mat file for %s\n', fullfile(local_dir.name, data_mfile.name));
                 continue;
@@ -49,7 +50,7 @@ function collect_all(force)
                 vars = eval(sprintf('%s(false);', data_mfile.name(1:end-2))); % run as a matlab script
                 close all;  % in case any plots were generated
 
-                % Save the variables by decomposing the struct, 
+                % Save the variables by decomposing the struct,
                 %   assigning the vars locally, saving,
                 %   then cleaning up.
                 varnames = fieldnames(vars);
@@ -63,7 +64,7 @@ function collect_all(force)
                 else
                     clear(varnames{:});
                 end;
-                
+
                 fprintf('DONE.\n');
             %catch err
             %    fprintf('FAILURE: %s\n', err);

@@ -5,7 +5,7 @@ function vars = ab_thesis_data(validate_data)
 
     ab_thesis_path = fileparts(which(mfilename));
 
-    
+
     %% Collect data
     ab_thesis_appendix1_subj = {'F1' 'F2' 'F3' 'F4' 'F5' 'F6' 'F7' 'F8' 'F9' 'F10' 'F11' 'F12' 'F13' 'F15' 'F16' 'F17' 'F18' 'F19' 'F20' 'F21' ...
                              'M1' 'M2' 'M3' 'M4' 'M5' 'M6' 'M7' 'M8' 'M9' 'M11' 'M12' 'M13' 'M15' 'M16' 'M17' 'M18' 'M19' 'M20' 'M21' 'M22'};
@@ -127,13 +127,13 @@ function vars = ab_thesis_data(validate_data)
 
     [~,idx8to2] = ismember(ab_thesis_appendix8_subj, ab_thesis_appendix2_subj);
 
-    
+
     %% Reconstruct outputs
-    varnames = who('ab_thesis_*');
+    varnames = who('ab_thesis_*', 'idx*');
     varvals = cellfun(@eval, varnames, 'UniformOutput', false);
     vars = cell2struct(varvals, varnames);
-    
-    
+
+
     %% Validate data
     if validate_data
         pct_area = ab_thesis_appendix8_data./repmat(ab_thesis_appendix2_data(idx8to2,1), [1 10])
