@@ -6,10 +6,11 @@ if ~exist('figs','var'), figs = {'predict_ab'}; end;
 if ~iscell(figs), figs = {figs}; end;
 
 pdh_dir = fileparts(which(mfilename));
+analysis_dir = fullfile(pdh_dir, '..');
 
 
 %% Validation 1: Aboitiz et al, 1992
-addpath(fullfile(pdh_dir, '..', 'aboitiz_etal_1992')); ab_data;
+load(fullfile(analysis_dir, 'aboitiz_etal_1992', 'ab_data.mat'));
 xvals = guru_newbins( ab_fig4_xbin_vals, 1 );
 [ab_overall_distn, ab_fig4_xbin_vals] = rebin_distn(ab_overall_distn./sum(ab_overall_distn), ab_fig4_xbin_vals, xvals, (ismember('rebin',figs) || ismember('all',figs)));
 %[ab_overall_distn, ab_fig4_xbin_vals] = rebin_distn(ab_overall_distn./sum(ab_overall_distn), ab_fig4_xbin_vals, [0 ab_fig4_xbin_vals]);
@@ -110,7 +111,7 @@ fprintf('Predicted distribution''s effective fiber density: %f\n', calc_fiber_de
 
 
 %% Validation 2: Tomasch
-addpath(fullfile(pdh_dir, '..', 'tomasch_1954')); tom_data;
+load(fullfile(analysis_dir, 'tomasch_1954', 'tom_data.mat'));
 
 
 %% Validation 3: CCA

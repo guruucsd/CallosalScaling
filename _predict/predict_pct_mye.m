@@ -13,7 +13,7 @@ function pct_mye = predict_pct_mye(brwt, bvol)
 
         % Collect data, then predict!
         load(fullfile(an_dir, 'aboitiz_etal_1992', 'ab_data.mat'));
-        load(fullfile(an_dir,  'wang_etal_2008', 'w_data.mat'));
+        load(fullfile(an_dir, 'wang_etal_2008', 'w_data.mat'));
 
         % Collect data
         human_pct_mye = 100*sum(ab_fig4_cc_rel_areas .* [.84 .95 .95 .95 .95]); %report that genu is 16% unmyelinated, the rest<5% unmyelinated

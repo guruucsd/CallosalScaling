@@ -17,7 +17,13 @@ function [cc_add, c_add_mye, c_add_unmye, pct_mye, xvals] = predict_cc_add(brwt,
 % fit_distn: gamma, lognormal, IUBD
 % frac: only fit bars that have a minimum proportion of frac in the Wang et al. (2008) data
 % regress_type: linear
-
+%
+% Outputs:
+%   cc_add: callosum axon diameter distribution
+%   cc_add_mye: callosum axon diameter distribution (myelinated fibers only)
+%   cc_add_unmye: callosum axon diameter distribution (unmyelinated fibers only)
+%   pct_mye: callosum % myelinated fibers
+%   xvals: xvals for the axon diameter distributions
 
     global g_cc_fit_distn g_cc_frac g_cc_regress_type
     global g_uparams g_mparams g_pmffn
@@ -26,7 +32,7 @@ function [cc_add, c_add_mye, c_add_unmye, pct_mye, xvals] = predict_cc_add(brwt,
     global human_brain_weight;
     human_brain_weight = 1300; % grams
     
-    if ~exist('fit_distn',    'var') || isempty(fit_distn),   fit_distn   =guru_iff(isempty(g_cc_fit_distn),   'gamma', g_cc_fit_distn); end;
+    if ~exist('fit_distn',   'var') || isempty(fit_distn),   fit_distn   =guru_iff(isempty(g_cc_fit_distn),   'gamma', g_cc_fit_distn); end;
     if ~exist('frac',        'var')  || isempty(frac),        frac        =guru_iff(isempty(g_cc_frac),        1/20, g_cc_frac); end;
     if ~exist('regress_type','var')  || isempty(regress_type),regress_type=guru_iff(isempty(g_cc_regress_type), 'linear', g_cc_regress_type); end;
 

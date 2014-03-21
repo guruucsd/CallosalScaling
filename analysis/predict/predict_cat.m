@@ -1,11 +1,13 @@
 pd_dir = fileparts(which(mfilename));
+rilling_dir = fullfile(pd_dir, '..', '..');
+analysis_dir = fullfile(rilling_dir, 'analysis');
 
-% predict cat / lamantia
-addpath(genpath(fullfile('..','_lib')));
-addpath(genpath(fullfile('..','..','_lib')));
-addpath(fullfile(pd_dir, '..','berbel_innocenti_1988')); bi_data; close all;
-addpath(fullfile(pd_dir, '..','wang_etal_2008')); w_data; close all;
-addpath(fullfile(pd_dir, '..','lamantia_rakic_1990s')); lrs_data; close all;
+% predict macaque / lamantia
+addpath(genpath(fullfile(rilling_dir,'_lib')));
+addpath(genpath(fullfile(rilling_dir,'_predict')));
+load(fullfile(analysis_dir, 'berbel_innocenti_1988', 'bi_data.mat'));
+load(fullfile(analysis_dir, 'lamantia_rakic_1990s', 'lrs_data.mat'));
+load(fullfile(analysis_dir, 'wang_etal_2008', 'w_data.mat'));
 
 bi_fig7_dates
 % Predict from wang data
@@ -18,30 +20,22 @@ subplot(1,2,1);
 plot(bi_fig7_dates, bi_fig7_density, 'bo');
 hold on;
 plot(bi_fig7_dates(end), cat_dens, 'ro');
-title('Cat (Berbel & Innocenti, 1988)', 'FontSize', 16); 
+title('Cat (Berbel & Innocenti, 1988)', 'FontSize', 16);
 
 % monkey
 subplot(1,2,2); set(gca, 'FontSize', 14);
 semilogx(lrs_age, lrs_dens/100, 'o', 'MarkerSize', 4, 'LineWidth',4); hold on;
-semilogx(156*[1 1], get(gca, 'ylim'), 'r--', 'LineWidth', 2); hold on; 
+semilogx(156*[1 1], get(gca, 'ylim'), 'r--', 'LineWidth', 2); hold on;
 %set(gca, 'xlim', xl, 'xtick', 10.^[2:5]); axis square;
 xlabel('Age (days since conception)');
 ylabel('axons/mm^2');
-title('Macaque (Lamantia & Rakic, 1990a;b)', 'FontSize', 16); 
+title('Macaque (Lamantia & Rakic, 1990a;b)', 'FontSize', 16);
 
 
 
 %%%%%%%%%%%%%%
 
-pd_dir = fileparts(which(mfilename));
-
-% predict macaque / lamantia
-addpath(genpath(fullfile('..','_lib')));
-addpath(genpath(fullfile('..','..','_lib')));
-addpath(fullfile(pd_dir, '..','caminiti_etal_2009'));   cam_data; close all;
-addpath(fullfile(pd_dir, '..','berbel_innocenti_1988')); bi_data; close all;
-addpath(fullfile(pd_dir, '..','rilling_insel_1999a'));  ria_data; close all;
-addpath(fullfile(pd_dir, '..','wang_etal_2008'));       w_data;   close all;
+keyboard;
 
 cam_bins = cam_figS5_xvals./(1-0.35).^(2/3);
 
@@ -90,11 +84,11 @@ figure;
 
 set(gca, 'FontSize', 14);
 semilogx(lrs_age, lrs_dens/100, 'o', 'MarkerSize', 4, 'LineWidth',4); hold on;
-semilogx(156*[1 1], get(gca, 'ylim'), 'r--', 'LineWidth', 2); hold on; 
+semilogx(156*[1 1], get(gca, 'ylim'), 'r--', 'LineWidth', 2); hold on;
 %set(gca, 'xlim', xl, 'xtick', 10.^[2:5]); axis square;
 xlabel('Age (days since conception)');
 ylabel('axons/mm^2');
-title('cat (Berbel & Innocenti (1988)', 'FontSize', 16); 
+title('cat (Berbel & Innocenti (1988)', 'FontSize', 16);
 prh = semilogx(macaque_avg_adult_age, dens_macaque, 'ro');
 legend(prh, {'Predicted density (Wang et al., 2008)'})
 
@@ -103,7 +97,7 @@ legend(prh, {'Predicted density (Wang et al., 2008)'})
 figure;
 set(gca, 'FontSize', 14);
 semilogx(lrs_age, lrs_area/10^6, 'o', 'MarkerSize', 4, 'LineWidth',4); hold on;
-semilogx(156*[1 1], get(gca, 'ylim'), 'r--', 'LineWidth', 2); hold on; 
+semilogx(156*[1 1], get(gca, 'ylim'), 'r--', 'LineWidth', 2); hold on;
 %set(gca, 'xlim', xl, 'xtick', 10.^[2:5]); axis square;
 xlabel('Age (days since conception)');
 ylabel('mm^2');
