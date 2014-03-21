@@ -13,6 +13,8 @@ function collect_datasets(datasets, force)
         local_files = dir(script_dir);
         local_dirs = local_files([local_files.isdir]);
         datasets = { local_dirs.name };
+    elseif ischar(datasets)
+        datasets = { datasets };
     end;
     if ~exist('force', 'var'), force = false; end;
 
