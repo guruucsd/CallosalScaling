@@ -23,7 +23,7 @@ switch fit_type
     case 'lognormal'
         % functions for computing mu and sigma from empirical mean and std
         % p(1) = ln(mn)-p(2).^2/2;
-        % p(2) = sqrt(ln(var/mn.^2 + 1)) 
+        % p(2) = sqrt(ln(var/mn.^2 + 1))
         sigmafn = @(mn,var) (sqrt(log(var./(mn.^2)+1)));
         mufn  = @(mn,var) (log(mn)-log(var./(mn.^2)+1)/2);
 
@@ -75,12 +75,12 @@ for si=1:ndates
     figure(uf); subplot(2,ceil(ndates/2),si);
 %    uparams(:,si) = fit_lognormal(u_distn(si,1:end_idx-1), bi_fig9_xvals(1:end_idx-1), [-2 0.2]);
     uparams(:,si) = fitfn(u_distn(si,1:end_idx-1), bi_fig9_xvals(1:end_idx-1));
-    
-    
+
+
     figure(mf); subplot(2,ceil(ndates/2),si);
 %    end_idx = round(size(m_distn,2));
     end_idx = find(m_distn(si,:)>=(frac*max(m_distn(si,:))), 1, 'last');
-%    mparams(:,si) = fit_lognormal(m_distn(si,:), bi_fig9_xvals, [-0.2 0.2]); 
+%    mparams(:,si) = fit_lognormal(m_distn(si,:), bi_fig9_xvals, [-0.2 0.2]);
     if ~isempty(end_idx)
         mparams(:,si) = fitfn(m_distn(si,1:end_idx-1), bi_fig9_xvals(1:end_idx-1));
     end;

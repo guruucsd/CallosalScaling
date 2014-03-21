@@ -37,11 +37,11 @@ plot(lra_cc_age_s(lra_cc_age<10), p_lra_cc_ar(2)+p_lra_cc_ar(1)*lra_cc_age_s(lra
 % relationship exists)
 % [~,~,r1] = allometric_regression(lra_cc_area, lra_cc_naxons,  'log', 1, true, '1');
 % [~,~,r2] = allometric_regression(lra_cc_area, lra_cc_density, 'log', 1, true, '1');
-% 
+%
 % [~,~,ra] = allometric_regression(lra_cc_area,   lra_cc_age, 'log', 1, true, '1');
 % [~,~,rn] = allometric_regression(lra_cc_naxons, lra_cc_age, 'log', 1, true, '1');
 % allometric_regression(ra{1}, rn{1}, 'linear', 1, true, '1');
-% 
+%
 % But what if we partial out age? i.e. isn't this due to maturation
 % differences?
 
@@ -174,5 +174,4 @@ plot(lra_btc_age_s, p_lra_btc_pm(2)+p_lra_btc_pm(1)*lra_btc_age_s);
 
 %% Filling fraction of cc, at each age
 
-    
-    
+
