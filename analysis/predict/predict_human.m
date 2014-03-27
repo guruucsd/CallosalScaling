@@ -11,6 +11,8 @@ analysis_dir = fullfile(pdh_dir, '..');
 
 %% Validation 1: Aboitiz et al, 1992
 load(fullfile(analysis_dir, 'aboitiz_etal_1992', 'ab_data.mat'));
+human_brain_weight = get_human_brain_weight();
+
 xvals = guru_newbins( ab_fig4_xbin_vals, 1 );
 [ab_overall_distn, ab_fig4_xbin_vals] = rebin_distn(ab_overall_distn./sum(ab_overall_distn), ab_fig4_xbin_vals, xvals, (ismember('rebin',figs) || ismember('all',figs)));
 %[ab_overall_distn, ab_fig4_xbin_vals] = rebin_distn(ab_overall_distn./sum(ab_overall_distn), ab_fig4_xbin_vals, [0 ab_fig4_xbin_vals]);
@@ -32,7 +34,7 @@ if do_fitab_fig, figure; end;
 %
 %if exist('f_regress','var')
 %    figure(f_regress);
-%    for ii=1:length(pab), subplot(2,length(pab),ii); loglog(1300, pab(ii), 'r*'); end;
+%    for ii=1:length(pab), subplot(2,length(pab),ii); loglog(human_brain_weight, pab(ii), 'r*'); end;
 %end;
 
 % Smooth the Aboitiz data, and fit that

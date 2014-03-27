@@ -46,13 +46,15 @@ function [p,distn,m_distn,u_distn,pct_mye] = predict_cc_fiber_distn(brwt, bvol, 
 
     %% Predict the % myelination
     if isempty(g_gmye)
+        human_brain_weight = get_human_brain_weight(); % grams
+        
         % Collect data, then predict!
         addpath(fullfile(pd_dir, '..', '..', 'aboitiz_etal_1992')); ab_data;
         human_pct_mye = 100*sum(ab_fig4_cc_rel_areas .* [.84 .95 .95 .95 .95]); %report that genu is 16% unmyelinated, the rest<5% unmyelinated
         [spec_wt,~,spec_idx] = unique(w_fig1c_weights);
         for ii=1:length(spec_wt), mpmye(ii) = mean(w_fig1c_pctmye(spec_idx==ii)); end;
-        [pmye,g_gmye] = allometric_regression([spec_wt(2:end) 1300], [mpmye(2:end) human_pct_mye], {'log','log'}, 1, true, '');
-        allometric_plot2([spec_wt 1300], [mpmye human_pct_mye], pmye, g_gmye);
+        [pmye,g_gmye] = allometric_regression([spec_wt(2:end) human_brain_weight], [mpmye(2:end) human_pct_mye], {'log','log'}, 1, true, '');
+        allometric_plot2([spec_wt human_brain_weight], [mpmye human_pct_mye], pmye, g_gmye);
     end;
     pct_mye = g_gmye.y(brwt)/100;
 

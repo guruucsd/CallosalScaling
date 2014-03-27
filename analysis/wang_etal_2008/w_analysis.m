@@ -8,7 +8,7 @@ function w_analysis(vars)
         eval(sprintf('%s = varvals{vi};', varnames{vi}))
     end;
 
-    human_brain_weight = 1300;  % grams
+    human_brain_weight = get_human_brain_weight();  % grams
 
     %% Examine axon distributions
 
@@ -58,17 +58,17 @@ function w_analysis(vars)
     subplot(1,2,1);
     hold on;
     plot(log10(w_fig1e_weights), w_fig1e_dens_est,'o');
-    plot(log10([w_fig1e_weights 1300]),gdens([w_fig1e_weights 1300]) );
-    plot(log10(1300), 0.37*sqrt(0.65), 'r*');
-    plot(log10(1300), 0.37*sqrt(0.65)*1.2*1.2, 'g*');
+    plot(log10([w_fig1e_weights human_brain_weight]),gdens([w_fig1e_weights human_brain_weight]) );
+    plot(log10(human_brain_weight), 0.37*sqrt(0.65), 'r*');
+    plot(log10(human_brain_weight), 0.37*sqrt(0.65)*1.2*1.2, 'g*');
     title('Brain weight vs. density (semilog)');
 
     subplot(1,2,2);
     hold on;
     plot(log10(w_fig1e_weights), log10(w_fig1e_dens_est),'o');
-    plot(log10([w_fig1e_weights 1300]),log10(gdens([w_fig1e_weights 1300])) );
-    plot(log10(1300), log10(0.33), 'r*');
-    plot(log10(1300), log10(0.33*1.2), 'g*');
+    plot(log10([w_fig1e_weights human_brain_weight]),log10(gdens([w_fig1e_weights human_brain_weight])) );
+    plot(log10(human_brain_weight), log10(0.33), 'r*');
+    plot(log10(human_brain_weight), log10(0.33*1.2), 'g*');
     title('Brain weight vs. density (loglog)');
 
     

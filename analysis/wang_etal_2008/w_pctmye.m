@@ -5,7 +5,8 @@ addpath(genpath(fullfile(w_dir, '..','..','_lib')));
 w_data;
 
 % Regress exponential decay WITH human
-x = [w_fig1c_weights 1300];
+human_brain_weight = get_human_brain_weight();
+x = [w_fig1c_weights human_brain_weight];
 y = 100-[w_fig1c_pctmye' 92];
 [pmye,gmye.y] = fit_exp_decay(x, y, 100*rand(1,3), false);
 
@@ -29,7 +30,7 @@ hold on;
 semilogx(x(1:end-1),gmye.y(x(1:end-1)));
 
 % Regress logistic WITH human
-x = [w_fig1c_weights 1300];
+x = [w_fig1c_weights human_brain_weight];
 y = [w_fig1c_pctmye' 92];
 B = glmfit(x', [y'/100 ones(size(y'))], 'binomial', 'link', 'logit');
 

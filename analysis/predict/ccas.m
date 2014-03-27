@@ -2,7 +2,7 @@ pdh_dir = fileparts(which(mfilename));
 
 cat_brain_weight = 30;
 macaque_brain_weight = 79; %rilling&insel
-human_brain_weight = 1300;
+human_brain_weight = get_human_brain_weight();
 
 addpath(fullfile(pdh_dir, '..', 'rilling_insel_1999b')); rib_data;
 

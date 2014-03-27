@@ -28,7 +28,7 @@ function GURU_April8(fig_list, saving)
         case 'individual', human_idx = length(bvols) - [0:4];
     end;
 
-    human_brain_weight = 1300;
+    human_brain_weight = get_human_brain_weight();
     human_brain_volume = mean(bvols(human_idx));
 
     %

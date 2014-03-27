@@ -7,7 +7,7 @@ function w_regress_distns(vars, fit_type)
         eval(sprintf('%s = varvals{vi};', varnames{vi}))
     end;
 
-    human_brain_weight = 1300;
+    human_brain_weight = get_human_brain_weight();
     
     
     %% Fit curves

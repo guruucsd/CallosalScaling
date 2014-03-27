@@ -1,6 +1,6 @@
 function w_gp_regress(vars)
 
-    human_brain_weight = 1300;
+    human_brain_weight = get_human_brain_weight();
 
     %% Load variables into the current workspace
     varnames = fieldnames(vars);

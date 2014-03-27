@@ -23,13 +23,13 @@ function pct_mye = predict_pct_mye(brwt, bvol)
             mpmye(ii) = mean(w_fig1c_pctmye(spec_idx==ii));
         end;
 
-        x=linspace(spec_wt(1), 1300, 100);
+        x=linspace(spec_wt(1), get_human_brain_weight(), 100);
 
         % sigmoid
         figure; set(gca, 'FontSize', 14);
 
         plot(x, 20+73*(atan(0.025*x)*2/pi), 'b--', 'LineWidth', 3); hold on;
-        plot([spec_wt 1300], [mpmye(1:end) human_pct_mye], 'r*', 'MarkerSize', 5, 'LineWidth', 2)
+        plot([spec_wt get_huamn_brain_weight()], [mpmye(1:end) human_pct_mye], 'r*', 'MarkerSize', 5, 'LineWidth', 2)
 
         xlabel('brain weight (g)'); ylabel('%% myelinated fibers');
 

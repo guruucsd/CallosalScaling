@@ -7,7 +7,7 @@ addpath(fullfile(curdir, '..', '_lib'));
 addpath(fullfile(curdir, '..', 'wang_etal_2008'));        w_data;
 addpath(fullfile(curdir, '..', 'lamantia_rakic_1990a'));  lra_data;
 
-human_brain_weight = 1300;
+human_brain_weight = get_human_brain_weight();
 human_brain_dens = 0.3717*1.2*0.65;
 human_brain_age = mean([43.5 46.4]);
 

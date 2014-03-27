@@ -17,7 +17,7 @@ function [dens] = predict_cc_density(brwt, bvol)
         human_dens_ab   = human_dens_ab_raw*1.21;  %  correct for 20% missing fibers
         human_dens_abcor= human_dens_ab*1.2;       % correct for age
 
-        [p_ccdens, g_ccdens] = allometric_regression( [w_fig1e_weights 1300], [w_fig1e_dens_est human_dens_abcor/1E6], 'log', 1, true, '3' );
+        [p_ccdens, g_ccdens] = allometric_regression( [w_fig1e_weights get_human_brain_weight()], [w_fig1e_dens_est human_dens_abcor/1E6], 'log', 1, true, '3' );
     end;
 
     dens = g_ccdens.y(brwt);
