@@ -1,3 +1,5 @@
+function ccas = predict_cc_area(brwt,bvol)
+% Predict the callosal area using allometric analysis
 function ccas = predict_cca(brwt,bvol)
 % Predict the callosal area from rilling & insel (1999) data
     global g_cca;

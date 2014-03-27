@@ -15,7 +15,7 @@ chimp_avg_adult_age = str2date(sprintf('P%d',10*365), 'chimp');
 [~,d_chimp,m_chimp,u_chimp,pmye_chimp] = predict_cc_fiber_distn(chimp_brain_wt);
 f_fiber_distn = gcf;
 [dens_chimp] = predict_cc_density(chimp_brain_wt);
-[cca_chimp]  = predict_cca(chimp_brain_wt);
+[cca_chimp]  = predict_cc_area(chimp_brain_wt);
 
 
 % Gather caminiti data

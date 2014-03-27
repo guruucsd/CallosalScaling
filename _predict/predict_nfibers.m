@@ -23,7 +23,7 @@ function [nwm,ncc,nintra] = predict_nfibers(brwt, bvol, gmv, ndens, ccdens, cca,
     if ~exist('gmv','var') || isempty(gmv),          gmv      = predict_gm_volume(brwt, bvol); end;
     if ~exist('ndens','var') || isempty(ndens),      ndens    = predict_ndens(brwt, bvol); end;
     if ~exist('ccdens','var') || isempty(ccdens),    ccdens   = predict_cc_density(brwt, bvol); end;
-    if ~exist('cca','var') || isempty(cca)           cca      = predict_cca(brwt, bvol); end;
+    if ~exist('cca','var') || isempty(cca)           cca      = predict_cc_area(brwt, bvol); end;
     if ~exist('pct_proj','var') || isempty(pct_proj),pct_proj = predict_pct_proj(brwt, bvol); end;
 
     nneurons = 1E3 * gmv .* ndens;

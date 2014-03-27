@@ -20,7 +20,7 @@ macaque_avg_adult_age = str2date(sprintf('P%d',365*mean(lra_cc_age)), 'macaque')
 
 [pmye_macaque] = predict_pct_mye(macaque_brain_wt);
 [dens_macaque] = predict_cc_density(macaque_brain_wt);
-[cca_macaque]  = predict_cca(macaque_brain_wt);
+[cca_macaque]  = predict_cc_area(macaque_brain_wt);
 
 
 % Gather lamantia data
