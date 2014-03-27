@@ -1,5 +1,6 @@
 function [nareas, nareaconns] = predict_nareas(brwt, bvol)
-% Predict # of cortical areas, using data from Changizi & Shimojo (2005)
+% Predict # of cortical areas using allometric regression, 
+%   using data from Changizi & Shimojo (2005)
 
     global g_nareas g_nareaconns
 

@@ -1,4 +1,5 @@
 function [nintra] = predict_nintra_fibers(brwt, bvol, gmv, ndens, ccdens, cca)
+% Predicts the # of intrahemispheric fibers
 
     % convert to native units
     if ~exist('bvol','var'), bvol = predict_bvol(brwt); end;

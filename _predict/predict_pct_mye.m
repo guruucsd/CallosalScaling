@@ -1,5 +1,7 @@
 function pct_mye = predict_pct_mye(brwt, bvol)
-% Predict the total pct myelinated axons in the CC
+% Predict the total pct myelinated axons in the CC.
+% Assumes functional form is a logistic function.
+
 
     global g_gmye;
 
@@ -23,7 +25,7 @@ function pct_mye = predict_pct_mye(brwt, bvol)
             mpmye(ii) = mean(w_fig1c_pctmye(spec_idx==ii));
         end;
 
-        x=linspace(spec_wt(1), get_human_brain_weight(), 100);
+        x = linspace(spec_wt(1), get_human_brain_weight(), 100);
 
         % sigmoid
         figure; set(gca, 'FontSize', 14);

@@ -1,4 +1,14 @@
 function [nwm,ncc,nintra] = predict_nfibers(brwt, bvol, gmv, ndens, ccdens, cca, pct_proj)
+% Predicts the total # of fibers and # callosal fibers,
+%   then subtracts them to return the # of intrahemispheric fibers.
+%
+% Does this by:
+%   * Predicing grey matter volume, neuron density, cc_density,
+%     callosal area, and % projecting
+%   * Computing as:
+%     # neurons   = [grey matter volume] * [neuron density/vol]
+%     # wm fibers = [# neurons] * [% neurons projecting]
+%     # cc fibers = [callosal density/area] * [callosal surface area]
 
     % convert to native units
     if ~exist('bvol','var'), bvol = predict_bvol(brwt); end;
