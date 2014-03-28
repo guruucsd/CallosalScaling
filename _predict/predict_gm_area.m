@@ -17,8 +17,8 @@ function [gma] = predict_gm_area(brwt, bvol, area_type, collation)
     global g_gmas g_gma_collations;
 
     if ~exist('area_type','var'), area_type = 'total'; end;
-    if ~exist('collation','var'), collation = 'individual'; end;
-    if ~exist('bvol','var'), bvol = predict_bvol(brwt); end;
+    if ~exist('collation','var'), collation = 'family'; end;
+    if ~exist('bvol','var') || isempty(bvol), bvol = predict_bvol(brwt); end;
     if isempty(g_gmas), g_gmas = {}; g_gma_collations = {}; end;
     
     if ~strcmp(area_type, 'total'), error('Area type "%s" is NYI.', area_type); end;
@@ -74,7 +74,7 @@ function [gma] = predict_gm_area(brwt, bvol, area_type, collation)
         % Now, do the regression
         [p_gma, g_gmas{end+1}] = allometric_regression(bvols, gmas);
         g_gma_collations{end+1} = collation;
-        fprintf('Grey matter surface area (%s) (Rilling & Insel, 1999a/b): %5.3f * bvol^%5.3f', collation, p_gma(end:-1:1));
+        fprintf('Grey matter surface area (%s) (Rilling & Insel, 1999a/b): %5.3f * bvol^%5.3f', collation, 10.^p_gma(2), p_gma(1));
     end;
 
     % Now use the functions to compute # cc fibers and # neurons

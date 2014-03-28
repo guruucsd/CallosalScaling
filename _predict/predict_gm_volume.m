@@ -5,11 +5,11 @@ function [gmv] = predict_gm_volume(brwt, bvol, collation)
 %
 % Collation: individual, species, or family
 
-    if ~exist('collation','var'), collation='individual'; end;
-    if ~exist('bvol','var'), bvol = predict_bvol(brwt); end;
+    if ~exist('collation','var'), collation='species'; end;
+    if ~exist('bvol','var') || isempty(bvol), bvol = predict_bvol(brwt); end;
 
-    global g_gmv    
-    
+    global g_gmv
+
     if isempty(g_gmv) && strcmp(collation, 'species')
         an_dir = fullfile(fileparts(which(mfilename)), '..', 'analysis');
 
@@ -30,7 +30,7 @@ function [gmv] = predict_gm_volume(brwt, bvol, collation)
 
         % Now, do the regression
         [p_gmv, g_gmv] = allometric_regression(bvols, gmvs);
-        fprintf('Grey matter volume (%s) (Rilling & Insel, 1999a/b): %5.3f * bvol^%5.3f', collation, p_gmv(end:-1:1));
+        fprintf('Grey matter volume (%s) (Rilling & Insel, 1999a/b): %5.3f * bvol^%5.3f', collation, 10.^p_gmv(2), p_gmv(1));
     end;
 
     % Now use the functions to compute # cc fibers and # neurons

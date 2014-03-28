@@ -7,7 +7,7 @@ function ndens = predict_ndens(brwt,bvol)
     global g_ndens
 
     % convert to native units
-    if ~exist('bvol','var'), bvol = predict_bvol(brwt); end;
+    if ~exist('bvol','var') || isempty(bvol), bvol = predict_bvol(brwt); end;
 
     if isempty(g_ndens)
         an_dir = fullfile(fileparts(which(mfilename)), '..', 'analysis');
@@ -17,7 +17,7 @@ function ndens = predict_ndens(brwt,bvol)
 
         load(fullfile(an_dir, 'tower_1954', 'tow_data.mat'));
         [p_ndens, g_ndens] = allometric_regression( tow_fig1_brain_weight, tow_fig1_neuron_dens, 'log', 1, true, false);
-        fprintf('Neuron density (Tower, 1954): %5.3f * brwt^%5.3f', p_ndens(end:-1:1));
+        fprintf('Neuron density (Tower, 1954): %5.3e * brwt^%5.3f', 10.^p_ndens(2), p_ndens(1));
     end;
 
     ndens = g_ndens.y(bvol);
