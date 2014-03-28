@@ -3,13 +3,16 @@ function vars = oli0_data(validate_data)
 % Cross-Species and Intraspecies Morphometric Analysis of the Corpus
 % Callosum
 
-    oli0_dir = fileparts(which(mfilename));
-
     if ~exist('validate_data', 'var'), validate_data = true; end;
- 
-    
+    if ~exist('visualize_data', 'var'), visualize_data = false; end;
+
+    OLI0_dirpath = fileparts(which(mfilename));
+    OLI0_dirname = guru_fileparts(OLI0_dirpath);
+    OLI0_img_dirpath = fullfile(OLI0_dirpath, '..', '..', 'img', OLI0_dirname);
+
+
     %% Gather data
-    [img, orig_img] = scrub_image(fullfile(oli0_dir, 'img', 'Fig3_greendot.png'), 0, 'g', 255);
+    [img, orig_img] = scrub_image(fullfile(OLI0_img_dirpath, 'Fig3_greendot.png'), 0, 'g', 255);
 
     % Get the (colored) datapoints
     oli0_fig3_species = {'Rat','Rabbit','Cat','Dog','Cow','Horse','Human'};
@@ -31,14 +34,9 @@ function vars = oli0_data(validate_data)
     oli0_fig3_ccas = 10.^((yticks(end)-data_ypix)/mean(diff(yticks))*1);
 
 
-    %% Reconstruct outputs
-    varnames = who('oli0_*');
-    varvals = cellfun(@eval, varnames, 'UniformOutput', false);
-    vars = cell2struct(varvals, varnames);
-
-    
     %% Validate data
     if validate_data
+        keyboard
 
         % Re-create the plot!
         p_cca = polyfit(log10(o_fig3_brain_weights), log10(o_fig3_ccas), 1);
@@ -67,3 +65,10 @@ function vars = oli0_data(validate_data)
                             log10([o_fig3_ccas' n_tab1_ccas(setdiff(1:end,3))]), ...
                             1);
     end;
+
+
+    %% Construct outputs
+    varnames = who('oli0_*');
+    varvals = cellfun(@eval, varnames, 'UniformOutput', false);
+    vars = cell2struct(varvals, varnames);
+

@@ -2,8 +2,7 @@ function vars = ab_thesis_data(validate_data)
 %
 
     if ~exist('validate_data', 'var'), validate_data = true; end;
-
-    ab_thesis_path = fileparts(which(mfilename));
+    if ~exist('visualize_data', 'var'), visualize_data = false; end;
 
 
     %% Collect data
@@ -128,14 +127,14 @@ function vars = ab_thesis_data(validate_data)
     [~,idx8to2] = ismember(ab_thesis_appendix8_subj, ab_thesis_appendix2_subj);
 
 
-    %% Reconstruct outputs
-    varnames = who('ab_thesis_*', 'idx*');
-    varvals = cellfun(@eval, varnames, 'UniformOutput', false);
-    vars = cell2struct(varvals, varnames);
-
-
     %% Validate data
     if validate_data
+        fprintf('All data taken from tables; no data to validate!\n');
+    end;
+
+
+    %% Visualize data
+    if visualize_data
         pct_area = ab_thesis_appendix8_data./repmat(ab_thesis_appendix2_data(idx8to2,1), [1 10])
         pct_area(18,:)
 
@@ -166,3 +165,8 @@ function vars = ab_thesis_data(validate_data)
         ab_thesis_appendix2_data(idx8to2(d2v8idx_2),:)
     end;
 
+
+    %% Construct outputs
+    varnames = who('ab_thesis_*', 'idx*');
+    varvals = cellfun(@eval, varnames, 'UniformOutput', false);
+    vars = cell2struct(varvals, varnames);

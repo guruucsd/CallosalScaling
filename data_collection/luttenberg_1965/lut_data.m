@@ -4,6 +4,7 @@ function vars = lut_data(validate_data)
 % Human developmental data on corpus callosum
 
     if ~exist('validate_data', 'var'), validate_data = true; end;
+    if ~exist('visualize_data', 'var'), visualize_data = false; end;
 
 
     %% Collect data
@@ -15,8 +16,8 @@ function vars = lut_data(validate_data)
     %lut_table2_area = [nan nan nan 0.5 1.275 5.108 4.97 6.161 11.25 20.093 24.462 48.608 57.87 53.37 66.78
     %          nan nan nan 0.66 3.150 3.784 6.334 15.634 13.265 26.575 34.434 44.527 60.086 70.684 70.394
     %          nan nan nan .425 2.5515 0.945 4.16 5.338 9.158 14.669 26.664 24.304 49.66 44.44 57.78
-    %          .05408 .097344 1.563 2.5 10.204 13.23 19.39 35.552 40.816 75.548 106.656 145.824 206.6 217.756 244.42]; 
-    %           
+    %          .05408 .097344 1.563 2.5 10.204 13.23 19.39 35.552 40.816 75.548 106.656 145.824 206.6 217.756 244.42];
+    %
     %correct by /0.7?
     %lut_table2_naxons = [nan nan nan 0.220 0.629 2.640 3.063 4.005 7.307 13.011 15.228 29.991 35.110 31.424 39.373
     %                   nan nan nan 0.660 3.150 3.784 6.334 15.634 13.265 26.575 34.434 44.527 60.086 70.684 70.394
@@ -101,15 +102,14 @@ function vars = lut_data(validate_data)
                        nan nan nan nan nan nan;
                        37.8 33.4 23.2 4.2 1.1 0.3];
 
-    
-    %% Reconstruct outputs
-    varnames = who('lut_*');
-    varvals = cellfun(@eval, varnames, 'UniformOutput', false);
-    vars = cell2struct(varvals, varnames);
 
-    
     %% validate data
     if validate_data
+        fprintf('All data taken from tables; no data to validate!\n');
+    end;
+
+    %% Visualize data
+    if visualize_data
         % Figure 2
         lut_subj_idx = [2 9 13];
         lut_area_proportions = lut_table2_areas(:,1:3)./repmat(lut_table2_areas(:,4),[1 3]);
@@ -134,3 +134,8 @@ function vars = lut_data(validate_data)
         waterfall(X,Y,[zeros(size(lut_distn,1),1) lut_distn]);
     end;
 
+
+    %% Construct outputs
+    varnames = who('lut_*');
+    varvals = cellfun(@eval, varnames, 'UniformOutput', false);
+    vars = cell2struct(varvals, varnames);

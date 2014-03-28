@@ -1,8 +1,9 @@
-function vars = ria_data(validate_data)
+function vars = rp_data(validate_data)
 %
 % Riise & Pakkenberg: age-related decline masks all @ 3100x
 
     if ~exist('validate_data', 'var'), validate_data = true; end;
+    if ~exist('visualize_data', 'var'), visualize_data = false; end;
 
     error('NYI');
 
@@ -30,16 +31,16 @@ function vars = ria_data(validate_data)
     [r,p] = corr(rp_brain_weight(setdiff(1:end,4))', rp_age(setdiff(1:end,4))')
 
     % But it's age-related decline, not a relationship between weight and # neurons
-    %[r,p] = corr(rp_number_neurons', rp_age')   
-    [r,p] = corr(rp_number_neurons(setdiff(1:end,4))', rp_age(setdiff(1:end,4))')   
-    %[r,p] = partialcorr(rp_brain_weight', rp_number_neurons', rp_age') 
-    [r,p] = partialcorr(rp_brain_weight(setdiff(1:end,4))', rp_number_neurons(setdiff(1:end,4))', rp_age(setdiff(1:end,4))') 
+    %[r,p] = corr(rp_number_neurons', rp_age')
+    [r,p] = corr(rp_number_neurons(setdiff(1:end,4))', rp_age(setdiff(1:end,4))')
+    %[r,p] = partialcorr(rp_brain_weight', rp_number_neurons', rp_age')
+    [r,p] = partialcorr(rp_brain_weight(setdiff(1:end,4))', rp_number_neurons(setdiff(1:end,4))', rp_age(setdiff(1:end,4))')
 
-    % STRONG negative correlation between #cc fibers and brain weight? 
+    % STRONG negative correlation between #cc fibers and brain weight?
     [r,p] = partialcorr(rp_brain_weight(setdiff(1:end,2))', rp_cc_fibers(setdiff(1:end,2))', [rp_age(setdiff(1:end,2))'])
 
     % but POSITIVE correlation between brain weights and cc area
-    [r,p] = corr(rp_brain_weight(setdiff(1:end,[2 4]))', rp_cc_area(setdiff(1:end,[2 4]))')   
+    [r,p] = corr(rp_brain_weight(setdiff(1:end,[2 4]))', rp_cc_area(setdiff(1:end,[2 4]))')
     [r,p] = partialcorr(rp_brain_weight(setdiff(1:end,[2 4]))', rp_cc_area(setdiff(1:end,[2 4]))', [rp_age(setdiff(1:end,[2 4]))'])
 
     % NEGATIVE relationship between # neurons and # fibers...
@@ -87,3 +88,16 @@ function vars = ria_data(validate_data)
 
     % brain w
     [V,D] = EIG(X)
+
+
+    %% Validate data
+    if validate_data
+        fprintf('All data taken from tables; no data to validate!\n');
+    end;
+
+
+    % Construct outputs
+    varnames = who('rp_*');
+    varvals = cellfun(@eval, varnames, 'UniformOutput', false);
+    vars = cell2struct(varvals, varnames);
+

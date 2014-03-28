@@ -1,18 +1,22 @@
 function vars = rid_data(validate_data)
 %
-% Cross-species primate brain data from Rilling & Insel (1999a), 
+% Cross-species primate brain data from Rilling & Insel (1999a),
 %   largely complementary to callosal data in 1999b.
 % Includes:
 % * Brain volume
 % * Grey & white matter volumes
 
-    rid_dir = fileparts(which(mfilename));
-
     if ~exist('validate_data', 'var'), validate_data = true; end;
+    if ~exist('visualize_data', 'var'), visualize_data = false; end;
+
+    RID_dirpath = fileparts(which(mfilename));
+    RID_dirname = guru_fileparts(RID_dirpath, 'name');
+    RID_img_dirpath = fullfile(RID_dirpath, '..', '..', 'img', RID_dirname);
+
 
     %% Fig 2
-    [data_ypix,data_xpix] = get_pixels_by_color('img/Fig2_reddot.png', 'r', -0.05);
-    [img] = scrub_image('img/Fig2.png', -0.05);
+    [data_ypix,data_xpix] = get_pixels_by_color(fullfile(RID_img_dirpath, 'Fig2_reddot.png'), 'r', -0.05);
+    [img] = scrub_image(fullfile(RID_img_dirpath, 'Fig2.png'), -0.05);
 
     % reorder in xy
     [data_xpix,idx1] = sort(data_xpix); data_ypix = data_ypix(idx1);
@@ -39,13 +43,10 @@ function vars = rid_data(validate_data)
     rid_fig2_ccas = 10.^(2+(yticks(end)-data_ypix)/mean(diff(yticks))*0.1);
 
 
-    % Reconstruct outputs
-    varnames = who('rid_*');
-    varvals = cellfun(@eval, varnames, 'UniformOutput', false);
-    vars = cell2struct(varvals, varnames);
-
-
+    %% Validate data
     if validate_data
+        keyboard
+
         % Re-create the plot!
         p_cca = polyfit(log10(rid_fig2_brain_weights), log10(rid_fig2_ccas), 1);
         figure; set(gcf, 'Position', [49         290        1194         394]);
@@ -61,4 +62,10 @@ function vars = rid_data(validate_data)
         xlabel('log(brain weight) (g)'); ylabel('log(cca) (mm^2)');
         title(sprintf('Regressions: %4.2fX + %4.2f', p_cca));
     end;
-    
+
+
+    %% Construct outputs
+    varnames = who('rid_*');
+    varvals = cellfun(@eval, varnames, 'UniformOutput', false);
+    vars = cell2struct(varvals, varnames);
+

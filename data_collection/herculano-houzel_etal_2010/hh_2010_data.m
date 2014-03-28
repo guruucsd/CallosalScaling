@@ -2,10 +2,14 @@ function vars = hh_2010_data(validate_data)
 %
 
     if ~exist('validate_data', 'var'), validate_data = true; end;
+    if ~exist('visualize_data', 'var'), visualize_data = false; end;
 
-    hh_2010_dir = fileparts(which(mfilename));
+    HH_2010_dirpath = fileparts(which(mfilename));
+    HH_2010_dirname = guru_fileparts(HH_2010_dirpath, 'name');
+    HH_2010_img_dirpath = fullfile(HH_2010_dirpath, '..', '..', 'img', HH_2010_dirname);
+    HH_2008_dirpath = fullfile(HH_2010_dirpath, '..', strrep(HH_2010_dirname, '2010', '2008'));
 
-    
+
     %% Gather data
     hh_2010_tabS2_species = {'Tupaia glis' 'Callithrix jacchus' 'Otolemur garnetti' 'Aotus trivirgatus' 'Callimico goeldi' 'Saimiri sciureus' 'Macaca fasciularis' 'Macaca radiata' 'Cebus apella' 'Macaca mulatta' 'Papio cynocephalus' 'Homo Sapiens'};
     hh_2010_tabS2_Mg = [0.515 2.042 2.556 3.698 3.827 6.996 10.459 15.493 15.820 21.430 36.334 285.860]'; % g
@@ -20,16 +24,15 @@ function vars = hh_2010_data(validate_data)
     %hh_2010_Aw_est = hh_2010_tabS2_N.^0.873;
     %hh_2010_Vw_est = hh_2010_tabS2_N.^1.1; %SI methods
 
-    
-    %% Reconstruct outputs
-    varnames = who('hh_2010_*');
-    varvals = cellfun(@eval, varnames, 'UniformOutput', false);
-    vars = cell2struct(varvals, varnames);
-    
-    
+
     %% Validate data by recreating some figures
     if validate_data
+        keyboard;
+    end;
 
+
+    %% Visualize data
+    if visualize_data
         % Fig1
         allometric_regression(hh_2010_tabS2_Mg, hh_2010_tabS2_Mw, 'log', 1, true, true) % Unequally divided into A and T
         title('Fig 1a: M_{gray} vs. M_{white}');
@@ -45,8 +48,7 @@ function vars = hh_2010_data(validate_data)
         title('Fig 2c: N_{neocortical} vs. N_{other}');
 
         % map 2008 paper to 2010 paper data
-    %    addpath(fullfile(rib_dir, '..', 'herculano-houzel_etal_2007')); hh_2007_data;
-        addpath(fullfile(hh_2010_dir, '..', 'herculano-houzel_etal_2008')); hh_2008_data;
+        addpath(HH_2008_dirpath); hh_2008_data;
         idx2008 = ismember(hh_2008_tab1_M, hh_2010_tabS2_Mg);
         idx2010 = ismember(hh_2010_tabS2_Mg, hh_2008_tab1_M);
 
@@ -95,7 +97,7 @@ function vars = hh_2010_data(validate_data)
         % Rw=(3*Vw/(4pi))^(1/3)
         % AW0 = AE*(Rw/R).^2 = AE*
 
-    
+
         % Rw=R-h-T
         % 2R-2h-2T = 2R-2*T*Fg => 0 = 2*T*Fg+2T-2H, or T(Fg+1)=h
 
@@ -131,11 +133,11 @@ function vars = hh_2010_data(validate_data)
         g_Rl = @(R) 10.^polyval(p_Rl,log10(R));
         %allometric_regression(hh_2010_R(idx2010), hh_2010_l(idx2010), 'log', 1, true, true) % Unequally divided into A and T
         Rs = linspace(min(hh_2010_R(idx2010)), max(hh_2010_R(idx2010)), 25);
-        figure; 
+        figure;
         plot(hh_2010_R(idx2010), hh_2010_l(idx2010), 'o');
         hold on;
         plot(Rs, g_Rl(Rs));
-        set(gca, 'ylim', [0.8 4.0]) 
+        set(gca, 'ylim', [0.8 4.0])
         xlabel('Cortical Radius (mm)'); ylabel('average axon length (mm)');
         title(sprintf('l \\propto R^{%4.3f}', p_Rl(1)));
     %     hh_2010_l = nan(size(idx2010)); hh_2010_l(idx2010) = 2*Vw_est(idx2010)./hh_2010_Aw_est(idx2010);
@@ -143,7 +145,7 @@ function vars = hh_2010_data(validate_data)
     %     g_Rl2 = @(R) 10.^polyval(p_Rl2,log10(R));
     %     %allometric_regression(hh_2010_R(idx2010), hh_2010_l(idx2010), 'log', 1, true, true) % Unequally divided into A and T
     %     Rs = linspace(min(R_est(idx2010)), max(R_est(idx2010)), 25);
-    %     figure; 
+    %     figure;
     %     plot(R_est(idx2010), hh_2010_l(idx2010), 'o');
     %     hold on;
     %     plot(Rs, g_Rl2(Rs));
@@ -157,7 +159,13 @@ function vars = hh_2010_data(validate_data)
         % Fig 6
         allometric_regression(hh_2010_tabS2_N(idx2010), hh_2010_Fw(idx2010), 'log', 1, true, true) % Unequally divided into A and T
         title('Fig 6: N_{neurons} vs. Folding_{white}(estimated)');
-        set(gca,'ylim',[0.1 10])    
+        set(gca,'ylim',[0.1 10])
     %     allometric_regression(hh_2010_tabS2_N(idx2010), Fw_est(idx2010), 'log', 1, true, true) % Unequally divided into A and T
     %     title('Fig 6: N_{neurons} vs. Folding_{white}(estimated)');
     end;
+
+
+    %% Construct outputs
+    varnames = who('hh_2010_*');
+    varvals = cellfun(@eval, varnames, 'UniformOutput', false);
+    vars = cell2struct(varvals, varnames);

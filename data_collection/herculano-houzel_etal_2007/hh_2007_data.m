@@ -2,6 +2,9 @@ function vars = hh_2007_data(validate_data)
 %
 
     if ~exist('validate_data', 'var'), validate_data = true; end;
+    if ~exist('visualize_data', 'var'), visualize_data = false; end;
+
+
     % Key:
     % M = brain (structure) mass
     % Nn = # neurons
@@ -9,7 +12,6 @@ function vars = hh_2007_data(validate_data)
     % Dn = Density of neurons (#/mg)
     % Do = Density of non-neurons (#/mg)
 
-    hh_2007_path = fileparts(which(mfilename));
 
     %% Table 1 data
     hh_2007_tab1_species = {'Tupaia glis' 'Callithrix jacchus' 'Otolemur garnetti' 'Aotus trivirgatus' 'Saimiri sciureus' 'Cebus apella' 'Macaca mulatta' };
@@ -53,16 +55,14 @@ function vars = hh_2007_data(validate_data)
     %% Eliminate the questionable datapoint
     sidx = find(~strcmp(hh_2007_tab1_species, 'xxCebus apella'));
 
-    
-    %% Reconstruct outputs
-    varnames = who('hh_2007_*');
-    varvals = cellfun(@eval, varnames, 'UniformOutput', false);
-    vars = cell2struct(varvals, varnames);
-        
-    
+
     %% Validate data, across tables
     if validate_data
+        fprintf('All data taken from tables; no data to validate!\n');
+    end;
 
+    %% Visualize data
+    if visualize_data
         % M in table 1 and M across all structures in supplement
         figure; allometric_regression(hh_2007_tab1_M, sum(hh_2007_tabS2_M,2), 'linear', 1, false, true);
         pct_diff_M = (sum(hh_2007_tabS2_M,2) - hh_2007_tab1_M)./(sum(hh_2007_tabS2_M,2)+hh_2007_tab1_M)/2*100;
@@ -132,3 +132,9 @@ function vars = hh_2007_data(validate_data)
         %allometric_regression(sum(hh_2007_tabS2_M, 1), hh_2007_tabS2_cortex_Nn); %TBM vs N neocortical
         %allometric_regression(sum(hh_2007_tabS2_cortex_M, 1), hh_2007_tabS2_cortex_Nn); %TBM vs N neocortical
     end;
+
+
+    %% Construct outputs
+    varnames = who('hh_2007_*');
+    varvals = cellfun(@eval, varnames, 'UniformOutput', false);
+    vars = cell2struct(varvals, varnames);

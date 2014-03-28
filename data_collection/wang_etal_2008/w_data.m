@@ -5,9 +5,13 @@ function vars = w_data(validate_data)
 % * Axon diameter distributions for different species
 % * Mean axon density across species
 
-    w_dir = fileparts(which(mfilename));
-
     if ~exist('validate_data', 'var'), validate_data = true; end;
+    if ~exist('visualize_data', 'var'), visualize_data = false; end;
+
+    % Capital indicates constant / local variable
+    W_dirpath = fileparts(which(mfilename));
+    W_dirname = guru_fileparts(W_dirpath, 'name');
+    W_img_dirpath = fullfile(W_dirpath, '..', '..', 'img', W_dirname);
 
     %% Get species and brain weights, from supp materials
     w_species = {'least shrew' 'mouse' 'rat' 'marmoset' 'cat' 'macaque' 'orangutan' 'chimpanzee' 'harbor porpoise' 'gorilla' 'striped dolphin' 'human' 'bottlenose dolphin' 'humpback whale'};
@@ -34,7 +38,7 @@ function vars = w_data(validate_data)
 
 
     %% Fig 1c: Get the progression of pct myelinated fibers!
-    img_file = fullfile(w_dir,'img','Fig1c_marked.png');
+    img_file = fullfile(W_img_dirpath, 'Fig1c_marked.png');
     [mpixy,mpixx] = get_pixels_by_color(img_file, 'r');  % % myelinated
     [yticks] = get_pixels_by_color(img_file, 'y');   % 2 cols of them
 
@@ -50,7 +54,7 @@ function vars = w_data(validate_data)
     %% Fig. 4: Get the unmyelinated and myelinated axon distribution histograms!
     w_fig4_species = {'least shrew', 'mouse', 'rat', 'marmoset', 'cat', 'macaque'};
     for si=1:length(w_fig4_species)
-        [um,m,xvals] = w_process_histogram(fullfile(fileparts(which(mfilename)), 'img', ['Fig4_' w_fig4_species{si} '.png']));
+        [um,m,xvals] = w_process_histogram(fullfile(W_img_dirpath, ['Fig4_' w_fig4_species{si} '.png']));
         w_fig4_unmyelinated(si,1:length(xvals)) = um;
         w_fig4_myelinated(si,1:length(xvals))   = m;
         w_fig4_xvals(1:length(xvals)) = xvals;
@@ -61,7 +65,7 @@ function vars = w_data(validate_data)
 
 
     %% Create diameter => weight mapping function (v1 now obsolete)
-    %img = scrub_image(fullfile(fileparts(which(mfilename)), 'img', 'Fig1c_neutered.png'));
+    %img = scrub_image(fullfile(W_img_dirpath, 'Fig1c_neutered.png'));
     %
     %% Find x axes
     %[gx,gxs] = get_groups(sum(img,2) > size(img,2)*0.5, 'right');
@@ -74,7 +78,7 @@ function vars = w_data(validate_data)
 
 
     %% Fig 1c: Create diameter => weight mapping function (v2 now obsolete)
-    img = scrub_image(fullfile(fileparts(which(mfilename)), 'img', 'Fig1c_xaxis.png'));
+    img = scrub_image(fullfile(W_img_dirpath, 'Fig1c_xaxis.png'));
 
     % Find x axes
     g = get_groups(sum(img,2) > size(img,2)*0.75);
@@ -102,7 +106,7 @@ function vars = w_data(validate_data)
 %
 %
     %% Grab points from Fig 1e
-    img = scrub_image(fullfile(fileparts(which(mfilename)), 'img', 'Fig1e.png'));
+    img = scrub_image(fullfile(W_img_dirpath, 'Fig1e.png'));
 
     % find x and y axes
     xaxis_first = find(sum(img,2)>0.5*size(img,2),1,'first');
@@ -159,18 +163,21 @@ function vars = w_data(validate_data)
     [~,species_idx] = ismember(w_fig1e_species, w_species);
     w_fig1e_weights = w_brain_weights(species_idx);
 
-    % Validate the y-value parsing and regression
-    figure; hold on;
-    plot(yticks(end:-1:1),[0.3 1 2 3 4 5 6],'o');
-    plot(yticks(end:-1:1), gg(yticks(end:-1:1)));
 
-    % Estimate, then discard
-    %w_fig1e_brwt_est = [gw(diam_cm_data)];% 1300];
-    w_fig1e_dens_est = [gg(gy)];% log10(3.8)];
+    %% Validate the y-value parsing and regression
+    if validate_data
+        keyboard
+        figure; hold on;
+        plot(yticks(end:-1:1),[0.3 1 2 3 4 5 6],'o');
+        plot(yticks(end:-1:1), gg(yticks(end:-1:1)));
 
-    
-    
-    % Reconstruct outputs
+        % Estimate, then discard
+        %w_fig1e_brwt_est = [gw(diam_cm_data)];% 1300];
+        w_fig1e_dens_est = [gg(gy)];% log10(3.8)];
+    end;
+
+
+    %% Construct outputs
     varnames = who('w_*');
     varvals = cellfun(@eval, varnames, 'UniformOutput', false);
     vars = cell2struct(varvals, varnames);
