@@ -3,6 +3,8 @@ function vars = lrb_data(validate_data)
 
 
     if ~exist('validate_data', 'var'), validate_data = true; end;
+    if ~exist('visualize_data', 'var'), visualize_data = false; end;
+
 
     %% Gather static data
     % table 1
@@ -31,9 +33,9 @@ function vars = lrb_data(validate_data)
     lrb_tab_ccdens = [lrb_tab1_ccdens lrb_tab3_ccdens(4:end)];
     lrb_tab_ccarea = [lrb_tab1_ccarea lrb_tab3_ccarea(4:end)];
     lrb_tab_pctmy  = [lrb_tab1_pctmy lrb_tab3_pctmy(4:end)];
-    
 
-    % get histogram data
+
+    %% Get histogram data, load variables locally.
     vars = lrb_histograms(validate_data);
     varnames = fieldnames(vars);
     varvals = struct2cell(vars);
@@ -41,14 +43,14 @@ function vars = lrb_data(validate_data)
         eval(sprintf('%s = varvals{%d};', varnames{vi}, vi));
     end;
 
-    
-    %% Reconstruct outputs
+
+    %% Validate data
+    if validate_data
+        fprintf('All data taken from tables; no data to validate!\n');
+    end;
+
+
+    %% Construct outputs
     varnames = who('lrb_*');
     varvals = cellfun(@eval, varnames, 'UniformOutput', false);
     vars = cell2struct(varvals, varnames);
-
-    
-    %% Validate data
-    if validate_data
-    end;
-    

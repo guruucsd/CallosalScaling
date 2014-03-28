@@ -3,8 +3,9 @@ function vars = man_data(validate_data)
 % Corpus callosum of the elephant
 
     if ~exist('validate_data', 'var'), validate_data = true; end;
- 
-    
+    if ~exist('visualize_data', 'var'), visualize_data = false; end;
+
+
     %% Set variables
     man_table1_brain_weights = [5145 5250 4835 4026.6  4460 5220 1345.66 322.4 349.44 397.31 421.55 85.99 148.46 81.95 102.77 68.89 23.93 70.29 3.38 14 23.6 45.15 101 201 747.66  724.6 2549.33 1162 1217.5 6060.33 6052 4444.5 739.75 644.5 1539.63 630 1508.63 1567 2217 188 ...
     ...
@@ -30,48 +31,14 @@ function vars = man_data(validate_data)
         man_table1_family_ccas{fi} = man_table1_ccas(man_table1_family_indices{fi});
     end;
 
-    
-    %% Reconstruct outputs
+
+    %% Validate data
+    if validate_data
+        fprintf('All data taken from tables; no data to validate!\n');
+    end;
+
+
+    %% Construct outputs
     varnames = who('man_*');
     varvals = cellfun(@eval, varnames, 'UniformOutput', false);
     vars = cell2struct(varvals, varnames);
-
-    
-    %% Validate data
-    if validate_data
-        [p_cca,fns_cca] = allometric_regression(man_table1_brain_weights, man_table1_ccas);
-
-        % All data as one
-        %allometric_plot(man_table1_brain_weights, man_table1_ccas)
-        h = allometric_plot(man_table1_family_brain_weights, man_table1_family_ccas);
-        legend(h, man_table1_families, 'Location', 'NorthWest');
-
-        % Separate regressions for each famiy
-        for fi=1:length(man_table1_families)
-            %if length(man_table1_family_brain_weights{fi})==1, continue; end;
-            [p_family_cca{fi}, fns_family_cca{fi}] = allometric_regression(man_table1_family_brain_weights{fi}, man_table1_family_ccas{fi});
-        end;
-        h = allometric_plot(man_table1_family_brain_weights, man_table1_family_ccas, p_family_cca, fns_family_cca);
-        legend(h, man_table1_families, 'Location', 'NorthWest');
-
-        % Average over families, then plot as one
-        for fi=1:length(man_table1_families)
-            mean_family_brain_weights(fi) = mean(man_table1_family_brain_weights{fi});
-            mean_family_ccas(fi) = mean(man_table1_family_ccas{fi});
-        end;
-
-        % Linear regression
-        [p_mean_cca,fns_mean_cca] = allometric_regression(mean_family_brain_weights, mean_family_ccas);
-        h = allometric_plot(num2cell(mean_family_brain_weights), num2cell(mean_family_ccas), p_mean_cca, fns_mean_cca);
-        legend(h, man_table1_families, 'Location', 'NorthWest');
-
-        % Quadratic regression
-        [p_mean_cca,fns_mean_cca] = allometric_regression(mean_family_brain_weights, mean_family_ccas, 'log', 2);
-        h = allometric_plot(num2cell(mean_family_brain_weights), num2cell(mean_family_ccas), p_mean_cca, fns_mean_cca);
-        legend(h, man_table1_families, 'Location', 'NorthWest');
-
-        % Quadratic regression on original data
-        [p_mean_cca,fns_mean_cca] = allometric_regression(mean_family_brain_weights, mean_family_ccas, 'linear', 2);
-        h = allometric_plot(num2cell(mean_family_brain_weights), num2cell(mean_family_ccas), p_mean_cca, fns_mean_cca);
-        legend(h, man_table1_families, 'Location', 'NorthWest');
-    end;

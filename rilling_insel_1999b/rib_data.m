@@ -4,9 +4,12 @@ function vars = rib_data(validate_data)
 % images, including:
 % * Callosal and grey matter surface areas
 
-    rib_dir = fileparts(which(mfilename));
-
     if ~exist('validate_data', 'var'), validate_data = true; end;
+    if ~exist('visualize_data', 'var'), visualize_data = false; end;
+
+    RIB_dirpath = fileparts(which(mfilename));
+    RIB_dirname = guru_fileparts(RIB_dirpath, 'name');
+    RIB_img_dirpath = fullfile(RIB_dirpath, '..', '..', 'img', RIB_dirname);
 
 
     %% Static data
@@ -20,10 +23,10 @@ function vars = rib_data(validate_data)
     %% Fig 1b
     %rib_fig1_families = {'cercopithecids' 'cebids' };
     rib_fig1_family_n = [[9] [8] [4 16 6]];
-    [oir] = scrub_image(fullfile(rib_dir, 'img', 'Fig1b_reddot.png'),   0, 'r', 255); [data_ypix_r, data_xpix_r] = find(~oir);
-    [oig] = scrub_image(fullfile(rib_dir, 'img', 'Fig1b_greendot.png'), 0, 'g', 255); [data_ypix_g, data_xpix_g] = find(~oig);
-    [oib] = scrub_image(fullfile(rib_dir, 'img', 'Fig1b_bluedot.png'),  0, 'b', 255); [data_ypix_b, data_xpix_b] = find(~oib);
-    [img]   = scrub_image(fullfile(rib_dir, 'img', 'Fig1b.png'));
+    [oir] = scrub_image(fullfile(RIB_img_dirpath, 'Fig1b_reddot.png'),   0, 'r', 255); [data_ypix_r, data_xpix_r] = find(~oir);
+    [oig] = scrub_image(fullfile(RIB_img_dirpath, 'Fig1b_greendot.png'), 0, 'g', 255); [data_ypix_g, data_xpix_g] = find(~oig);
+    [oib] = scrub_image(fullfile(RIB_img_dirpath, 'Fig1b_bluedot.png'),  0, 'b', 255); [data_ypix_b, data_xpix_b] = find(~oib);
+    [img]   = scrub_image(fullfile(RIB_img_dirpath, 'Fig1b.png'));
     data_xpix_b = [data_xpix_b(1:10); data_xpix_b(9:end)]; %duplicate two overlapping ones
     data_ypix_b = [data_ypix_b(1:10); data_ypix_b(9:end)]; %duplicate two overlapping ones
 
@@ -68,8 +71,8 @@ function vars = rib_data(validate_data)
 
 
     %% Fig 2
-    [data_ypix_cca,data_xpix_cca] = get_pixels_by_color(fullfile(rib_dir, 'img', 'Fig2_reddot.png'), 'r');
-    [data_ypix_wmv,data_xpix_wmv] = get_pixels_by_color(fullfile(rib_dir, 'img', 'Fig2_greendot.png'), 'g');
+    [data_ypix_cca,data_xpix_cca] = get_pixels_by_color(fullfile(RIB_img_dirpath, 'Fig2_reddot.png'), 'r');
+    [data_ypix_wmv,data_xpix_wmv] = get_pixels_by_color(fullfile(RIB_img_dirpath, 'Fig2_greendot.png'), 'g');
     % reorder in xy
     [data_xpix_cca,idx1] = sort(data_xpix_cca); data_ypix_cca = data_ypix_cca(idx1);
     [data_xpix_wmv,idx2] = sort(data_xpix_wmv); data_ypix_wmv = data_ypix_wmv(idx2);
@@ -77,7 +80,7 @@ function vars = rib_data(validate_data)
     data_xpix_wmv = [data_xpix_wmv(1:8); data_xpix_wmv(8:end)]; %duplication of an overlapping guy
     data_ypix_wmv = [data_ypix_wmv(1:8); data_ypix_wmv(8:end)];
     sort(data_xpix_wmv'-data_xpix_cca');
-    [img]   = scrub_image(fullfile(rib_dir, 'img', 'Fig2.png'));
+    [img]   = scrub_image(fullfile(RIB_img_dirpath, 'Fig2.png'));
 
     % Get the (b&w) axes
     [yaxis_idx,yaxis_width]=get_groups(sum(img,1)>0.75*size(img,1));
@@ -123,8 +126,14 @@ function vars = rib_data(validate_data)
     rib_data_names = {'CCA (fig1b)' 'CCA (fig2)' 'Brain Volume' 'Grey Matter Volume' 'White Matter Volume'};
     rib_database = [rib_fig1b_ccas rib_fig2_ccas rib_fig1b_brain_volumes rib_fig2_gmas rib_fig2_wmvs]; % the database
 
-  
-    % Reconstruct outputs
+
+    %% Validate outputs
+    if validate_data
+        keyboard
+    end;
+
+    %% Construct outputs
     varnames = who('rib_*');
     varvals = cellfun(@eval, varnames, 'UniformOutput', false);
     vars = cell2struct(varvals, varnames);
+

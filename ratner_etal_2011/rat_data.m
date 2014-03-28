@@ -1,30 +1,30 @@
 function vars = rat_data(validate_data)
 %
-% Cross-species primate brain data from Rilling & Insel (1999a), 
+% Cross-species primate brain data from Rilling & Insel (1999a),
 %   largely complementary to callosal data in 1999b.
 % Includes:
 % * Brain volume
 % * Grey & white matter volumes
 
-    rat_dir = fileparts(which(mfilename));
-
     if ~exist('validate_data', 'var'), validate_data = true; end;
+    if ~exist('visualize_data', 'var'), visualize_data = false; end;
 
-    
+    RAT_dirpath = fileparts(which(mfilename));
+    RAT_dirname = guru_fileparts(RAT_dirpath, 'name');
+    RAT_img_dirpath = fullfile(RAT_dirpath, '..', '..', 'img', RAT_dirname);
+
+
     rat_tab1_brain_weights = [2784 2738 2566 2448];
 
-    data =  parse_img_by_color(fullfile(rat_dir, 'img', 'Fig6_marked.png'), 'g', @(x)(x), @(y)(0+20*y));
+    data =  parse_img_by_color(fullfile(RAT_img_dirpath, 'Fig6_marked.png'), 'g', @(x)(x), @(y)(0+20*y));
     rat_fig6_distn = data{1}'./sum(data{1});
     rat_fig6_xbin_vals = [.822 1.14 1.59 2.21 10];
 
 
-
-    % Reconstruct outputs
-    varnames = who('rat_*');
-    varvals = cellfun(@eval, varnames, 'UniformOutput', false);
-    vars = cell2struct(varvals, varnames);
-    
+    %% Validate data
     if validate_data
+        keyboard;
+
         prat = fit_lognormal(rat_fig6_distn, rat_fig6_xbin_vals);
 
         minke_brain_weight = mean(rat_tab1_brain_weights);
@@ -82,3 +82,9 @@ function vars = rat_data(validate_data)
         set(gca, 'ylim', [0 0.750], 'xlim', [0 11]);
 
     end;
+
+
+    %% Construct outputs
+    varnames = who('rat_*');
+    varvals = cellfun(@eval, varnames, 'UniformOutput', false);
+    vars = cell2struct(varvals, varnames);
