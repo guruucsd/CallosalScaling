@@ -1,7 +1,13 @@
 function vars = tow_data(validate_data)
 %
-% Extract cross-species neuron density from Tower (1954)
-% images
+% Dataset:
+%   Tower (1954)
+%
+% Data:
+%   Cross-species grey matter neuron density (neurons/mm^3)
+%
+% Figures:
+%   Fig 1: brain weight vs. grey matter neuron density
 
     if ~exist('validate_data', 'var'), validate_data = true; end;
     if ~exist('visualize_data', 'var'), visualize_data = false; end;
@@ -13,13 +19,14 @@ function vars = tow_data(validate_data)
 
     %% Collect data
     [~,pix,xticks,yticks] = parse_img_by_color(fullfile(TOW_img_dirpath, 'Fig1_marked.png'), 'g');
-    tow_fig1_brain_weight = 0.5*10.^(0+(pix{2} - xticks{2}(1))./mean(diff(xticks{2})));
-    tow_fig1_neuron_dens  = 3E3*10.^(0+(yticks{1}(end) - pix{1})./mean(diff(yticks{1})));
+    tow_fig1_brain_weight = 0.5*10.^(0+(pix{2} - xticks{2}(1))./mean(diff(xticks{2})))';
+    tow_fig1_neuron_dens  = 3E3*10.^(0+(yticks{1}(end) - pix{1})./mean(diff(yticks{1})))';
 
 
     %% Do validation
     if validate_data
-        keyboard
+        fprintf('Validation NYI\n');
+        %keyboard
     end;
 
 

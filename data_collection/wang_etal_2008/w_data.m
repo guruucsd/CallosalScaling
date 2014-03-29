@@ -1,9 +1,23 @@
 function vars = w_data(validate_data)
 %
-% Extract cross-species callosal data from Wang et al. (2008) annotated
-% images, including:
-% * Axon diameter distributions for different species
-% * Mean axon density across species
+% Dataset:
+%   Wang et al. (2008)
+%
+% Data:
+%   Cross-species callosal data , including:
+%   * Axon diameter distributions (myelinated & unmyelinated, axons/um^2)
+%   * Mean axon density (um)
+%   * Brain diameter (cm)
+%   * Brain weights (g)
+%
+% Figures:
+%   Fig 1c: % myelination
+%   Fig 1c: brain diameter vs. weight
+%   Fig 1e: callosal axon density (vs. brain diameter (and weight))
+%   Fig 4: axon diamter distributions (myelinated & unmyelinated) for all 6 species
+%
+% Notes:
+%   Shrinkage was estimated to be ZERO in the paper.
 
     if ~exist('validate_data', 'var'), validate_data = true; end;
     if ~exist('visualize_data', 'var'), visualize_data = false; end;
@@ -13,24 +27,26 @@ function vars = w_data(validate_data)
     W_dirname = guru_fileparts(W_dirpath, 'name');
     W_img_dirpath = fullfile(W_dirpath, '..', '..', 'img', W_dirname);
 
+
     %% Get species and brain weights, from supp materials
     w_species = {'least shrew' 'mouse' 'rat' 'marmoset' 'cat' 'macaque' 'orangutan' 'chimpanzee' 'harbor porpoise' 'gorilla' 'striped dolphin' 'human' 'bottlenose dolphin' 'humpback whale'};
     w_brain_weights = [0.14 0.4 1.6 nan 31 89 nan nan nan nan 936 1300 1824 7500]; %g
     w_brain_diameters = [0.6 0.9 1.4 2.4 3.8 5.5 8.6 8.9 9.7 9.7 12.0 14.5 14.9 22.7]; %cm
 
-
-    % retrofit the weights
     plog = polyfit(log10(w_brain_diameters(~isnan(w_brain_weights)).^3), log10(w_brain_weights(~isnan(w_brain_weights))), 1);
 %    plin = polyfit(w_brain_diameters(~isnan(w_brain_weights)).^3, w_brain_weights(~isnan(w_brain_weights)), 1);
     est_brain_weights = 10.^(plog(1)*log10(w_brain_diameters.^3) + plog(2));
 %    est_brain_weights = plin(1)*w_brain_diameters.^3 + plin(2);
 
-    figure;
-    scatter(log(w_brain_diameters.^3), log(w_brain_weights));
-    hold on;
-    plot(log(w_brain_diameters.^3), log(est_brain_weights));
-    title('Measured vs. estimated, brain weights');
-    axis square;
+    % retrofit the weights
+    if visualize_data
+        figure;
+        scatter(log(w_brain_diameters.^3), log(w_brain_weights));
+        hold on;
+        plot(log(w_brain_diameters.^3), log(est_brain_weights));
+        title('Measured vs. estimated, brain weights');
+        axis square;
+    end;
 
     %w_brain_weights, est_brain_weights
     w_brain_weights(isnan(w_brain_weights)) = est_brain_weights(isnan(w_brain_weights));
@@ -48,19 +64,20 @@ function vars = w_data(validate_data)
 
     % Now convert into actual values
     w_fig1c_pctmye = 0 + 20*(yticks(end)-mpixy)/mean(diff(yticks)); %tot fibers & cca correspondences
-
+    w_fig1c_pctmye = w_fig1c_pctmye';
 
 
     %% Fig. 4: Get the unmyelinated and myelinated axon distribution histograms!
     w_fig4_species = {'least shrew', 'mouse', 'rat', 'marmoset', 'cat', 'macaque'};
     for si=1:length(w_fig4_species)
-        [um,m,xvals] = w_process_histogram(fullfile(W_img_dirpath, ['Fig4_' w_fig4_species{si} '.png']));
+        img_filepath = fullfile(W_img_dirpath, ['Fig4_' w_fig4_species{si} '.png']);
+        [um,m,xvals] = w_process_histogram(img_filepath, visualize_data);
         w_fig4_unmyelinated(si,1:length(xvals)) = um;
         w_fig4_myelinated(si,1:length(xvals))   = m;
         w_fig4_xvals(1:length(xvals)) = xvals;
     end;
-    w_fig4_myelinated_orig = w_fig4_myelinated;
-    w_fig4_unmyelinated_orig = w_fig4_unmyelinated;
+    %w_fig4_myelinated_orig = w_fig4_myelinated;
+    %w_fig4_unmyelinated_orig = w_fig4_unmyelinated;
     w_fig4_brain_weights = w_brain_weights(ismember(w_species, w_fig4_species));
 
 
@@ -120,17 +137,16 @@ function vars = w_data(validate_data)
 
     % Grab data pixels, and find boxes
     data_pix = img(1:xaxis_first-1, yaxis_last+1:end);
-    figure; imshow(data_pix)
 
     [gx,gs] = get_groups(sum(data_pix,1)); % get groups of pix
     double_idx = find(round(gs/min(gs)) > 1); % split any overlapping (works for 2 only)
     for ii = double_idx
-      gxn = zeros(1,length(gx)+1); gsn = zeros(size(gxn));
-      gxn(1:ii-1) = gx(1:ii-1); gxn(ii+2:end) = gx(ii+1:end);
-      gsn(1:ii-1) = gs(1:ii-1); gsn(ii+2:end) = gs(ii+1:end);
+        gxn = zeros(1,length(gx)+1); gsn = zeros(size(gxn));
+        gxn(1:ii-1) = gx(1:ii-1); gxn(ii+2:end) = gx(ii+1:end);
+        gsn(1:ii-1) = gs(1:ii-1); gsn(ii+2:end) = gs(ii+1:end);
 
-      gxn(ii) = gx(ii)-gs(ii)/4; gxn(ii+1) = gx(ii)+gs(ii)/4;
-      gsn(ii) = gs(ii)/2; gsn(ii+1) = gs(ii)/2;
+        gxn(ii) = gx(ii)-gs(ii)/4; gxn(ii+1) = gx(ii)+gs(ii)/4;
+        gsn(ii) = gs(ii)/2; gsn(ii+1) = gs(ii)/2;
     end;
     gx = gxn; gs=gsn;
 
@@ -144,8 +160,12 @@ function vars = w_data(validate_data)
         gy(gi) = gy2(2);
     end;
 
-    hold on;
-    plot(gx,gy,'g*');
+    if visualize_data
+        figure;
+        imshow(data_pix)
+        hold on;
+        plot(gx,gy,'g*');
+    end;
 
     % Convert from pixels to data
     diam_cm_ticks = (xticks -xticks(1)) / mean(diff(xticks)); %0 :6 on linear scale
@@ -157,23 +177,22 @@ function vars = w_data(validate_data)
     pg = polyfit(yticks(end:-1:1),log10([0.3 1 2 3 4 5 6]),1) ;
     gg = @(y) (10.^(pg(2)+pg(1)*y));
 
-
     % hardcoded species names & weights
     w_fig1e_species = {'least shrew' 'mouse' 'rat' 'marmoset' 'cat' 'macaque'};
     [~,species_idx] = ismember(w_fig1e_species, w_species);
     w_fig1e_weights = w_brain_weights(species_idx);
+    w_fig1e_dens_est = [gg(gy)];% log10(3.8)];
+
+    if visualize_data
+        figure; hold on;
+        plot(yticks(end:-1:1),[0.3 1 2 3 4 5 6],'o');
+        plot(yticks(end:-1:1), gg(yticks(end:-1:1)));
+    end;
 
 
     %% Validate the y-value parsing and regression
     if validate_data
-        keyboard
-        figure; hold on;
-        plot(yticks(end:-1:1),[0.3 1 2 3 4 5 6],'o');
-        plot(yticks(end:-1:1), gg(yticks(end:-1:1)));
-
-        % Estimate, then discard
-        %w_fig1e_brwt_est = [gw(diam_cm_data)];% 1300];
-        w_fig1e_dens_est = [gg(gy)];% log10(3.8)];
+        fprintf('Validation NYI');%keyboard
     end;
 
 

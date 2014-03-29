@@ -1,10 +1,17 @@
 function vars = ry_data(validate_data)
 %
-% Cross-species primate brain data from Rilling & Insel (1999a),
-%   largely complementary to callosal data in 1999b.
-% Includes:
-% * Brain volume
-% * Grey & white matter volumes
+% Dataset:
+%   Rakic & Yaklovev (1968)
+%
+% Data:
+%   Human (infant) callosal cross-sectional area
+%
+% Tables:
+%   Table 1: specimen age
+%   Table 2: callosal mid-sagittal cross-sectional area (mm^2)
+%
+% Notes:
+%   NO CORRECTION FOR SHRINKAGE
 
     if ~exist('validate_data', 'var'), validate_data = true; end;
     if ~exist('visualize_data', 'var'), visualize_data = false; end;
@@ -12,7 +19,7 @@ function vars = ry_data(validate_data)
 
     ry_ages = [[20 24 28 32 36 40]*7 12*30 40*365];
     ry_areas = [22.6 37.0 52.0 51.8 55.6 67.2 147.9 325.1]; % (correct by /0.5?)
-
+    ry_correction
 
     if validate_data
         fprintf('All data taken from tables; no data to validate!\n');

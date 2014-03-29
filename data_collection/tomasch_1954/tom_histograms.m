@@ -1,3 +1,5 @@
+error('Old, deprecated script.');
+
 tom_dir = fileparts(which(mfilename));
 tom_hist_datafile = fullfile(tom_dir, 'tom_histograms.mat');
 
