@@ -1,7 +1,20 @@
 function vars = tom_data(validate_data)
+% Dataset:
+%   Tomasch (1954)
 %
-% Extract adult human axon diameter distribution data from Tomasch (1954)
-% from images
+% Data:
+%   Human callosal axon diameter distribution
+%
+% Figures:
+%   Fig 1: splenium, stained with Weigert stain.
+%   Fig 2: splenium, stained with Haeggquiest's method
+%
+% Tables:
+%   Table 1: surface area (fibers/mm^2)
+%
+% Notes:
+%   NO CORRECTION FOR SHRINKAGE
+%   Estimated (by in-paper reference) to be ~25% for both methods.
 
     if ~exist('validate_data', 'var'), validate_data = true; end;
     if ~exist('visualize_data', 'var'), visualize_data = false; end;
@@ -42,33 +55,35 @@ function vars = tom_data(validate_data)
     if length(yticks) ~= length(ytick_vals), error('?'); end;
 
     baseline_pix = round(yticks(end)+mean(diff(yticks))); % approx zero line
-    tom_hist_pix = zeros(1, length(xticks));
+    hist_pix = zeros(1, length(xticks));
     for xi=1:length(xticks)
         % some hack
         if xi==2,  pval = get_groups(img(1:round(baseline_pix), round(xticks(xi)-6)));
         else,      pval = get_groups(img(1:round(baseline_pix), round(xticks(xi))));
         end;
 
-        if isempty(pval), tom_hist_pix(xi) = round(baseline_pix);
-        elseif length(pval)==1, tom_hist_pix(xi) = pval;
-        elseif length(pval)==2, tom_hist_pix(xi) = pval(1);
-        elseif length(pval)==3, tom_hist_pix(xi) = mean(pval(1:2)); %special hack case
+        if isempty(pval), hist_pix(xi) = round(baseline_pix);
+        elseif length(pval)==1, hist_pix(xi) = pval;
+        elseif length(pval)==2, hist_pix(xi) = pval(1);
+        elseif length(pval)==3, hist_pix(xi) = mean(pval(1:2)); %special hack case
         else, pval, xi
         end;
+    end;
+
+    tom_fig2_hist_vals = (baseline_pix - hist_pix)/mean(diff(yticks))*10;
+
+    if visualize_data
+        figure;
+        imshow(img);
+        hold on;
+        plot(xticks, baseline_pix, 'r*');
+        plot(xticks, hist_pix, 'g*')
     end;
 
 
     %% Validate data
     if validate_data
-        keyboard;
-        figure;
-        imshow(img);
-        hold on;
-        plot(xticks, baseline_pix, 'r*');
-        plot(xticks, tom_hist_pix, 'g*')
-
-        tom_fig2_hist_vals = (baseline_pix - tom_hist_pix)/mean(diff(yticks))*10;
-
+        fprintf('Validation NYI\n');%keyboard;
     end;
 
 

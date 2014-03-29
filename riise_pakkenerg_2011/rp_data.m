@@ -1,6 +1,17 @@
 function vars = rp_data(validate_data)
 %
-% Riise & Pakkenberg: age-related decline masks all @ 3100x
+% Dataset:
+%   Riise & Pakkenberg (2011)
+%
+% Data:
+%   Old age axon diameter distributions
+%
+% Tables:
+%    Table 1: Age, CC area (cm^2), # MYELINATED fibers, Body height (cm), body weight (kg), brain weight (g), # neurons
+%
+% Notes:
+%   "Fiber sizes and fiber densities ... were not corrected for shrinkage,
+%    as tissue shrinkage had a diminutive value (< 1%) negligible for the results."
 
     if ~exist('validate_data', 'var'), validate_data = true; end;
     if ~exist('visualize_data', 'var'), visualize_data = false; end;
@@ -9,11 +20,11 @@ function vars = rp_data(validate_data)
 
     rp_age = [39 40 40 48 52 52 52 59 59 60];
     rp_cc_area = [7.07 nan 8.03 8.84 6.81 5.43 7.54 6.43 6.91 7.85]; %cm^2
-    rp_cc_fibers = [150 124 148 195 153 126 133 104 106 139]; %10^6
+    rp_cc_myelinated_fibers = [150 124 148 195 153 126 133 104 106 139] * 10^6; %total # fibers
     rp_body_height = [183 179 167 186 171 175 169 178 185 171]; %cm
     rp_body_weight = [80 85 75 110 77 73 74 87 98 78]; %kg
     rp_brain_weight = [1550 1620 1710 1290 1340 1435 1650 1475 1400 1375]; %g
-    rp_number_neurons = [21.0 22.6 23.0 17.6 21.0 30.2 22.8 21.8 17.0 20.2]; %10^9
+    rp_number_neurons = [21.0 22.6 23.0 17.6 21.0 30.2 22.8 21.8 17.0 20.2] * 10^9; %10^9
 
 
 
@@ -37,19 +48,19 @@ function vars = rp_data(validate_data)
     [r,p] = partialcorr(rp_brain_weight(setdiff(1:end,4))', rp_number_neurons(setdiff(1:end,4))', rp_age(setdiff(1:end,4))')
 
     % STRONG negative correlation between #cc fibers and brain weight?
-    [r,p] = partialcorr(rp_brain_weight(setdiff(1:end,2))', rp_cc_fibers(setdiff(1:end,2))', [rp_age(setdiff(1:end,2))'])
+    [r,p] = partialcorr(rp_brain_weight(setdiff(1:end,2))', rp_cc_myelinated_fibers(setdiff(1:end,2))', [rp_age(setdiff(1:end,2))'])
 
     % but POSITIVE correlation between brain weights and cc area
     [r,p] = corr(rp_brain_weight(setdiff(1:end,[2 4]))', rp_cc_area(setdiff(1:end,[2 4]))')
     [r,p] = partialcorr(rp_brain_weight(setdiff(1:end,[2 4]))', rp_cc_area(setdiff(1:end,[2 4]))', [rp_age(setdiff(1:end,[2 4]))'])
 
     % NEGATIVE relationship between # neurons and # fibers...
-    [r,p] = partialcorr(rp_number_neurons(setdiff(1:end,2))', rp_cc_fibers(setdiff(1:end,2))', [rp_age(setdiff(1:end,2))'])
+    [r,p] = partialcorr(rp_number_neurons(setdiff(1:end,2))', rp_cc_myelinated_fibers(setdiff(1:end,2))', [rp_age(setdiff(1:end,2))'])
 
 
     % Run PCA
     data_names = {'age' 'cc_area' 'cc_fibers' 'body_height' 'body_weight' 'brain_weight' 'number_neurons'};
-    all_data = [rp_age' rp_cc_area' rp_cc_fibers' rp_body_height' rp_body_weight' rp_brain_weight' rp_number_neurons'];
+    all_data = [rp_age' rp_cc_area' rp_cc_myelinated_fibers' rp_body_height' rp_body_weight' rp_brain_weight' rp_number_neurons'];
     good_data = all_data(setdiff(1:end,[2 4]),:);
     norm_data = (good_data-repmat(mean(good_data,1), [size(good_data,1) 1]))./repmat(std(good_data,[],1), [size(good_data,1) 1]))
     %norm_data = (good_data)./repmat(std(good_data,[],1), [size(good_data,1) 1])./repmat(mean(good_data,1), [size(good_data,1) 1]);
