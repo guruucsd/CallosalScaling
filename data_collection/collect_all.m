@@ -9,7 +9,7 @@ function collect_datasets(datasets, force)
     addpath(genpath(fullfile(rilling_dir, '_predict')));
 
     % Default values
-    if ~exist('datasets', 'var'), 
+    if ~exist('datasets', 'var') || isempty(datasets)
         local_files = dir(script_dir);
         local_dirs = local_files([local_files.isdir]);
         datasets = { local_dirs.name };
@@ -34,7 +34,7 @@ function collect_datasets(datasets, force)
             fprintf('WARNING: files for creating requested dataset do not exist: %s', dataset);
             continue;
         end;
-        
+
         data_mfiles = dir(fullfile(local_dir, '*_data.m'));
         if isempty(data_mfiles)
             continue;
@@ -49,7 +49,8 @@ function collect_datasets(datasets, force)
             %  if it's there, nothing left to do.
             data_mfile = data_mfiles(fi);
             [~, cwd_name] = fileparts(script_dir);
-            mat_filepath = fullfile(strrep(script_dir, cwd_name, 'analysis'), dataset, sprintf('%s.mat', data_mfile.name(1:end-2)));
+            mat_dirpath = fullfile(strrep(script_dir, cwd_name, 'analysis'), dataset);
+            mat_filepath = fullfile(mat_dirpath, sprintf('%s.mat', data_mfile.name(1:end-2)));
             if exist(mat_filepath, 'file') && ~force
                 fprintf('Found existing mat file for %s\n', fullfile(dataset, data_mfile.name));
                 continue;
@@ -71,7 +72,14 @@ function collect_datasets(datasets, force)
                 for vi=1:length(varnames)
                     eval(sprintf('%s = varvals{%d};', varnames{vi}, vi));
                 end;
+                
+                % Create directory and save
+                if ~exist(mat_dirpath, 'dir')
+                    mkdir(mat_dirpath);
+                end;
                 save(mat_filepath, varnames{:});
+ 
+                % Clean up variables.
                 if isempty(varnames)
                     error('no');
                 else
@@ -81,7 +89,7 @@ function collect_datasets(datasets, force)
                 fprintf('DONE.\n');
             %catch err
             %    fprintf('FAILURE: %s\n', err);
-            %    keyboard;
+            %    %keyboard;
             %end;
         end;
         cd(cur_dir);
