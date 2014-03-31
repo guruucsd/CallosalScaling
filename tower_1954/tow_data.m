@@ -4,7 +4,7 @@ function vars = tow_data(validate_data)
 %   Tower (1954)
 %
 % Data:
-%   Cross-species grey matter neuron density (neurons/mm^3)
+%   Cross-species grey matter neuron density (neurons / mm^3)
 %
 % Figures:
 %   Fig 1: brain weight vs. grey matter neuron density

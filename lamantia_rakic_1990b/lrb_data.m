@@ -1,5 +1,20 @@
 function vars = lrb_data(validate_data)
+% Dataset:
+%   Lamantia & Rakic 1990b
+
+% Data:
+%   Macaque pre- and post-natal callosal data
 %
+% Figures:
+%   Figure 3:
+%   Figure 15:
+%
+% Tables:
+%   Table 1:
+%   Table 3:
+%
+% Notes:
+%   Reported no shrinkage, so no corrections are made here.
 
 
     if ~exist('validate_data', 'var'), validate_data = true; end;

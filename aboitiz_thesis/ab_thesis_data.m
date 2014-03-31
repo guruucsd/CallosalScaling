@@ -1,5 +1,12 @@
 function vars = ab_thesis_data(validate_data)
 %
+% Dataset:
+%   Wang et al. (2008)
+%
+% Data:
+%   Cross-species callosal data , including:
+%   * Axon diameter distributions for different species
+%   * Mean axon density across species
 
     if ~exist('validate_data', 'var'), validate_data = true; end;
     if ~exist('visualize_data', 'var'), visualize_data = false; end;

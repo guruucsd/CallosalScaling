@@ -1,5 +1,7 @@
 function vars = lrb_histograms(validate_data)
 %
+% Processes Figures 3 and 15 of Lamantia & Rakic (1990b)
+
 
     if ~exist('validate_data', 'var'), validate_data = true; end;
     if ~exist('visualize_data', 'var'), visualize_data = false; end;
@@ -49,7 +51,7 @@ function vars = lrb_histograms(validate_data)
 
     %% Validate data
     if validate_data
-        keyboard;
+        %keyboard;
     end;
 
 

@@ -181,7 +181,7 @@ function vars = w_data(validate_data)
     w_fig1e_species = {'least shrew' 'mouse' 'rat' 'marmoset' 'cat' 'macaque'};
     [~,species_idx] = ismember(w_fig1e_species, w_species);
     w_fig1e_weights = w_brain_weights(species_idx);
-    w_fig1e_dens_est = [gg(gy)];% log10(3.8)];
+    w_fig1e_dens_est = [gg(gy)];% log10(3.8)];  % axons / um^2
 
     if visualize_data
         figure; hold on;

@@ -1,5 +1,6 @@
 function vars = lra_histograms(validate_data)
 %
+% Processes Figure 7 of Lamantia & Rakic (1990b)
 
     if ~exist('validate_data', 'var'), validate_data = true; end;
     if ~exist('visualize_data', 'var'), visualize_data = false; end;
@@ -7,7 +8,7 @@ function vars = lra_histograms(validate_data)
     LRA_dirpath = fileparts(which(mfilename));
     LRA_dirname = guru_fileparts(LRA_dirpath, 'name');
     LRA_img_dirpath = fullfile(LRA_dirpath, '..', '..', 'img', LRA_dirname);
-    LRB_dirpath = fullfile(LRA_dirpath, '..', strrep(LRA_DIRNAME, 'lra', 'lrb'));
+    LRB_dirpath = fullfile(LRA_dirpath, '..', strrep(LRA_dirname, '1990a', '1990b'));
 
     lra_fig7_sectors = {'2' '4' '6'};
     lra_fig7_ytick_vals = 0:25:75;
@@ -29,7 +30,7 @@ function vars = lra_histograms(validate_data)
 
     %% Validate data
     if validate_data
-        keyboard
+        %keyboard
     end;
 
 

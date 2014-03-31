@@ -1,8 +1,17 @@
 function vars = rib_data(validate_data)
 %
-% Extract cross-primate callosal data from Rilling & Insel (1999b)
-% images, including:
-% * Callosal and grey matter surface areas
+% Dataset:
+%   Rilling & Insel 1999b
+%
+% Data:
+%   Extract cross-primate callosal data from Rilling & Insel (1999b)
+%
+% Figures:
+%   Figure 1b: brain volume (cm^3) vs. cc area (mm^2)
+%   Figure 2: grey matter surface area (cm^2) vs. cca (mm^2), white matter volume (cm^3)
+%
+% Tables:
+%   Table 1: body weight (kg), brain vol (cm^3), cca (mm^2), aca (mm^2)
 
     if ~exist('validate_data', 'var'), validate_data = true; end;
     if ~exist('visualize_data', 'var'), visualize_data = false; end;
@@ -129,7 +138,7 @@ function vars = rib_data(validate_data)
 
     %% Validate outputs
     if validate_data
-        keyboard
+        %keyboard
     end;
 
     %% Construct outputs
