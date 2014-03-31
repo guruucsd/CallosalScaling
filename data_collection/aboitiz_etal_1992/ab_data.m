@@ -1,5 +1,26 @@
 function vars = ab_data(validate_data)
 %
+% Dataset:
+%   Wang et al. (2008)
+%
+% Data:
+%   Cross-species callosal data , including:
+%   * Axon diameter distributions for different species
+%   * Mean axon density across species
+%
+% Figures:
+%   Figure 1:  cc area (mm^2), cc density (fibers/mm^2)
+%   Figure 4:  cc axon diameter distribution (radius: um)
+%
+% Tables:
+%   Figure 1 (caption): cc area (mm^2)
+%
+% Notes:
+%   This dataset is hard to use for the following reasons:
+%     Shrinkage (estimated at 35% volumetrically)
+%     Sample age (average age of 44 years >> "young adult" age of animal samples
+%     Use of light microscopy (estimate 20% missing fibers)
+
 
     if ~exist('validate_data', 'var'), validate_data = true; end;
     if ~exist('visualize_data', 'var'), visualize_data = false; end;

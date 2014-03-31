@@ -1,4 +1,11 @@
 function vars = lrs_data(validate_data)
+% Dataset:
+%   Wang et al. (2008)
+%
+% Data:
+%   Cross-species callosal data , including:
+%   * Axon diameter distributions for different species
+%   * Mean axon density across species
 %
 % Cross-species primate brain data from Rilling & Insel (1999a),
 %   largely complementary to callosal data in 1999b.
@@ -9,13 +16,14 @@ function vars = lrs_data(validate_data)
     if ~exist('validate_data', 'var'), validate_data = true; end;
     if ~exist('visualize_data', 'var'), visualize_data = false; end;
 
+    LRS_dirpath = fileparts(which(mfilename));
 
     %% Collect data
     % Run data collection for lamantia
     for lc='ab'
 
         % Re-run data collection for each paper
-        LRX_dirpath = fullfile(lrs_dir, '..', sprintf('lamantia_rakic_1990%s', lc));
+        LRX_dirpath = fullfile(LRS_dirpath, '..', sprintf('lamantia_rakic_1990%s', lc));
         addpath(LRX_dirpath);
         eval(sprintf('vars = lr%s_data(validate_data);', lc));
         close all;

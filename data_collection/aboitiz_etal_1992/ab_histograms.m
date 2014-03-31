@@ -1,7 +1,8 @@
-function vars = tow_data(validate_data)
+function vars = ab_histograms(validate_data)
 %
-% Extract cross-species neuron density from Tower (1954)
-% images
+% Figures:
+%   Figure 4
+%
 
     if ~exist('validate_data', 'var'), validate_data = true; end;
     if ~exist('visualize_data', 'var'), visualize_data = false; end;

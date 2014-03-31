@@ -1,10 +1,13 @@
 function vars = ria_data(validate_data)
+% Dataset:
+%   Rilling & Insel 1999a
 %
-% Cross-species primate brain data from Rilling & Insel (1999a),
-%   largely complementary to callosal data in 1999b.
-% Includes:
-% * Brain volume
-% * Grey & white matter volumes
+% Data:
+%   Primate body & brain volumes based on MRI
+%
+% Tables:
+%   Table 1: Body weight (kg), brain volume (cm^3), grey matter volume (cm^3), white matter volume (cm^3)
+%   Table 6: Whole-brain Gyrification Index (GI) (dimensionless)
 
     if ~exist('validate_data', 'var'), validate_data = true; end;
     if ~exist('visualize_data', 'var'), visualize_data = false; end;

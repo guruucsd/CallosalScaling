@@ -1,13 +1,14 @@
 function [vals, xbar_vals] = process_ab_histogram(img_file, xtick_vals, ytick_vals, rotang, showfig)
+% Process Fig. 4 histograms from Aboitiz et al, 1992a
 
     % Set defaults
     if ~exist('rotang','var'), rotang = 0; end;
     if ~exist('showfig','var'), showfig = true; end;
-    
+
     % Read image
     orig_img = rgb2gray(imread(img_file));
     img = orig_img;
-    
+
     % binarize and invert the image
     thresh = 170;
     img(img>=thresh) = 255; img(img<thresh) = 0;
@@ -17,24 +18,24 @@ function [vals, xbar_vals] = process_ab_histogram(img_file, xtick_vals, ytick_va
     % interfere.
     if rotang ~= 0, img = imrotate(img, rotang); end;
     pixfact = size(orig_img,1)/187; % our hacky constants were computed with an image height of 187; to be flexible, multiply them by a reasonable scale factor.
-    
+
 
     % Blank out text
     img(1:floor(size(img,1)/2), ceil(size(img,2)/2):end) = 0;
-    
+
     % x and y axes must be at least 1/2 as long as the images
     %  Find them, then blank out any axis text
     [yaxis_idx] = find(sum(img,1)>size(img,1)/2, 1, 'first');
     [xaxis_idx] = find(sum(img,2)>size(img,2)/2, 1, 'last');
-    
+
     img(:,1:yaxis_idx-floor(4*pixfact)) = 0;
     img(xaxis_idx+floor(4*pixfact):end,:) = 0;
-    
-    
+
+
     % to the right of the yaxis are the yticks
     ytick_pix = max(0,sum(img(:,yaxis_idx+[6:10]),2)-floor(1*pixfact));
     yticks = get_groups(ytick_pix, 'center', length(ytick_vals));
-    
+
     % below the xaxis are the xticks
     % Should find 26 ticks (27 including 0)
     xtick_pix = max(0,sum(img(xaxis_idx+1:end,:),1)-floor(2*pixfact));
@@ -52,10 +53,10 @@ function [vals, xbar_vals] = process_ab_histogram(img_file, xtick_vals, ytick_va
         subplot(2,2,2); hold on;
         title('Parsed image');
         imshow(img);
-        plot(yaxis_idx+[1:10], ones(10,1)*yticks, 'r')    
-        plot(ones(10,1)*xticks, xaxis_idx+[1:10], 'r')    
+        plot(yaxis_idx+[1:10], ones(10,1)*yticks, 'r')
+        plot(ones(10,1)*xticks, xaxis_idx+[1:10], 'r')
     end;
-    
+
     if length(yticks) ~= length(ytick_vals)
         if length(yticks)>length(ytick_vals)
             % Find distribution of ticks, locate the max
@@ -96,14 +97,14 @@ function [vals, xbar_vals] = process_ab_histogram(img_file, xtick_vals, ytick_va
             process_lr_image(img_file, xtick_vals, ytick_vals, rotang, true);
         else
             warning(sprintf('xticks must be %d (it is %d)', length(xtick_vals), length(xticks)));
-            keyboard
+            %keyboard
         end;
     end;
-   
-     
+
+
     % Above the xaxis are the bars themselves.
     % Bars can lie anywhere, so just find them!
-    
+
     bins = 0.2:0.2:9;
     pixel_vals = zeros(1,length(bins));
     for ti=1:length(bins)
@@ -124,7 +125,7 @@ function [vals, xbar_vals] = process_ab_histogram(img_file, xtick_vals, ytick_va
           if bar_start==size(bar_pix,1), error('?'); end;
           bar_start = bar_start+1;
       end;
-      
+
       % clean bottom of image
       bar_end = size(bar_pix,1);
       while (true)
@@ -134,12 +135,12 @@ function [vals, xbar_vals] = process_ab_histogram(img_file, xtick_vals, ytick_va
           bar_end = bar_end - 1;
       end;
       bar_pix = bar_pix(bar_start:bar_end,:);
-      
+
       if showfig
           subplot(2,2,4);
           imshow(bar_pix);
       end;
-      
+
       g= get_groups(bar_pix(end,:));
       dg = diff(g);
       [c] = hist(dg); ngood = max(c);
@@ -149,9 +150,9 @@ function [vals, xbar_vals] = process_ab_histogram(img_file, xtick_vals, ytick_va
 
       if showfig
           hold on;
-          plot(g,size(bar_pix,1)-5,'r*')     
+          plot(g,size(bar_pix,1)-5,'r*')
       end;
-      
+
       % get the bar heights
       bar_heights = (sum(bar_pix(:,round(g)),1) + sum(bar_pix(:,round(g)-1),1) + sum(bar_pix(:,round(g)+1),1))/3;
       pixel_vals(g_bins) = bar_heights;
@@ -161,11 +162,10 @@ function [vals, xbar_vals] = process_ab_histogram(img_file, xtick_vals, ytick_va
     scalefactor = mean(diff(ytick_vals))/mean(diff(yticks));
     offset = ytick_vals(1);
     vals = offset+scalefactor.*pixel_vals;
-        
+
     if showfig
         subplot(2,2,3); hold on;
         title('Parsed data');
         bar(bins, vals, 0.5);
         set(gca, 'xlim', [0 bins(end)], 'ylim', ytick_vals([1 end]), 'ytick', ytick_vals);
     end;
-    
