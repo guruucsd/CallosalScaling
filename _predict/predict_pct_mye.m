@@ -6,7 +6,7 @@ function pct_mye = predict_pct_mye(brwt, bvol)
     global g_gmye;
 
     % convert to native units
-    if ~exist('brwt','var'), brwt = predict_bwt(bvol); end;
+    if ~exist('brwt','var'), brwt = predict_brwt(bvol); end;
 
 
     %% Predict the % myelination

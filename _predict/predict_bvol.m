@@ -1,4 +1,4 @@
-function bvol = predict_bvol(bwt)
+function bvol = predict_bvol(brwt)
 
     global p g_vol
 
@@ -9,4 +9,4 @@ function bvol = predict_bvol(bwt)
 
         [~,g_vol] = allometric_regression(wts,  vols);
     end;
-    bvol = g_vol.y(bwt);
+    bvol = g_vol.y(brwt);

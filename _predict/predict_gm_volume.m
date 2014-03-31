@@ -37,7 +37,7 @@ function [gmv] = predict_gm_volume(brwt, bvol, collation)
 
         % Now, do the regression
         [p_gmv, g_gmv] = allometric_regression(bvols, gmvs);
-        fprintf('Grey matter volume (%s) (Rilling & Insel, 1999a/b): %5.3f * bvol^%5.3f', collation, 10.^p_gmv(2), p_gmv(1));
+        fprintf('Grey matter volume (%s) (Rilling & Insel, 1999a/b): %5.3f * bvol^%5.3f\n', collation, 10.^p_gmv(2), p_gmv(1));
     end;
 
     % Now use the functions to compute # cc fibers and # neurons

@@ -8,7 +8,7 @@ addpath(fullfile(pd_dir, '..','wang_etal_2008'));       w_data;   close all;
 
 % Predict data using brain weight from rilling and/or wang
 %chimp_brain_wt = w_fig1e_weights(find(strcmp('chimp', w_fig1e_species), 1, 'first'))
-chimp_brain_wt = predict_bwt(ria_table1_brainvol(find(strcmp('p. troglodytes',ria_table1_species),1,'first')));
+chimp_brain_wt = predict_brwt(ria_table1_brainvol(find(strcmp('p. troglodytes',ria_table1_species),1,'first')));
 
 chimp_avg_adult_age = str2date(sprintf('P%d',10*365), 'chimp');
 

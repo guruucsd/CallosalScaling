@@ -19,7 +19,7 @@ function cca = predict_cc_area(brwt, bvol)
         load(fullfile(an_dir, 'rilling_insel_1999b', 'rib_data.mat'));
 
         [p_cca, g_cca] = allometric_regress(rib_table1_brainvol, rib_table1_ccarea);
-        fprintf('Corpus callosum area (Rilling & Insel, 1999a/b): %5.3f * bvol^%5.3f', 10.^p_cca(2), p_cca(1));
+        fprintf('Corpus callosum area (Rilling & Insel, 1999a/b): %5.3f * bvol^%5.3f\n', 10.^p_cca(2), p_cca(1));
     end;
 
     cca = g_cca.y(bvol);

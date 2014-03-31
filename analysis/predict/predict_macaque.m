@@ -15,7 +15,7 @@ load(fullfile(analysis_dir, 'wang_etal_2008', 'w_data.mat'));
 nbins = 100;
 pred_bins = linspace(0,4,nbins);
 
-macaque_brain_wt = predict_bwt(ria_table1_brainvol(find(strcmp('M. mulatta',ria_table1_species),1,'first')));
+macaque_brain_wt = predict_brwt(ria_table1_brainvol(find(strcmp('M. mulatta',ria_table1_species),1,'first')));
 macaque_avg_adult_age = str2date(sprintf('P%d',365*mean(lra_cc_age)), 'macaque');
 
 [pmye_macaque] = predict_pct_mye(macaque_brain_wt);

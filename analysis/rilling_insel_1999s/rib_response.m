@@ -18,7 +18,7 @@ function rib_response(collation, figs)
     [bvols, ccas, gmas] = ris_collate(collation);
 
     % Now use the functions to compute # cc fibers and # neurons
-    bwts = predict_bwt(bvols);
+    bwts = predict_brwt(bvols);
     gmvs = gmas.*predict_gm_thickness(bwts, bvols);
     [nwm_fibers,ncc_fibers,nintra_fibers] = predict_nfibers(bwts, bvols, gmvs, [], [], ccas, 0.33);
     [nareas, nareaconns]  = predict_nareas(bwts, bvols);
@@ -49,12 +49,12 @@ function rib_response(collation, figs)
     % For all cortical areas, they project out to some proportion of areas
     % (nareas_projout) with some number of neurons (0.3*nneurons_perarea)
     %
-    % OVER ALL areas, how many of the projecting white matter fibers GO 
+    % OVER ALL areas, how many of the projecting white matter fibers GO
     % to a particular area?
     %
     % For cc, all fibers go to ONE area (homotopic)
     %
-    % Note: The const difference between them (slope of line is non-zero) 
+    % Note: The const difference between them (slope of line is non-zero)
     %   suggests there are more fibers in a CC area-area connection than an
     %   INTRA area-area conection.  We will test this later.
 
@@ -83,13 +83,13 @@ function rib_response(collation, figs)
     %     ylabel('1/([# areas/conn]-1)'); xlabel('[# cc cxns]/[# intra- wm cxns]');
     %     title('allometric version');
     % end;
-    % 
+    %
     % [p,g] = allometric_regression(ncc_fibers./nintra_fibers, 1./(nareas-1), 'linear', 1, true);
     % allometric_plot2(ncc_fibers./nintra_fibers, 1./(nareas-1), [1 p(1)], g, 'linear');
     % ylabel('1/([# areas/conn]-1)'); xlabel('[# cc cxns]/[# intra- wm cxns]');
     % title('linear version');
 
-    % Divide again by the # areas, so that we get an estimate of the 
+    % Divide again by the # areas, so that we get an estimate of the
     %   # of fibers per area-area connection, across the whole brain.
     fprintf('Regressing [per- area-area inter-fibers] vs. [per- area-area intra-fibers]\n');
     [p,g] = allometric_regression(ncc_fibers./1./nareas, nintra_fibers./(nareaconns-1)./nareas, 'log', 1, true);

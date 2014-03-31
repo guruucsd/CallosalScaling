@@ -29,7 +29,7 @@ function [cc_add, c_add_mye, c_add_unmye, pct_mye, xvals] = predict_cc_add(brwt,
     global g_uparams g_mparams g_pmffn
     global g_cc_add_xvals g_cc_add g_cc_add_mye g_cc_add_unmye
     global g_params_mye g_params_unmye
-    
+
     if ~exist('fit_distn',   'var') || isempty(fit_distn),   fit_distn   =guru_iff(isempty(g_cc_fit_distn),   'gamma', g_cc_fit_distn); end;
     if ~exist('frac',        'var')  || isempty(frac),        frac        =guru_iff(isempty(g_cc_frac),        1/20, g_cc_frac); end;
     if ~exist('regress_type','var')  || isempty(regress_type),regress_type=guru_iff(isempty(g_cc_regress_type), 'linear', g_cc_regress_type); end;
@@ -61,7 +61,7 @@ function [cc_add, c_add_mye, c_add_unmye, pct_mye, xvals] = predict_cc_add(brwt,
     end;
 
     % convert to native units
-    if ~exist('brwt','var') || isempty(brwt),       brwt = predict_bwt(bvol); end;
+    if ~exist('brwt','var') || isempty(brwt),       brwt = predict_brwt(bvol); end;
     if ~exist('bvol','var'),                        bvol = []; end; % dummy just so we can easily call predict_pct_mye
     if ~exist('xvals','var') || isempty(xvals),     xvals = g_cc_add_xvals; end;
     if ~exist('pct_mye','var') || isempty(pct_mye), pct_mye     = predict_pct_mye(brwt, bvol); end;
@@ -122,7 +122,7 @@ function [uparams,mparams,xvals] = fit_cc_add_params(fitfn)
 
 function [gmpm gmps gupm gups] = regress_cc_add_params(uparams, mparams, fit_distn, regress_type);
     global human_brain_weight;
-    
+
     an_dir = fullfile(fileparts(which(mfilename)), '..', 'analysis');
 
     % Get the wang data

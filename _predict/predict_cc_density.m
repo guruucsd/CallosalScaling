@@ -16,7 +16,7 @@ function [ccdens] = predict_cc_density(brwt, bvol, use_human)
     if ~exist('use_human','var'), use_human = false; end;
 
     % convert to native units
-    if ~exist('brwt','var') || isempty(brwt), brwt = predict_bwt(bvol); end;
+    if ~exist('brwt','var') || isempty(brwt), brwt = predict_brwt(bvol); end;
 
     if isempty(g_ccdens) || use_human
         %% Compare # neurons to # cc connections
@@ -37,7 +37,7 @@ function [ccdens] = predict_cc_density(brwt, bvol, use_human)
         end;
 
         [p_ccdens, g_ccdens] = allometric_regression(all_br_wts, all_cc_dens);%, 'log', 1, true, '3' );
-        fprintf('Corpus callosum density (Wang et al., 2008): %5.3f * brwt^%5.3f', 10.^p_ccdens(2), p_ccdens(1));
+        fprintf('Corpus callosum density (Wang et al., 2008): %5.3f * brwt^%5.3f\n', 10.^p_ccdens(2), p_ccdens(1));
     end;
 
     ccdens = g_ccdens.y(brwt);
