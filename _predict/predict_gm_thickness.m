@@ -1,6 +1,13 @@
 function gmt = predict_gm_thickness(brwt, bvol)
-% Function for computing grey matter thickness (dm) from brain volume
-%   using regression log-baesd regression in Hofman (1989), eqn 9
+% Function for computing grey matter thickness (cm) from brain volume
+%   using regression log-baesd regression in Hofman (1989), eqn 9 (Fig 8 caption)
+%
+% Input:
+%   brwt: brain weight (g)
+%   bvol: [native units] brain volume (cm^3)
+%
+% Output:
+%   gmt: grey matter thickness (cm)
 
     global g_gmt;
 
@@ -11,4 +18,4 @@ function gmt = predict_gm_thickness(brwt, bvol)
         g_gmt.y = @(bvol) 10*(0.0258 * log(bvol) + 0.084); % where are these from?
     end;
 
-    gmt = g_gmt.y(bvol);
+    gmt = g_gmt.y(bvol);  % cm

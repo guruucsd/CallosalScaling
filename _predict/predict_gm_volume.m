@@ -1,9 +1,16 @@
 function [gmv] = predict_gm_volume(brwt, bvol, collation)
 %function [gmv] = predict_gm_volume(brwt, bvol)
 %
-% Predict grey matter volume (cm^3) via grey matter thickness and surface area.
+% Predict grey matter volume (cm^3) via data from Rilling & Insel (1999a/b)
+%   and potentially others.
 %
-% Collation: individual, species, or family
+% Input:
+%   brwt: brain weight (g)
+%   bvol: [native units] brain volume (cm^3)
+%   collation: family, species, individual
+%
+% Output:
+%   gmv: grey matter volume (cm^3)
 
     if ~exist('collation','var'), collation='species'; end;
     if ~exist('bvol','var') || isempty(bvol), bvol = predict_bvol(brwt); end;
@@ -25,8 +32,8 @@ function [gmv] = predict_gm_volume(brwt, bvol, collation)
 
         % We get the species volume, then divide by the estimated
         % thickness.
-        bvols = rib_table1_brainvol;%rib_fig1b_brain_volumes;
-        gmvs = ria_table1_gmvol;
+        bvols = rib_table1_brainvol;  % cm^3
+        gmvs = ria_table1_gmvol;      % cm^3
 
         % Now, do the regression
         [p_gmv, g_gmv] = allometric_regression(bvols, gmvs);
@@ -36,9 +43,9 @@ function [gmv] = predict_gm_volume(brwt, bvol, collation)
     % Now use the functions to compute # cc fibers and # neurons
     switch (collation)
         case 'species'
-            gmv = g_gmv.y(bvol);
+            gmv = g_gmv.y(bvol);  % cm^3
         otherwise
             gma = predict_gm_area(brwt, bvol, 'total', collation);
             gmt = predict_gm_thickness(brwt, bvol);
-            gmv = gma .* gmt;
+            gmv = gma .* gmt;     % cm^2 * cm
     end;

@@ -1,13 +1,20 @@
-function ndens = predict_ndens(brwt,bvol)
-%function ndens = predict_ndens(brwt,bvol)
+function ndens = predict_ndens(brwt, bvol)
+%function ndens = predict_ndens(brwt, bvol)
 %
 % Predict the neuron density using allometric regression,
 %   based on data from Tower (1954)
+%
+% Input:
+%   brwt: [native units] brain weight (g)
+%   bvol: brain volume (cm^3)
+%
+% Output:
+%   ndens: neuron density in the grey matter (neurons / mm^3)
 
     global g_ndens
 
     % convert to native units
-    if ~exist('bvol','var') || isempty(bvol), bvol = predict_bvol(brwt); end;
+    if ~exist('brwt','var') || isempty(brwt), brwt = predict_brwt(bvol); end;
 
     if isempty(g_ndens)
         an_dir = fullfile(fileparts(which(mfilename)), '..', 'analysis');
@@ -20,5 +27,5 @@ function ndens = predict_ndens(brwt,bvol)
         fprintf('Neuron density (Tower, 1954): %5.3e * brwt^%5.3f', 10.^p_ndens(2), p_ndens(1));
     end;
 
-    ndens = g_ndens.y(bvol);
+    ndens = g_ndens.y(brwt);  % neurons / mm^3
 

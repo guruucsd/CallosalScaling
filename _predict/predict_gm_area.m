@@ -1,5 +1,5 @@
 function [gma] = predict_gm_area(brwt, bvol, area_type, collation)
-%function [gmv,gma,gmt] = predict_gm_area(brwt, bvol)
+%function [gma] = predict_gm_area(brwt, bvol)
 %
 % Predict grey matter volume, based on Rilling & Insel (1999a, 1999b)
 %
@@ -14,16 +14,26 @@ function [gma] = predict_gm_area(brwt, bvol, area_type, collation)
 %
 % For grey matter volume, "inner" surface area should be
 % used.
+%
+% Input:
+%   brwt: brain weight (g)
+%   bvol: [native units] brain volume (cm^3)
+%   area_type: inner (default) or outer
+%   collation: family, species, individual
+%
+% Output:
+%   gma: grey matter area (cm^2)
+
     global g_gmas g_gma_collations;
 
     if ~exist('area_type','var'), area_type = 'total'; end;
     if ~exist('collation','var'), collation = 'family'; end;
     if ~exist('bvol','var') || isempty(bvol), bvol = predict_bvol(brwt); end;
     if isempty(g_gmas), g_gmas = {}; g_gma_collations = {}; end;
-    
+
     if ~strcmp(area_type, 'total'), error('Area type "%s" is NYI.', area_type); end;
-    
-    
+
+
     if isempty(g_gmas) || ~ismember(collation, g_gma_collations)
         an_dir = fullfile(fileparts(which(mfilename)), '..', 'analysis');
 
