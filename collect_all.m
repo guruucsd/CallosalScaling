@@ -45,11 +45,11 @@ function collect_datasets(datasets, force)
         cd(local_dir);
         for fi=1:length(data_mfiles)
 
-            % MAT file is put in the 'analysis' directory;
+            % MAT file is put in the 'data' directory;
             %  if it's there, nothing left to do.
             data_mfile = data_mfiles(fi);
             [~, cwd_name] = fileparts(script_dir);
-            mat_dirpath = fullfile(strrep(script_dir, cwd_name, 'analysis'), dataset);
+            mat_dirpath = fullfile(strrep(script_dir, cwd_name, 'data'), dataset);
             mat_filepath = fullfile(mat_dirpath, sprintf('%s.mat', data_mfile.name(1:end-2)));
             if exist(mat_filepath, 'file') && ~force
                 fprintf('Found existing mat file for %s\n', fullfile(dataset, data_mfile.name));
@@ -72,13 +72,13 @@ function collect_datasets(datasets, force)
                 for vi=1:length(varnames)
                     eval(sprintf('%s = varvals{%d};', varnames{vi}, vi));
                 end;
-                
+
                 % Create directory and save
                 if ~exist(mat_dirpath, 'dir')
                     mkdir(mat_dirpath);
                 end;
                 save(mat_filepath, varnames{:});
- 
+
                 % Clean up variables.
                 if isempty(varnames)
                     error('no');
