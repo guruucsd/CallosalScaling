@@ -48,8 +48,8 @@ function collect_all(datasets, force)
             %  if it's there, nothing left to do.
             data_mfile = data_mfiles(fi);
             [~, cwd_name] = fileparts(script_dir);
-            mat_dirpath = fullfile(strrep(script_dir, cwd_name, 'data'), dataset);
-            mat_filepath = fullfile(mat_dirpath, sprintf('%s.mat', data_mfile.name(1:end-2)));
+            mat_dirpath = strrep(script_dir, cwd_name, 'data');
+            mat_filepath = fullfile(mat_dirpath, sprintf('%s.mat', dataset));
             if exist(mat_filepath, 'file') && ~force
                 fprintf('Found existing mat file for %s in %s\n', fullfile(dataset, data_mfile.name), mat_filepath);
                 continue;
