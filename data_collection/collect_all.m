@@ -4,6 +4,8 @@ function collect_all(datasets, force)
 
     %% Add paths
     script_dir = fileparts(which(mfilename));
+    project_dir = fileparts(script_dir);  % parent directory
+    addpath(genpath(fullfile(project_dir, '_lib')));
 
     % Default values
     if ~exist('datasets', 'var') || isempty(datasets)
