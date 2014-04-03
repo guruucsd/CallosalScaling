@@ -6,7 +6,7 @@ function vars = hh_2010_data(validate_data)
 
     HH_2010_dirpath = fileparts(which(mfilename));
     HH_2010_dirname = guru_fileparts(HH_2010_dirpath, 'name');
-    HH_2010_img_dirpath = fullfile(HH_2010_dirpath, '..', 'img', HH_2010_dirname);
+    HH_2010_img_dirpath = fullfile(HH_2010_dirpath, '..', '..', 'img', HH_2010_dirname);
     HH_2008_dirpath = fullfile(HH_2010_dirpath, '..', strrep(HH_2010_dirname, '2010', '2008'));
 
 

@@ -25,7 +25,7 @@ function vars = w_data(validate_data)
     % Capital indicates constant / local variable
     W_dirpath = fileparts(which(mfilename));
     W_dirname = guru_fileparts(W_dirpath, 'name');
-    W_img_dirpath = fullfile(W_dirpath, '..', 'img', W_dirname);
+    W_img_dirpath = fullfile(W_dirpath, '..', '..', 'img', W_dirname);
 
 
     %% Get species and brain weights, from supp materials

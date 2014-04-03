@@ -7,7 +7,7 @@ function vars = lra_histograms(validate_data)
 
     LRA_dirpath = fileparts(which(mfilename));
     LRA_dirname = guru_fileparts(LRA_dirpath, 'name');
-    LRA_img_dirpath = fullfile(LRA_dirpath, '..', 'img', LRA_dirname);
+    LRA_img_dirpath = fullfile(LRA_dirpath, '..', '..', 'img', LRA_dirname);
     LRB_dirpath = fullfile(LRA_dirpath, '..', strrep(LRA_dirname, '1990a', '1990b'));
 
     lra_fig7_sectors = {'2' '4' '6'};

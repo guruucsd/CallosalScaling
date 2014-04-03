@@ -16,7 +16,7 @@ function vars = tr_data(validate_data)
 
     RID_dirpath = fileparts(which(mfilename));
     RID_dirname = guru_fileparts(RID_dirpath, 'name');
-    RID_img_dirpath = fullfile(RID_dirpath, '..', 'img', RID_dirname);
+    RID_img_dirpath = fullfile(RID_dirpath, '..', '..', 'img', RID_dirname);
 
 
     %% Fig 2

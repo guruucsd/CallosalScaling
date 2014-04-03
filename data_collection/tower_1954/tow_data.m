@@ -15,7 +15,7 @@ function vars = tow_data(validate_data)
     % Mark directories as internal variables
     TOW_dirpath = fileparts(which(mfilename));
     TOW_dirname = guru_fileparts(TOW_dirpath, 'name');
-    TOW_img_dirpath = fullfile(TOW_dirpath, '..', 'img', TOW_dirname);
+    TOW_img_dirpath = fullfile(TOW_dirpath, '..', '..', 'img', TOW_dirname);
 
     %% Collect data
     [~,pix,xticks,yticks] = parse_img_by_color(fullfile(TOW_img_dirpath, 'Fig1_marked.png'), 'g');

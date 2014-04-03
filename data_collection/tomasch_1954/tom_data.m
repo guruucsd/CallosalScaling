@@ -21,7 +21,7 @@ function vars = tom_data(validate_data)
 
     TOM_dirpath = fileparts(which(mfilename));
     TOM_dirname = guru_fileparts(TOM_dirpath, 'name');
-    TOM_img_dirpath = fullfile(TOM_dirpath, '..', 'img', TOM_dirname);
+    TOM_img_dirpath = fullfile(TOM_dirpath, '..', '..', 'img', TOM_dirname);
 
 
     tom_tab1_surface_area = [ ...

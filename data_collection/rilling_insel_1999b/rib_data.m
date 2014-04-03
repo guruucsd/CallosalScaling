@@ -18,7 +18,7 @@ function vars = rib_data(validate_data)
 
     RIB_dirpath = fileparts(which(mfilename));
     RIB_dirname = guru_fileparts(RIB_dirpath, 'name');
-    RIB_img_dirpath = fullfile(RIB_dirpath, '..', 'img', RIB_dirname);
+    RIB_img_dirpath = fullfile(RIB_dirpath, '..', '..', 'img', RIB_dirname);
 
 
     %% Static data

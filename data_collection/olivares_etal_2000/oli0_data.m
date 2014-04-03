@@ -8,7 +8,7 @@ function vars = oli0_data(validate_data)
 
     OLI0_dirpath = fileparts(which(mfilename));
     OLI0_dirname = guru_fileparts(OLI0_dirpath, 'name');
-    OLI0_img_dirpath = fullfile(OLI0_dirpath, '..', 'img', OLI0_dirname);
+    OLI0_img_dirpath = fullfile(OLI0_dirpath, '..', '..', 'img', OLI0_dirname);
 
 
     %% Gather data

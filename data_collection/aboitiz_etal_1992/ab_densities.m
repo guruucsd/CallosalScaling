@@ -9,7 +9,7 @@ function vars = ab_data(validate_data)
 
     AB_dirpath = fileparts(which(mfilename));
     AB_dirname = guru_fileparts(AB_dirpath, 'name');
-    AB_img_dirpath = fullfile(AB_dirpath, '..', 'img', AB_dirname);
+    AB_img_dirpath = fullfile(AB_dirpath, '..', '..', 'img', AB_dirname);
 
 
     %% Create diameter => weight mapping function

@@ -6,7 +6,7 @@ function vars = ha_data(validate_data)
 
     HA_dirpath = fileparts(which(mfilename));
     HA_dirname = guru_fileparts(HA_dirpath, 'name');
-    HA_img_dirpath = fullfile(HA_dirpath, '..', 'img', HA_dirname);
+    HA_img_dirpath = fullfile(HA_dirpath, '..', '..', 'img', HA_dirname);
 
 
     %% Collect data

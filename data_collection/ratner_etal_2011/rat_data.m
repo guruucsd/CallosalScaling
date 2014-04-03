@@ -11,7 +11,7 @@ function vars = rat_data(validate_data)
 
     RAT_dirpath = fileparts(which(mfilename));
     RAT_dirname = guru_fileparts(RAT_dirpath, 'name');
-    RAT_img_dirpath = fullfile(RAT_dirpath, '..', 'img', RAT_dirname);
+    RAT_img_dirpath = fullfile(RAT_dirpath, '..', '..', 'img', RAT_dirname);
 
 
     rat_tab1_brain_weights = [2784 2738 2566 2448];

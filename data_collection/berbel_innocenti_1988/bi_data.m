@@ -8,7 +8,7 @@ function vars = bi_data(validate_data)
 
     BI_dirpath = fileparts(which(mfilename));
     BI_dirname = guru_fileparts(BI_dirpath, 'name');
-    BI_img_dirpath = fullfile(BI_dirpath, '..', 'img', BI_dirname);
+    BI_img_dirpath = fullfile(BI_dirpath, '..', '..', 'img', BI_dirname);
 
 
     %% Fig 7

@@ -8,7 +8,7 @@ function vars = lrb_histograms(validate_data)
 
     LRB_dirpath = fileparts(which(mfilename));
     LRB_dirname = guru_fileparts(LRB_dirpath, 'name');
-    LRB_img_dirpath = fullfile(LRB_dirpath, '..', 'img', LRB_dirname);
+    LRB_img_dirpath = fullfile(LRB_dirpath, '..', '..', 'img', LRB_dirname);
 
 
     %% Parse histograms from Lamantia & Rakic, 1990a

@@ -6,7 +6,7 @@ function vars = cam_data(validate_data)
 
     CAM_dirpath = fileparts(which(mfilename));
     CAM_dirname = guru_fileparts(CAM_dirpath, 'name');
-    CAM_img_dirpath = fullfile(CAM_dirpath, '..', 'img', CAM_dirname);
+    CAM_img_dirpath = fullfile(CAM_dirpath, '..', '..', 'img', CAM_dirname);
 
 
     %% Collect data
