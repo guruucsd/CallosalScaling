@@ -29,8 +29,8 @@ function collect_all(datasets, force)
 
         % Find files for doing computations
         local_dir = fullfile(script_dir, dataset);
-        if ~exist(dataset)
-            fprintf('WARNING: files for creating requested dataset do not exist: %s', dataset);
+        if ~exist(local_dir, 'file')
+            fprintf('WARNING: files for creating requested dataset do not exist: %s, %s\n', dataset, local_dir);
             continue;
         end;
 
@@ -48,7 +48,7 @@ function collect_all(datasets, force)
             %  if it's there, nothing left to do.
             data_mfile = data_mfiles(fi);
             [~, cwd_name] = fileparts(script_dir);
-            mat_dirpath = strrep(script_dir, cwd_name, 'data');
+            mat_dirpath = strrep(script_dir, cwd_name, 'matfiles');
             mat_filepath = fullfile(mat_dirpath, sprintf('%s.mat', dataset));
             if exist(mat_filepath, 'file') && ~force
                 fprintf('Found existing mat file for %s in %s\n', fullfile(dataset, data_mfile.name), mat_filepath);
