@@ -1,4 +1,4 @@
-function vars = ab_data(validate_data)
+function vars = ab_data(validate_data, visualize_data)
 %
 % Dataset:
 %   Wang et al. (2008)

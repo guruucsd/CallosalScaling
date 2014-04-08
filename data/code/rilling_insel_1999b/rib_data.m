@@ -1,4 +1,4 @@
-function vars = rib_data(validate_data)
+function vars = rib_data(validate_data, visualize_data)
 %
 % Dataset:
 %   Rilling & Insel 1999b
@@ -42,7 +42,7 @@ function vars = rib_data(validate_data)
     data_ypix = [data_ypix_r; data_ypix_g; data_ypix_b];
     data_xpix = [data_xpix_r; data_xpix_g; data_xpix_b];
 
-    % get species indices
+    % get family indices
     rib_families = {'cebids'    'cercopithecids'    'hylobatids'    'pongids' 'humans'};
     [idx,c] = kmeans(data_xpix_b, 3);
     [~,idx2] = sort(c);
@@ -64,20 +64,27 @@ function vars = rib_data(validate_data)
 
     % Re-create the plot!
     p_cca = polyfit(log10(rib_fig1b_brain_volumes), log10(rib_fig1b_ccas), 1);
-    figure; set(gcf, 'Position', [19         303        1122         381]);
-    subplot(1,2,1);
-    imshow(~img); hold on;
-    plot(data_xpix_r, data_ypix_r, 'r*');
-    plot(data_xpix_g, data_ypix_g, 'g*');
-    plot(data_xpix_b, data_ypix_b, 'b*');
+    if validate_data
+        p_cca_reported = [0.70, 0.65];
+        cca_error_estimate = abs(100 * (p_cca - p_cca_reported) ./ ((p_cca + p_cca_reported) / 2));
+        fprintf('CCA (Fig 1b) error estimate: %4.2f - %4.2f%%\n', cca_error_estimate);
+    end;
+    if visualize_data
+        figure; set(gcf, 'Position', [19         303        1122         381]);
+        subplot(1,2,1);
+        imshow(~img); hold on;
+        plot(data_xpix_r, data_ypix_r, 'r*');
+        plot(data_xpix_g, data_ypix_g, 'g*');
+        plot(data_xpix_b, data_ypix_b, 'b*');
 
-    subplot(1,2,2);
-    plot(log10(rib_fig1b_brain_volumes), log10(rib_fig1b_ccas), 'o');
-    hold on; plot(log10(rib_fig1b_brain_volumes), p_cca(1)*log10(rib_fig1b_brain_volumes)+ p_cca(2));
-    set(gca, 'FontSize', 14, 'xlim', [1 4], 'ylim', [1.5 3]);
-    xlabel('log(brain volume) (g)'); ylabel('log(cca) (mm^2)');
-    title(sprintf('Regression: %4.2fX + %4.2f', p_cca));
-
+        subplot(1,2,2);
+        plot(log10(rib_fig1b_brain_volumes), log10(rib_fig1b_ccas), 'o');
+        hold on; plot(log10(rib_fig1b_brain_volumes), p_cca(1)*log10(rib_fig1b_brain_volumes)+ p_cca(2));
+        set(gca, 'FontSize', 14, 'xlim', [1 4], 'ylim', [1.5 3]);
+        xlabel('log(brain volume) (g)'); ylabel('log(cca) (mm^2)');
+        title(sprintf('Regression: %4.2fX + %4.2f', p_cca));
+    end;
+    
 
     %% Fig 2
     [data_ypix_cca,data_xpix_cca] = get_pixels_by_color(fullfile(RIB_img_dirpath, 'Fig2_reddot.png'), 'r');
@@ -99,10 +106,11 @@ function vars = rib_data(validate_data)
     xticks     = get_groups(img(floor(xaxis_idx(2)-xaxis_width(2)/2)-2,:)); xticks = xticks([5 7:9]);
     yticks_cca = get_groups(img(:,floor(yaxis_idx(1)+yaxis_width(1)/2)+2,:)); yticks_cca = yticks_cca([1:3 5]);
     yticks_wmv = get_groups(img(:,ceil(yaxis_idx(2)-yaxis_width(2)/2)-2,:)); yticks_wmv = yticks_wmv([1:4]);
-    figure; imshow(img); hold on; plot(yaxis_idx(1), yticks_cca, 'r*');
-    plot(yaxis_idx(2), yticks_wmv, 'g*'); plot(xticks, xaxis_idx(2), 'b*');
-
-
+    if visualize_data
+        figure; imshow(img); hold on; plot(yaxis_idx(1), yticks_cca, 'r*');
+        plot(yaxis_idx(2), yticks_wmv, 'g*'); plot(xticks, xaxis_idx(2), 'b*');
+    end;
+    
     % Convert the datapoints from pixels to data(x,y) values
     rib_fig2_gmas = 10.^(0+((data_xpix_cca+data_xpix_wmv)/2 - xticks(1))/mean(diff(xticks))*1); % average over cca and wmv; should have same xval!
     rib_fig2_ccas = 10.^(0+(yticks_cca(end)-data_ypix_cca)/mean(diff(yticks_cca))*1);
@@ -111,23 +119,34 @@ function vars = rib_data(validate_data)
     % Re-create the plot!
     p_cca = polyfit(log10(rib_fig2_gmas), log10(rib_fig2_ccas), 1);
     p_wmv = polyfit(log10(rib_fig2_gmas), log10(rib_fig2_wmvs), 1);
-    figure; set(gcf, 'Position', [49         290        1194         394]);
-    subplot(1,2,1);
-    imshow(~img); hold on;
-    plot(data_xpix_cca, data_ypix_cca, 'g*');
-    plot(data_xpix_wmv, data_ypix_wmv, 'r*');
+    if validate_data
+        p_cca_reported = [0.88, 0.84];
+        cca_error_estimate = abs(100 * (p_cca - p_cca_reported) ./ ((p_cca + p_cca_reported) / 2));
+        fprintf('CCA (Fig 2) error estimate: %4.2f - %4.2f%%\n', cca_error_estimate);
 
-    subplot(1,2,2);
-    plot(log10(rib_fig2_gmas), log10(rib_fig2_ccas), 'o');
-    hold on; plot(log10([0.1; rib_fig2_gmas]), p_cca(1)*log10([0.1; rib_fig2_gmas])+ p_cca(2));
+        p_wmv_reported = [1.38, -0.56];
+        wmv_error_estimate = abs(100 * (p_wmv - p_wmv_reported) ./ ((p_wmv + p_wmv_reported) / 2));
+        fprintf('WMV (Fig 2) error estimate: %4.2f - %4.2f%%\n', wmv_error_estimate);
+    end;
+    if visualize_data
+        figure; set(gcf, 'Position', [49         290        1194         394]);
+        subplot(1,2,1);
+        imshow(~img); hold on;
+        plot(data_xpix_cca, data_ypix_cca, 'g*');
+        plot(data_xpix_wmv, data_ypix_wmv, 'r*');
 
-    plot(log10(rib_fig2_gmas), log10(rib_fig2_wmvs), 'o');
-    hold on; plot(log10([0.1; rib_fig2_gmas]), p_wmv(1)*log10([0.1; rib_fig2_gmas])+ p_wmv(2));
+        subplot(1,2,2);
+        plot(log10(rib_fig2_gmas), log10(rib_fig2_ccas), 'o');
+        hold on; plot(log10([0.1; rib_fig2_gmas]), p_cca(1)*log10([0.1; rib_fig2_gmas])+ p_cca(2));
 
-    set(gca, 'FontSize', 14, 'xlim', [0 3], 'ylim', [0 3]);
-    xlabel('log(grey matter surface area) (g)'); ylabel('log(cca) (mm^2)');
-    title(sprintf('Regressions: %4.2fX + %4.2f\n\t%4.2fX+%4.2f', p_cca, p_wmv));
+        plot(log10(rib_fig2_gmas), log10(rib_fig2_wmvs), 'o');
+        hold on; plot(log10([0.1; rib_fig2_gmas]), p_wmv(1)*log10([0.1; rib_fig2_gmas])+ p_wmv(2));
 
+        set(gca, 'FontSize', 14, 'xlim', [0 3], 'ylim', [0 3]);
+        xlabel('log(grey matter surface area) (g)'); ylabel('log(cca) (mm^2)');
+        title(sprintf('Regressions: %4.2fX + %4.2f\n\t%4.2fX+%4.2f', p_cca, p_wmv));
+    end;
+        
     % now build a database
     [rib_fig1b_ccas,idx1] = sort(rib_fig1b_ccas); rib_fig1b_brain_volumes = rib_fig1b_brain_volumes(idx1);
     [rib_fig2_ccas,idx2]  = sort(rib_fig2_ccas);  rib_fig2_gmas = rib_fig2_gmas(idx2); rib_fig2_wmvs = rib_fig2_wmvs(idx2);

@@ -1,4 +1,4 @@
-function vars = rp_data(validate_data)
+function vars = rp_data(validate_data, visualize_data)
 %
 % Dataset:
 %   Riise & Pakkenberg (2011)

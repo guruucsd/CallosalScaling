@@ -1,4 +1,4 @@
-function vars = lut_data(validate_data)
+function vars = lut_data(validate_data, visualize_data)
 %
 % Luttenberg (1965)
 % Human developmental data on corpus callosum

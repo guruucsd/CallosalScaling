@@ -1,4 +1,4 @@
-function vars = ry_data(validate_data)
+function vars = ry_data(validate_data, visualize_data)
 %
 % Dataset:
 %   Rakic & Yaklovev (1968)

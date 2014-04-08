@@ -1,4 +1,4 @@
-function vars = lra_data(validate_data)
+function vars = lra_data(validate_data, visualize_data)
 % Dataset:
 %   Lamantia & Rakic (1990a)
 %

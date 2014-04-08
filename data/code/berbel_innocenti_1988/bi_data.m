@@ -1,4 +1,4 @@
-function vars = bi_data(validate_data)
+function vars = bi_data(validate_data, visualize_data)
 %
 % Extract cross-species neuron density from Tower (1954)
 % images

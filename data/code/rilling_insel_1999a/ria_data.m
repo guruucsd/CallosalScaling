@@ -1,4 +1,4 @@
-function vars = ria_data(validate_data)
+function vars = ria_data(validate_data, visualize_data)
 % Dataset:
 %   Rilling & Insel 1999a
 %

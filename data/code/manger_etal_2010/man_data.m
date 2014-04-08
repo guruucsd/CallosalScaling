@@ -1,4 +1,4 @@
-function vars = man_data(validate_data)
+function vars = man_data(validate_data, visualize_data)
 %
 % Corpus callosum of the elephant
 

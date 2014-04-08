@@ -1,4 +1,4 @@
-function collect_all(datasets, force)
+function collect_all(datasets, force, validate_data, visualize_data)
 %
 % Collect all datasets
 
@@ -16,6 +16,8 @@ function collect_all(datasets, force)
         datasets = { datasets };
     end;
     if ~exist('force', 'var'), force = false; end;
+    if ~exist('validate_data', 'var'), validate_data = false; end;
+    if ~exist('visualize_data', 'var'), visualize_data = false; end;
 
 
     %% Loop over all directories and mat files to create datasets
@@ -60,7 +62,7 @@ function collect_all(datasets, force)
             %try
                 % Run the data collection; output is a struct
                 fprintf('Running "%s" ... ', fullfile(dataset, data_mfile.name));
-                vars = eval(sprintf('%s(false);', data_mfile.name(1:end-2))); % run as a matlab script
+                vars = eval(sprintf('%s(validate_data, visualize_data);', data_mfile.name(1:end-2))); % run as a matlab script
                 close all;  % in case any plots were generated
 
                 % Save the variables by decomposing the struct,

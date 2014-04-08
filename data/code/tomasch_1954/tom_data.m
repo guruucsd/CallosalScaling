@@ -1,4 +1,4 @@
-function vars = tom_data(validate_data)
+function vars = tom_data(validate_data, visualize_data)
 % Dataset:
 %   Tomasch (1954)
 %

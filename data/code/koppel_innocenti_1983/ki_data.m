@@ -1,4 +1,4 @@
-function vars = ki_data(validate_data)
+function vars = ki_data(validate_data, visualize_data)
 %
 
     if ~exist('validate_data', 'var'), validate_data = true; end;

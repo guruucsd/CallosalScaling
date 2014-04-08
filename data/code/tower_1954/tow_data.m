@@ -1,4 +1,4 @@
-function vars = tow_data(validate_data)
+function vars = tow_data(validate_data, visualize_data)
 %
 % Dataset:
 %   Tower (1954)

@@ -1,4 +1,4 @@
-function vars = rat_data(validate_data)
+function vars = rat_data(validate_data, visualize_data)
 %
 % Cross-species primate brain data from Rilling & Insel (1999a),
 %   largely complementary to callosal data in 1999b.

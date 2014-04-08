@@ -1,4 +1,4 @@
-function vars = tr_data(validate_data)
+function vars = tr_data(validate_data, visualize_data)
 %
 % Dataset:
 %   Tarpley & Ridgway (1994)

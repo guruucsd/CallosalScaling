@@ -1,4 +1,4 @@
-function vars = oli0_data(validate_data)
+function vars = oli0_data(validate_data, visualize_data)
 %
 % Cross-Species and Intraspecies Morphometric Analysis of the Corpus
 % Callosum
