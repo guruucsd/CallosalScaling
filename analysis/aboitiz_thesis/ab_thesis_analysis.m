@@ -4,7 +4,7 @@ function ab_thesis_analysis(vars, figs)
         figs = {'all'};
     end;
 
-    %% Load variables into the current workspace
+    %% load variables into the current workspace
     varnames = fieldnames(vars);
     varvals = struct2cell(vars);
     for vi=1:length(varnames)
@@ -18,7 +18,7 @@ function ab_thesis_analysis(vars, figs)
 
 
     %% Look at the relationship between density and age, over the whole callosum
-    if ismember(figs, 'all') 
+    if ismember(figs, 'all')
         figure('Position', [680   327   667   631]);
         plot(ab_thesis_appendix3_data(idx8to2,1), ab_density_correction*ab_thesis_total_density, 'ro', 'MarkerSize', 10, 'LineWidth', 2)
         set(gca, 'fontsize', 14);
@@ -34,10 +34,10 @@ function ab_thesis_analysis(vars, figs)
 
     % partialing out brain size doesn't diminish the effect of age.
     corr(ab_thesis_appendix3_data(idx8to2,1), ab_thesis_total_density)
-    partialcorr(ab_thesis_appendix3_data(idx8to2,1), ab_thesis_total_density, ab_thesis_appendix3_data(idx8to2,2)) 
+    partialcorr(ab_thesis_appendix3_data(idx8to2,1), ab_thesis_total_density, ab_thesis_appendix3_data(idx8to2,2))
 
     %% now do the same thing for each region
-    if ismember(figs, 'all') 
+    if ismember(figs, 'all')
         figure('Position', [-23         314        1304         370]);
         for ri=1:length(ab_thesis_appendix8_cols)
             subplot(2,5,ri);
@@ -67,14 +67,14 @@ function ab_thesis_analysis(vars, figs)
     corr(ab_thesis_PT_asymmetry_idx, ab_thesis_total_fibers), corr(abs(ab_thesis_PT_asymmetry_idx), ab_thesis_total_fibers)
     partialcorr(ab_thesis_SF_asymmetry_idx, ab_thesis_total_fibers, ab_thesis_appendix3_data(idx8to2,1)),
 
-    if ismember(figs, 'all') 
+    if ismember(figs, 'all')
         figure;
         scatter(ab_thesis_SF_asymmetry_idx(setdiff(1:end,5)), ab_thesis_total_fibers(setdiff(1:end,5)));
         %hold on;
         %scatter(ab_thesis_PT_asymmetry_idx(setdiff(1:end,5)), ab_thesis_total_fibers(setdiff(1:end,5)), 'r');
         xlabel('Asymmetry index'); ylabel('Total fibers')
     end;
- 
+
     % correlation with overall density
     fprintf('with overall density:\n');
     corr(ab_thesis_SF_asymmetry_idx, ab_thesis_total_density), corr(abs(ab_thesis_SF_asymmetry_idx), ab_thesis_total_density)
@@ -96,7 +96,7 @@ function ab_thesis_analysis(vars, figs)
         hold on; % add tomasch
         %plot(55, 177*1.2, 'go')
         %plot(55, 175*1.2, 'go')
-        %plot(55, 193.5*1.2, 'go') 
+        %plot(55, 193.5*1.2, 'go')
         title(sprintf('%s; corr=%.2f', ...
                       'Whole CC', ...
                       corr(ab_thesis_appendix3_data(idx8to2,1), ab_thesis_total_fibers)));
@@ -108,7 +108,7 @@ function ab_thesis_analysis(vars, figs)
     ab_thesis_appendix8_male_idx   = find(~ab_thesis_appendix8_sex);
     ab_thesis_appendix8_female_idx = find(ab_thesis_appendix8_sex);
 
-    if ismember(figs, 'all') 
+    if ismember(figs, 'all')
         figure;
         shm = scatter(ab_thesis_appendix3_data(idx8to2(ab_thesis_appendix8_male_idx),1), ab_thesis_total_fibers(ab_thesis_appendix8_male_idx), 'b')
         hold on;
@@ -152,7 +152,7 @@ function ab_thesis_analysis(vars, figs)
     xlabel('CC area'); ylabel('Density');
 
     % since area does not correlate with age, but # fibers does, that means
-    %   that 
+    %   that
 
 
     % Correlation with
@@ -164,7 +164,7 @@ function ab_thesis_analysis(vars, figs)
     %   therefore we can estimate the area that has fibers but we missed
     %   therefore we can estimate the number of fibers that we missed
     %
-    % 
+    %
     ab_thesis_database = [ab_thesis_appendix1_data(idx8to2,:) ab_thesis_appendix2_data(idx8to2,:) ab_thesis_appendix3_data(idx8to2,:) ab_thesis_appendix4_data ab_thesis_appendix8_data]
     ab_thesis_features = [ab_thesis_SF_asymmetry_idx ab_thesis_PT_asymmetry_idx ab_thesis_OT_asymmetry_idx ab_thesis_total_density.^2];
 
@@ -172,7 +172,7 @@ function ab_thesis_analysis(vars, figs)
 
     %% correlate across fiber sizes
     figure;
-    scatter( sum(ab_thesis_region_area_norm.*ab_thesis_appendix7_data,2), ... % 
+    scatter( sum(ab_thesis_region_area_norm.*ab_thesis_appendix7_data,2), ... %
           sum(ab_thesis_region_area_norm.*ab_thesis_appendix6_data,2))
     xlabel(sprintf('Fiber count (%s)', ab_thesis_appendix7_title));
     ylabel(sprintf('Fiber count (%s)', ab_thesis_appendix6_title));
@@ -195,10 +195,10 @@ function ab_thesis_analysis(vars, figs)
                  ab_thesis_appendix3_data(idx8to2,1)) % something with age
     [a,rx2,ry2] = pc( sum(ab_thesis_region_area_norm.*ab_thesis_appendix5_data,2), ...
                  sum(ab_thesis_region_area_norm.*ab_thesis_appendix4_data,2), ...
-                 ab_thesis_appendix2_data(idx8to2,1)) % something with callosal area       
+                 ab_thesis_appendix2_data(idx8to2,1)) % something with callosal area
     [a,rx3,ry3] = pc( sum(ab_thesis_region_area_norm.*ab_thesis_appendix6_data,2), ...
                  sum(ab_thesis_region_area_norm.*ab_thesis_appendix4_data,2), ...
-                 [ab_thesis_appendix2_data(idx8to2,1) ab_thesis_appendix3_data(idx8to2,1)] ) % something age and callosal area partialed out    
+                 [ab_thesis_appendix2_data(idx8to2,1) ab_thesis_appendix3_data(idx8to2,1)] ) % something age and callosal area partialed out
 
     partialcorr( sum(ab_thesis_region_area_norm.*ab_thesis_appendix5_data,2), ...
                  sum(ab_thesis_region_area_norm.*ab_thesis_appendix4_data,2), ...

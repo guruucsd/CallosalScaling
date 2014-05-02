@@ -79,7 +79,7 @@ if ismember('predict_ab',figs) || ismember('all',figs)
     legend([bh ph1 ph2], {'Aboitiz et al (1992) data', 'Predicted data', 'Fit to Aboitiz data'})
     title('Predicted (combined) histograms vs. data');
     xlabel('axon diameter (\mu m)'); ylabel('proportion');
-    
+
     % subplot 3
     subplot(1,3,3);
     dff = ab_overall_distn - cc_add;
@@ -89,7 +89,7 @@ if ismember('predict_ab',figs) || ismember('all',figs)
     [~,idx] = max(abs(dff))
     idx = find(dff(idx:end)>0, 1,'first') + idx-1;
     title(sprintf('%f%%', sum(dff(1:idx-1))*-100));
-    sum(cc_add(xvals<=1)) 
+    sum(cc_add(xvals<=1))
     sum(ab_overall_distn(xvals<=1))
     hold on;
     plot(xvals(idx),0,'r*');

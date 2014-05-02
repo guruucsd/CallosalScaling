@@ -41,7 +41,7 @@ function analyze_all()
             analysis_mfile = analysis_mfiles(fi);
 
 
-            % Load data
+            % load data
             varnames = {};
             varvals = {};
             for mfi=1:length(data_matfiles)

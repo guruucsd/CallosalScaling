@@ -1,7 +1,7 @@
 function w_analysis(vars)
 %
 
-    %% Load variables into the current workspace
+    %% load variables into the current workspace
     varnames = fieldnames(vars);
     varvals = struct2cell(vars);
     for vi=1:length(varnames)

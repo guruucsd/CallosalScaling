@@ -114,14 +114,15 @@ function vars = w_data(validate_data, visualize_data)
     wts = [1 10 100]; wts2 = min(wts):max(wts);
     p = polyfit(log10(wts), diam2wt_pts, 2);
     diam2wt = @(wt) (p(1)*log10(wt).^2 + p(2).*log10(wt) + p(3));
-%
-%     % Plot to show fitting function
-%     figure;    hold on;
-%     plot(log10(wts), diam2wt_pts, 'o');
-%     plot(log10(wts2), diam2wt(wts2));
-%
-%
-%
+
+    if visualize_data
+        % Plot to show fitting function
+        figure;    hold on;
+        plot(log10(wts), diam2wt_pts, 'o');
+        plot(log10(wts2), diam2wt(wts2));
+    end;
+
+
     %% Grab points from Fig 1e
     img = scrub_image(fullfile(W_img_dirpath, 'Fig1e.png'));
 

@@ -1,14 +1,14 @@
 function ab_analysis(vars)
 %
 
-    %% Load variables into the current workspace
+    %% load variables into the current workspace
     varnames = fieldnames(vars);
     varvals = struct2cell(vars);
     for vi=1:length(varnames)
         eval(sprintf('%s = varvals{vi};', varnames{vi}))
     end;
 
-    
+
     %% Do plots
     f = figure; set(gcf,'Position', [77   117   921   567]);
 
@@ -55,7 +55,7 @@ function ab_analysis(vars)
         p3 = IUBD(xvals, pab3(hi,1), pab3(hi,2)); p3 = p3./sum(p3)*spacing_fact;
         plot(xvals, p3, 'k--', 'LineWidth', 4);
         %set(gca, 'xlim', [0 0.8]);
-        legend({'Original data', 'Curve [estimated]'}); 
+        legend({'Original data', 'Curve [estimated]'});
         set(gca, 'FontSize', 14);
         title('Fitting using gradient descent', 'FontSize', 16);
         xlabel('axon diameter ( {\mu}m)', 'FontSize', 14);

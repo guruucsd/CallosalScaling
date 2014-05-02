@@ -1,6 +1,6 @@
 function w_regress_distns(vars, fit_type)
 
-    %% Load variables into the current workspace
+    %% load variables into the current workspace
     varnames = fieldnames(vars);
     varvals = struct2cell(vars);
     for vi=1:length(varnames)
@@ -8,8 +8,8 @@ function w_regress_distns(vars, fit_type)
     end;
 
     human_brain_weight = get_human_brain_weight();
-    
-    
+
+
     %% Fit curves
     %if ~exist('fit_type','var'), fit_type = 'gamma';'lognormal';'IUBD'; end;
     fit_type = 'gamma';
@@ -68,11 +68,11 @@ function w_regress_distns(vars, fit_type)
         end_idx = find(m_distn(si,:)>=(frac*max(m_distn(si,:))), 1, 'last');
     %    mparams(:,si) = fit_lognormal(m_distn(si,:), w_fig4_xvals, [-0.2 0.2]);
         mparams(:,si) = fitfn(m_distn(si,1:end_idx-1), w_fig4_xvals(1:end_idx-1));
-    end;    
-    
-    
+    end;
+
+
     %% Do regression of fit parameters
-    
+
     w_regress_type = 'linear';
 
     switch w_regress_type
@@ -128,7 +128,7 @@ function w_regress_distns(vars, fit_type)
             loglog(([w_fig4_brain_weights]), [mparams(2,:)], 'ro', 'MarkerSize', 10, 'LineWidth',2); hold on;
             loglog(bw_range, gmps(bw_range), 'LineWidth', 3);
             axis tight; set(gca, 'ylim', [0 0.25])
-            %xlabel('log_{10}(brain weight)'); 
+            %xlabel('log_{10}(brain weight)');
             %ylabel('\beta value');
             title('myelinated \beta', 'FontSize', 16);
 
@@ -138,7 +138,7 @@ function w_regress_distns(vars, fit_type)
             loglog((w_fig4_brain_weights), uparams(1,:), 'ro', 'MarkerSize', 10, 'LineWidth',2); hold on;
             loglog(bw_range, gupm(bw_range), 'LineWidth', 3);
             axis tight; set(gca, 'ylim', [0 20])
-            xlabel('brain weight'); 
+            xlabel('brain weight');
             ylabel('\alpha value');
             title('unmyelinated \alpha', 'FontSize', 16);
 
@@ -148,7 +148,7 @@ function w_regress_distns(vars, fit_type)
             loglog((w_fig4_brain_weights), uparams(2,:), 'ro', 'MarkerSize', 10, 'LineWidth',2); hold on;
             loglog(bw_range, gups(bw_range), 'LineWidth', 3);
             axis tight; set(gca, 'ylim', [0 0.25])
-            xlabel('brain weight'); 
+            xlabel('brain weight');
             %ylabel('\beta value');
             title('unmyelinated \beta', 'FontSize', 16);
 

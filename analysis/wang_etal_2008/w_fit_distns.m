@@ -1,7 +1,7 @@
 function [fit_type, u_params, m_params] = w_fit_distns(vars)
 %
 
-    %% Load variables into the current workspace
+    %% load variables into the current workspace
     varnames = fieldnames(vars);
     varvals = struct2cell(vars);
     for vi=1:length(varnames)
