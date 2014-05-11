@@ -36,8 +36,8 @@ function [ccdens] = predict_cc_density(brwt, bvol, use_human)
             all_cc_dens = [w_fig1e_dens_est human_dens_abcor/1E6];  % 1E6 converts axons/mm^2 to axons/um^2
         end;
 
-        [p_ccdens, g_ccdens] = allometric_regression(all_br_wts, all_cc_dens);%, 'log', 1, true, '3' );
-        fprintf('Corpus callosum density (Wang et al., 2008): %5.3f * brwt^%5.3f\n', 10.^p_ccdens(2), p_ccdens(1));
+        [p_ccdens, g_ccdens, rsq] = allometric_regression(all_br_wts, all_cc_dens);%, 'log', 1, true, '3' );
+        fprintf('Corpus callosum density (Wang et al., 2008): %5.3f * brwt^%5.3f, r^2=%5.3f\n', 10.^p_ccdens(2), p_ccdens(1), rsq{1});
     end;
 
     ccdens = g_ccdens.y(brwt);

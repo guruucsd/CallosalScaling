@@ -23,9 +23,10 @@ function ndens = predict_ndens(brwt, bvol)
         %[~, g_ndens] = allometric_regression( ha_fig7_brain_volume, ha_fig7_neuron_density, 'log', 1, true );
 
         load(fullfile(an_dir, 'tower_1954', 'tow_data.mat'));
-        [p_ndens, g_ndens] = allometric_regression( tow_fig1_brain_weight, tow_fig1_neuron_dens, 'log', 1, true, false);
-        fprintf('Neuron density (Tower, 1954): %5.3e * brwt^%5.3f\n', 10.^p_ndens(2), p_ndens(1));
+        [p_ndens, g_ndens, rsq] = allometric_regression( tow_fig1_brain_weight, tow_fig1_neuron_dens, 'log', 1, true, false);
+        fprintf('Neuron density (Tower, 1954): %5.3e * brwt^%5.3f, r^2=%5.3f\n', 10.^p_ndens(2), p_ndens(1), rsq{1});
     end;
 
     ndens = g_ndens.y(brwt);  % neurons / mm^3
+
 

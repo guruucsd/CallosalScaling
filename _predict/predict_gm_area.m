@@ -82,9 +82,9 @@ function [gma] = predict_gm_area(brwt, bvol, area_type, collation)
         end;
 
         % Now, do the regression
-        [p_gma, g_gmas{end+1}] = allometric_regression(bvols, gmas);
+        [p_gma, g_gmas{end+1}, rsq] = allometric_regression(bvols, gmas);
         g_gma_collations{end+1} = collation;
-        fprintf('Grey matter surface area (%s) (Rilling & Insel, 1999a/b): %5.3f * bvol^%5.3f\n', collation, 10.^p_gma(2), p_gma(1));
+        fprintf('Grey matter surface area (%s) (Rilling & Insel, 1999a/b): %5.3f * bvol^%5.3f, r^2=%5.3f\n', collation, 10.^p_gma(2), p_gma(1), rsq);
     end;
 
     % Now use the functions to compute # cc fibers and # neurons
