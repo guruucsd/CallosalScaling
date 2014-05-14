@@ -286,7 +286,7 @@ function Rinsel_paper(fig_list, out_path)
             set(gcf, 'Name', 'w_dens');
         end;
         
-        %% Lamantia scaling with age
+        %% Lamantia age vs. density
         if ismember('all',fig_list) || strcmp(fig_list{fi}, 'lms_dens')            % Lamantia & Rakic (1990a): density decreases with age
             figure;
             semilogx(lrs_age, 1E4*lrs_dens, 'o', 'MarkerSize', 4, 'LineWidth',4); hold on;
@@ -301,6 +301,14 @@ function Rinsel_paper(fig_list, out_path)
             set(gcf, 'Name', 'lms_dens');
         end;
 
+        if ismember('all',fig_list) || strcmp(fig_list{fi}, 'lms_dens_regression')
+            [p1,g1,rsquared] = allometric_regression(lra_cc_age, lra_cc_density, 'log', 1, true)
+            allometric_plot2(lra_cc_age, lra_cc_density, p1, g1, {'loglog'});
+            
+            legend('Location', 'NorthEast');
+            legend('Location', 'NorthEast');
+        end;
+
 
         %% Aboitiz scaling with age
         if ismember('all',fig_list) || strcmp(fig_list{fi}, 'ab_dens')            % Aboitiz (1990): density decreases with age
@@ -308,7 +316,6 @@ function Rinsel_paper(fig_list, out_path)
             ab_thesis_region_area_norm = ab_thesis_appendix8_data./repmat(sum(ab_thesis_appendix8_data,2),[1 size(ab_thesis_appendix8_data,2)]);
             ab_thesis_total_density    = ab_density_correction * sum(ab_thesis_appendix4_data.*ab_thesis_region_area_norm,2);
             ab_thesis_total_fibers     = ab_density_correction * sum(ab_thesis_appendix4_data.*ab_thesis_appendix8_data*1E2,2)/1E6;
-            keyboard
             figure('Position', [680   327   667   631]);
             plot(ab_thesis_appendix3_data(idx8to2,1), ab_thesis_total_density, 'ro', 'MarkerSize', 10, 'LineWidth', 2)
             set(gca, 'fontsize', 14);
