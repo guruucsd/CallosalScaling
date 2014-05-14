@@ -1,11 +1,14 @@
 clear all;
 
 curdir = fileparts(which(mfilename));
-addpath(fullfile(curdir, '..', '_lib'));
+project_dir = fullfile(curdir, '..', '..');
+addpath(fullfile(project_dir, '_lib'));
+addpath(fullfile(project_dir, '_predict'));
 
 % Get density data across studies
-addpath(fullfile(curdir, '..', 'wang_etal_2008'));        w_data;
-addpath(fullfile(curdir, '..', 'lamantia_rakic_1990a'));  lra_data;
+analysis_dir = fullfile(project_dir, 'analysis');
+load(fullfile(analysis_dir, 'wang_etal_2008', 'w_data'));
+load(fullfile(analysis_dir, 'lamantia_rakic_1990a', 'lra_data'));
 
 human_brain_weight = get_human_brain_weight();
 human_brain_dens = 0.3717*1.2*0.65;
@@ -37,6 +40,7 @@ human_brain_age = mean([43.5 46.4]);
     % Get a function of density vs age for macaque
     p_maqdens  = polyfit(log10(lra_cc_age), log10(lra_cc_density), 1);
     g_maqdens  = @(m_age) 10.^polyval(p_maqdens, log10(m_age));
+    keyboard
 
     % Get a function of human post-natal age vs macaque post-natal age
     % macaque: sexual maturity at 4, lifespan 25

@@ -121,7 +121,7 @@ function [uparams,mparams,xvals] = fit_cc_add_params(fitfn)
 
 
 function [gmpm gmps gupm gups] = regress_cc_add_params(uparams, mparams, fit_distn, regress_type);
-    global human_brain_weight;
+    human_brain_weight = get_human_brain_weight();
 
     an_dir = fullfile(fileparts(which(mfilename)), '..', 'analysis');
 

@@ -15,8 +15,8 @@ function w_analysis(vars)
 
     %w_gp_regress(vars);  % gaussian process regression
     %w_fit_distns(vars);  % code moved to w_regress_distns
+    w_pctmye(vars);
     w_regress_distns(vars);
-
 
     % Overlay unmyelinated distributions on each other
     figure;
@@ -73,7 +73,11 @@ function w_analysis(vars)
 
 
     %% Try to compute CCA, then compare to actual CCA
-    mean_pctmye = 0.01*[mean(w_fig1c_pctmye(1:2)); mean(w_fig1c_pctmye(3:5)); w_fig1c_pctmye(6); mean(w_fig1c_pctmye(7:8)); w_fig1c_pctmye(9:10)];
+    [~,~,uidx] = unique(w_fig1c_weights);
+    mean_pctmye = zeros(length(w_fig1c_species), 1);
+    for si=1:length(w_fig1c_species)  % average over datapoints within a species
+        mean_pctmye(si) = 0.01 * mean(w_fig1c_pctmye(uidx == si)); % convert 0..100 to 0..1
+    end;
     myelinated_distn   = w_fig4_myelinated./repmat(sum(w_fig4_myelinated,2),[1 size(w_fig4_myelinated,2)]);
     unmyelinated_distn = w_fig4_unmyelinated./repmat(sum(w_fig4_myelinated,2),[1 size(w_fig4_unmyelinated,2)]);
 
@@ -85,11 +89,12 @@ function w_analysis(vars)
     figure;
     plot(1./w_fig1e_dens_est, tot_area_perfiber, 'o');
     xlabel('1/density (um^2)'); ylabel('area per fiber (um^2)');
+    title('Filling fraction across species (cartesian)');
 
     filling_frac = (1./w_fig1e_dens_est - tot_area_perfiber')./(1./w_fig1e_dens_est +tot_area_perfiber')/2 + 1;
     figure;
     plot(log10(w_fig1e_weights), log10(filling_frac), 'o');
-    title('Filling fraction across species');
+    title('Filling fraction across species (loglog)');
 
 
 

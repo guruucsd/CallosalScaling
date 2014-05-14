@@ -111,7 +111,7 @@
         axi(ns) = gca;
     end;
 
-    figure;
+    figure('Name', 'Unknown plot in w_gp_regress');
     subplot(1,3,1);
     mfe_ax2ax(axi(1), gca);
     %view(47.5, 54)

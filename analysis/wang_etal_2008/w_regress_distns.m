@@ -51,8 +51,8 @@ function w_regress_distns(vars, fit_type)
 
     uparams = nan(2,nspecies);
     mparams = nan(2,nspecies);
-    uf = figure; set(gcf, 'position', [27          17        1254         667])
-    mf = figure; set(gcf, 'position', [27          17        1254         667])
+    uf = figure('Name', 'Unmyelinated ADDs', 'position', [27          17        1254         667]);
+    mf = figure('Name', 'Myelinated ADDs', 'position', [27          17        1254         667]);
     for si=1:nspecies
     %    end_idx = round(size(u_distn,2)/2);
         end_idx = find(u_distn(si,:)>=(frac*max(u_distn(si,:))), 1, 'last');
