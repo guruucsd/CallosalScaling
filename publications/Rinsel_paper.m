@@ -31,14 +31,14 @@ function Rinsel_paper(fig_list, out_path)
         case 'individual', human_idx = length(bvols) - [0:4];
     end;
 
-    human_brain_weight = get_human_brain_weight();
+    human_brain_weight = predict_brwt(mean(bvols(human_idx)));%get_human_brain_weight();
 
     %
-    human_dens_pred = 1000*predict_cc_density(human_brain_weight); %[], human_brain_volume);
+    human_dens_pred = 1000 * predict_cc_density(human_brain_weight, mean(bvols(human_idx))); % 1000 converts units to same scale as aboitiz
     human_dens_ab_raw = 100*3.7*(1-0.35)^(1); %correct for shrinkage
-    human_dens_ab   = human_dens_ab_raw*1.20;  %  correct for 20% missing fibers
-    human_dens_abcor= human_dens_ab*1.2;       % correct for age
-
+    human_dens_ab   = human_dens_ab_raw * 1.20;  %  correct for 20% missing fibers
+    human_dens_abcor= human_dens_ab * 1.2;       % correct for age
+human_dens_pred, human_dens_abcor
     %chimp_idx = strcmp('p. troglodytes', rib_table1_species);
     %chimp_brain_vol = rib_table1_brainvol(chimp_idx);
     %chimp_dens = 1000*predict_cc_density([], chimp_brain_vol);
@@ -58,32 +58,32 @@ function Rinsel_paper(fig_list, out_path)
         end;
 
         %% Rilling & Insel redo: brain volume vs. interhemispheric connections
-        % regression 
+        % regression
         if ismember('all', fig_list) || strcmp(fig_list{fi}, 'ri_basic_compare')
-            rib_response('individual', 'wm_cxns_vs_cc_cxns');  % hard-code 'individual'
+            rib_response('species', 'wm_cxns_vs_cc_cxns');  % hard-code 'individual'
             set(gcf, 'name', 'ri_bv_vs_cc_cxns');  % used as filename.
-            
-            rib_response('individual', 'wm_cxns_vs_cc_cxns_withrinsel');  % hard-code 'individual'
+
+            rib_response('species', 'wm_cxns_vs_cc_cxns_withrinsel');  % hard-code 'individual'
             set(gcf, 'name', 'ri_bv_vs_cc_cxns_withrinsel');  % used as filename.
         end;
 
-        
+
         % Literally Recreate figure 1
         %if ismember('all',fig_list) || strcmp(fig_list{fi}, 'ril_fig1')
         %    rib_response('individual', {}); % re-compute, to be sure...
         %    allometric_regression(rib_fig1b_brain_volumes, rib_fig1b_ccas, 'log', 1, true, '3');
 
         %    subplot(1,2,1);
-        %    xlabel('Brain volume (mm^3)'); ylabel('CC area (mm^2)');
+        %    xlabel('Brain volume (cm^3)'); ylabel('CC area (mm^2)');
         %    guru_updatelegend(gca, 1, 'Rilling & Insel (1999)');
         %    subplot(1,2,2);
-        %    xlabel('Brain volume (mm^3)'); ylabel('CC area (mm^2)');
+        %    xlabel('Brain volume (cm^3)'); ylabel('CC area (mm^2)');
         %    guru_updatelegend(gca, 1, 'Rilling & Insel (1999)');
 
         %    set(gcf, 'Name', 'ril_fig1');
         %end;
 
-        
+
         %% Rilling & Insel connectivity scaling comparison
         if ismember('all', fig_list) || strcmp(fig_list{fi}, 'ri_scaling_compare1')
             rib_response(collation, 'prop_fibers_vs_prop_aa_cxns');
@@ -105,7 +105,7 @@ function Rinsel_paper(fig_list, out_path)
                 set(gcf, 'name', sprintf('./ri_intra_vs_cc_scaling_linear_%s', col{1}));
             end;
         end;
-        
+
         % Rilling & Insel connection strength comparison; familiy
         %if ismember('all', fig_list) || strcmp(fig_list{fi}, 'ri_strength_compare')
         %    addpath(genpath(fullfile(analysis_dir, 'rilling_insel_1999s')));
@@ -114,39 +114,39 @@ function Rinsel_paper(fig_list, out_path)
         %    set(gcf, 'name', sprintf('./ri_intra_vs_cc_scaling_linear_%s', collation));
         %end;
 
-        % Regress proportion of cc fibers on brain volume.  
+        % Regress proportion of cc fibers on brain volume.
         if ismember('all',fig_list) || strcmp(fig_list{fi}, 'nwmfib_vs_cc')
             allometric_regression(bvols, ncc_fibers./nwm_fibers, 'log', 1, false, '2');
 
             guru_updatelegend(gca, 1, '[Computed]');
-            xlabel('Brain volume (mm^3)'); ylabel('[# CC fibers]/[# intra-hem fibers]');
+            xlabel('Brain volume (cm^3)'); ylabel('[# CC fibers]/[# intra-hem fibers]');
 
             set(gcf, 'Name', 'nwmfib_vs_cc');
         end;
 
-        
-        
-        
+
+
+
         %% Proportion of cc fibers vs. brain volume.... on cartesian axis
         if ismember('all',fig_list) || strcmp(fig_list{fi}, 'nwmfib_vs_cch_lin')
             [p,g] = allometric_regression(bvols, ncc_fibers./nintra_fibers, 'log', 1, false, '');
             allometric_plot2(bvols, ncc_fibers./nintra_fibers, p, g, 'linear');
-            
+
             % Mark aboitiz data (corrected)
-            human_ncc_fibers = (human_dens_abcor./human_dens_pred)*ncc_fibers(human_idx);  % mark aboitiz
-            human_nintra_fibers = (nwm_fibers(human_idx)-human_ncc_fibers);
-            dh = plot(bvols(human_idx), human_ncc_fibers./human_nintra_fibers, 'g*', 'MarkerSize', 10, 'LineWidth',5);
-            
+            human_ncc_fibers = (human_dens_abcor./human_dens_pred) * ncc_fibers(human_idx);  % mark aboitiz
+            human_nintra_fibers = nwm_fibers(human_idx) - human_ncc_fibers;
+            dh = plot(mean(bvols(human_idx)), human_ncc_fibers./human_nintra_fibers, 'g*', 'MarkerSize', 10, 'LineWidth',5);
+
             % Update legend and labels
             [~,~,ph,pt] = legend(gca); legend([ph; dh], [pt {' Human (Aboitiz et. al, 1992)'}], 'Location', 'NorthEast');
             guru_updatelegend(gca, 1, '[Computed]');
-            xlabel('Brain volume (mm^3)'); ylabel('[# CC fibers]/[# intra-hem fibers]');
+            xlabel('Brain volume (cm^3)'); ylabel('[# CC fibers]/[# intra-hem fibers]');
             axis tight;
 
             set(gcf, 'Name', 'nwmfib_vs_cch_lin');
         end;
 
-        % Proportion of cc fibers vs. brain volume.... on log-log axis        
+        % Proportion of cc fibers vs. brain volume.... on log-log axis
         if ismember('all',fig_list) || strcmp(fig_list{fi}, 'nwmfib_vs_cch_log')
             [p,g] = allometric_regression(bvols, ncc_fibers./nintra_fibers, 'log', 1, false, '');
             allometric_plot2(bvols, ncc_fibers./nintra_fibers, p, g, 'log');
@@ -154,16 +154,16 @@ function Rinsel_paper(fig_list, out_path)
             % Mark aboitiz data (corrected)
             human_ncc_fibers = (human_dens_abcor./human_dens_pred)*ncc_fibers(human_idx);
             human_nintra_fibers = (nwm_fibers(human_idx)-human_ncc_fibers);
-            dh = loglog(bvols(human_idx), human_ncc_fibers./human_nintra_fibers, 'g*', 'MarkerSize', 10, 'LineWidth',5);
+            dh = loglog(mean(bvols(human_idx)), human_ncc_fibers./human_nintra_fibers, 'g*', 'MarkerSize', 10, 'LineWidth',5);
             [~,~,ph,pt] = legend(gca); legend([ph; dh], [pt {' Human (corrected)'}], 'Location', 'NorthEast');
             guru_updatelegend(gca, 1, '[Computed]');
-            xlabel('Brain volume (mm^3)'); ylabel('[# CC fibers]/[# intra-hem fibers]');
+            xlabel('Brain volume (cm^3)'); ylabel('[# CC fibers]/[# intra-hem fibers]');
 
             set(gcf, 'Name', 'nwmfib_vs_cch_log');
         end;
-        
-        
-        
+
+
+
         %% Total cc fibers vs. brain volume on cartesian axis
         if ismember('all',fig_list) || strcmp(fig_list{fi}, 'ncch_lin')
             [p,g] = allometric_regression(bvols, ncc_fibers, 'log', 1, false, '');
@@ -171,12 +171,12 @@ function Rinsel_paper(fig_list, out_path)
 
             % Mark Aboitiz data (corrected)
             human_ncc_fibers = (human_dens_abcor./human_dens_pred) * ncc_fibers(human_idx);
-            dh = plot(bvols(human_idx), human_ncc_fibers, 'g*', 'MarkerSize', 10, 'LineWidth',5);
-            
+            dh = plot(mean(bvols(human_idx)), human_ncc_fibers, 'g*', 'MarkerSize', 10, 'LineWidth',5);
+
             % Update legend and labels
             [~,~,ph,pt] = legend(gca); legend([ph; dh], [pt {' Human^* (Aboitiz et al., 1992)'}], 'Location', 'SouthEast');
             guru_updatelegend(gca, 1, '[Computed]');
-            xlabel('Brain volume (mm^3)'); ylabel('[# CC fibers]');
+            xlabel('Brain volume (cm^3)'); ylabel('[# CC fibers]');
             axis tight;
 
             set(gcf, 'Name', 'ncch_lin');
@@ -188,13 +188,15 @@ function Rinsel_paper(fig_list, out_path)
             allometric_plot2(bvols, ncc_fibers, p, g, 'loglog');
 
             % Add human data point
-            human_ncc_fibers = (human_dens_abcor./human_dens_pred) * ncc_fibers(human_idx);
-            dh = loglog(bvols(human_idx), human_ncc_fibers, 'g*', 'MarkerSize', 10, 'LineWidth',5);
-            
+            human_ncc_fibers = (human_dens_abcor./human_dens_pred) * predict_ncc_fibers(human_brain_weight);
+            dh = loglog(mean(bvols(human_idx)), human_ncc_fibers, 'g*', 'MarkerSize', 10, 'LineWidth',5);
+
             % Update legend and axis labels
-            [~,~,ph,pt] = legend(gca); legend([ph; dh], [pt {' Human^* (Aboitiz et al., 1992)'}], 'Location', 'SouthEast');
+            [lh,~,ph,pt] = legend(gca); legend([ph; dh], [pt {' Human^* (Aboitiz et al., 1992)'}], 'Location', 'NorthWest');
+
             guru_updatelegend(gca, 1, '[Computed]');
-            xlabel('Brain volume (mm^3)'); ylabel('[# CC fibers]');
+            set(legend(gca), 'FontSize', 12);
+            xlabel('Brain volume (cm^3)'); ylabel('[# CC fibers]');
             axis tight;
 
             set(gcf, 'Name', 'ncch_log');
@@ -206,10 +208,10 @@ function Rinsel_paper(fig_list, out_path)
         %    allometric_plot2(bvols, ncc_fibers./nintra_fibers, p, g, 'log');
 
         %    human_ncc_fibers = (human_dens_ab_raw./human_dens_pred)*ncc_fibers(human_idx);
-        %    dh = loglog(bvols(human_idx), human_ncc_fibers./nintra_fibers(human_idx), 'g*', 'MarkerSize', 10, 'LineWidth',5);
+        %    dh = loglog(mean(bvols(human_idx)), human_ncc_fibers./nintra_fibers(human_idx), 'g*', 'MarkerSize', 10, 'LineWidth',5);
         %    [~,~,ph,pt] = legend(gca); legend([ph; dh], [pt {' Human (Aboitiz et. al, 1992)'}], 'Location', 'NorthEast');
         %    guru_updatelegend(gca, 1, '[Computed]');
-        %    xlabel('Brain volume (mm^3)'); ylabel('[# CC fibers]/[# intra-hem fibers]');
+        %    xlabel('Brain volume (cm^3)'); ylabel('[# CC fibers]/[# intra-hem fibers]');
 
         %    set(gcf, 'Name', 'nwmfib_vs_cch_log');
         %end;
@@ -221,15 +223,15 @@ function Rinsel_paper(fig_list, out_path)
         %    % Add human data point
         %    human_ncc_fibers = (human_dens_abcor./human_dens_pred)*ncc_fibers(human_idx);
         %    human_nintra_fibers = (nwm_fibers(human_idx)-human_ncc_fibers);
-        %    dh = loglog(bvols(human_idx), human_ncc_fibers./human_nintra_fibers, 'g*', 'MarkerSize', 10, 'LineWidth',5);
-            
+        %    dh = loglog(mean(bvols(human_idx)), human_ncc_fibers./human_nintra_fibers, 'g*', 'MarkerSize', 10, 'LineWidth',5);
+
         %    % Add chimpanzee data point
         %    ch = loglog(chimp_brain_vol, predict_ncc_fibers(chimp_brain_vol)./predict_nintra_fibers(chimp_brain_vol), 'b*', 'MarkerSize', 10, 'LineWidth',5);
 
         %    % Update legend and axis labels
         %    [~,~,ph,pt] = legend(gca); legend([ph; dh; ch], [pt {' Human (corrected)', 'chimp'}], 'Location', 'NorthEast');
         %    guru_updatelegend(gca, 1, '[Computed]');
-        %    xlabel('Brain volume (mm^3)'); ylabel('[# CC fibers]/[# intra-hem fibers]');
+        %    xlabel('Brain volume (cm^3)'); ylabel('[# CC fibers]/[# intra-hem fibers]');
 
         %    set(gcf, 'Name', 'nwmfib_vs_cchc_lin');
         %end;
@@ -238,7 +240,7 @@ function Rinsel_paper(fig_list, out_path)
         %% Wang plot, showing human data
         if ismember('all',fig_list) || strcmp(fig_list{fi}, 'w_densh')            % Wang plot (w/ age-corrected human)
             [p,g] = allometric_regression(w_fig1e_weights, 1E3*w_fig1e_dens_est, 'log', 1, false, '');  % regress without human
-            
+
             % Plot, then adjust size and labels
             allometric_plot2([w_fig1e_weights human_brain_weight], [1E3*w_fig1e_dens_est human_dens_abcor], p, g, 'log');  % plot with human
             guru_updatelegend(gca, 1, ' Wang et. al (2008)');  % label the last entry as Wang data
@@ -246,7 +248,7 @@ function Rinsel_paper(fig_list, out_path)
             xlabel('Brain mass (g)'); ylabel('CC fiber density (fibers/ \mum^2)');
             legend('Location', 'NorthEast');
 
-            % Plot human, then update legend 
+            % Plot human, then update legend
             acch = plot(human_brain_weight, human_dens_abcor,  'g*', 'MarkerSize', 10, 'LineWidth',5);
             [~,~,ph,pt] = legend(gca); legend([ph; acch], [pt {' Aboitiz et. al, 1992 (corrected)'}], 'Location', 'NorthEast');
 
@@ -263,7 +265,7 @@ function Rinsel_paper(fig_list, out_path)
             set(gcf, 'Name', 'w_densh');
         end;
 
-        %% Wang data, regressed without human data 
+        %% Wang data, regressed without human data
         if ismember('all',fig_list) || strcmp(fig_list{fi}, 'w_dens')            % Wang plot (w/ age-corrected human)
             [p,g] = allometric_regression(w_fig1e_weights, 1E3*w_fig1e_dens_est, 'log', 1, false, '');
 
@@ -273,7 +275,7 @@ function Rinsel_paper(fig_list, out_path)
             set(gcf,'Position',[235    40   743   644]);
             xlabel('Brain mass (g)'); ylabel('CC fiber density (fibers/ \mum^2)');
             legend('Location', 'NorthEast');
-            
+
             % Add species labels
             for si=1:length(w_fig1c_species)
                if g.y(w_fig1e_weights(si)) > 1E3*w_fig1e_dens_est(si)
@@ -285,7 +287,7 @@ function Rinsel_paper(fig_list, out_path)
 
             set(gcf, 'Name', 'w_dens');
         end;
-        
+
         %% Lamantia age vs. density
         if ismember('all',fig_list) || strcmp(fig_list{fi}, 'lms_dens')            % Lamantia & Rakic (1990a): density decreases with age
             figure;
@@ -304,9 +306,11 @@ function Rinsel_paper(fig_list, out_path)
         if ismember('all',fig_list) || strcmp(fig_list{fi}, 'lms_dens_regression')
             [p1,g1,rsquared] = allometric_regression(lra_cc_age, lra_cc_density, 'log', 1, true)
             allometric_plot2(lra_cc_age, lra_cc_density, p1, g1, {'loglog'});
-            
+
             legend('Location', 'NorthEast');
             legend('Location', 'NorthEast');
+
+            set(gcf, 'Name', 'lms_dens_regression');
         end;
 
 
@@ -330,8 +334,8 @@ function Rinsel_paper(fig_list, out_path)
 
             set(gcf, 'Name', 'ab_dens');
         end;
-        
-        
+
+
         %% Save outputs
         if exist('out_path', 'var') && ~isempty(out_path)
             while ~isempty(findobj('type','figure'))

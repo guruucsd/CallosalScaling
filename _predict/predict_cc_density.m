@@ -29,7 +29,7 @@ function [ccdens] = predict_cc_density(brwt, bvol, use_human)
             all_cc_dens = w_fig1e_dens_est;
         else
             human_dens_ab_raw = 3.717 * 1E5 * (1-0.35)^(1); % correct for shrinkage
-            human_dens_ab     = human_dens_ab_raw*1.21;     % correct for 20% missing fibers
+            human_dens_ab     = human_dens_ab_raw*1.20;     % correct for 20% missing fibers
             human_dens_abcor  = human_dens_ab*1.2;          % correct for age; TODO: predict this directly, don't hard-code.
 
             all_br_wts = [w_fig1e_weights get_human_brain_weight()];
