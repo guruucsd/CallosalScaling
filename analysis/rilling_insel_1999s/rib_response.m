@@ -33,7 +33,7 @@ function rib_response(collation, figs)
     fprintf('r^2=%5.3f\n', rsq{1})
     if ismember('all', figs) || ismember('bv_vs_cc_cxns', figs)
         allometric_plot2(bvols, ncc_fibers, p, g);
-        ylabel('# cc fibers'); xlabel('brain volume (mm^3)');
+        ylabel('# cc fibers'); xlabel('brain volume (cm^3)');
     end;
 
 
@@ -91,22 +91,22 @@ function rib_response(collation, figs)
         
         subplot(1,2,1)
         allometric_plot2(ncc_fibers./nintra_fibers, 1./(nareaconns-1), p1, g1, 'loglog', fh);
-        ylabel('1/([# area conns/area]-1)'); xlabel('[# cc cxns]/[# intra- wm cxns]');
-        title('allometric version');
+        ylabel('inter-area connection ratio'); xlabel('fiber count ratio');
+        title(sprintf('allometric version (r^2=%5.3f)', rsq1{1}));
 
         subplot(1,2,2)
         allometric_plot2(ncc_fibers./nintra_fibers, 1./(nareaconns-1), [1 p2(1)], g2, 'linear', fh);
-        ylabel('1/([# area conns/area]-1)'); xlabel('[# cc cxns]/[# intra- wm cxns]');
-        title('linear version');
+        ylabel('inter-area connection ratio'); xlabel('fiber count ratio');
+        title(sprintf('linear version (r^2=%5.3f)', rsq2{1}));
         
     elseif ismember('all', figs) || ismember('prop_fibers_vs_prop_aa_cxns', figs)
         allometric_plot2(ncc_fibers./nintra_fibers, 1./(nareaconns-1), p1, g1, {'linear', 'loglog'});
-        ylabel('1/([# area conns/area]-1)'); xlabel('[# cc cxns]/[# intra- wm cxns]');
+        ylabel('inter-area connection ratio'); xlabel('fiber count ratio');
         title('allometric version');
 
     elseif ismember('all', figs) || ismember('prop_fibers_vs_prop_aa_cxns_linear', figs)
         allometric_plot2(ncc_fibers./nintra_fibers, 1./(nareaconns-1), [1 p2(1)], g2, 'linear');
-        ylabel('1/([# area conns/area]-1)'); xlabel('[# cc cxns]/[# intra- wm cxns]');
+        ylabel('inter-area connection ratio'); xlabel('fiber count ratio');
         title('linear version');
     end;
 
@@ -161,22 +161,23 @@ function rib_response(collation, figs)
 
         subplot(1,2,1);
         allometric_plot2(nintra_fibers./(nareaconns-1), ncc_fibers./1, p1, g1, 'loglog', fh);
-        ylabel('[# cc conns]'); xlabel('[#intra cxns] / ([#narea cxns]-1)');
+        ylabel('[# callosal cxns]'); xlabel('[#intra cxns] / ([#narea cxns]-1)');
+        title(sprintf('allometric version (r^2=%5.3f)', rsq1{1}));
 
         subplot(1,2,2);
         allometric_plot2(nintra_fibers./(nareaconns-1), ncc_fibers./1, [1 p2(1)], g2, 'linear', fh);
-        ylabel('[# cc conns]'); xlabel('[#intra cxns] / ([#narea cxns]-1)');
-        title('linear version');
-    
+        ylabel('[# callosal cxns]'); xlabel('[#intra cxns] / ([#narea cxns]-1)');
+        title(sprintf('linear version (r^2=%5.3f)', rsq2{1}));
+
     % Just the non-linear plot
     elseif ismember('all', figs) || ismember('intra_vs_cc_scaling', figs)
         allometric_plot2(nintra_fibers./(nareaconns-1), ncc_fibers./1, p1, g1, {'linear','loglog'});
-        ylabel('[# cc conns]'); xlabel('[#intra cxns] / ([#narea cxns]-1)');
+        ylabel('[# callosal cxns]'); xlabel('[#intra cxns] / ([#narea cxns]-1)');
 
     % Just the linear plot
     elseif ismember('all', figs) || ismember('intra_vs_cc_scaling_linear', figs)
         allometric_plot2(nintra_fibers./(nareaconns-1), ncc_fibers./1, [1 p2(1)], g2, 'linear');
-        ylabel('[# cc conns]'); xlabel('[#intra cxns] / ([#narea cxns]-1)');
+        ylabel('[# callosal cxns]'); xlabel('[#intra cxns] / ([#narea cxns]-1)');
         title('linear version');
     end;
         
