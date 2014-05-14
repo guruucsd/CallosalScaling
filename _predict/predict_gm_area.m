@@ -58,7 +58,7 @@ function [gma] = predict_gm_area(brwt, bvol, area_type, collation)
                     idxa = fi==famidxa;
                     idxb = fi==famidxb;
                     bvols(fi) = mean(rib_fig1b_brain_volumes(idxb));
-                    gmas(fi) = mean(rib_fig2_gmas(idxb)).*mean(ria_table6_gi(idxa));
+                    gmas(fi) = mean(rib_fig2_gmas(idxb)).*mean(ria_table6_gi(idxa));  % cm^2
                 end;
 
             case 'species'
@@ -70,7 +70,7 @@ function [gma] = predict_gm_area(brwt, bvol, area_type, collation)
 
             case 'individual'
                 % We get the GMA from 1999b Fig 2, multiply by GI.
-                bvols = rib_fig1b_brain_volumes;
+                bvols = rib_fig1b_brain_volumes;  % cm^3
 
                 % Use the family GI
                 gis  = zeros(size(rib_fig2_gmas));
@@ -78,7 +78,7 @@ function [gma] = predict_gm_area(brwt, bvol, area_type, collation)
                     gis(famidxb==fi) = mean(ria_table6_gi(famidxa==fi));
                 end;
 
-                gmas = rib_fig2_gmas .* gis;
+                gmas = rib_fig2_gmas .* gis;  % cm^2
         end;
 
         % Now, do the regression

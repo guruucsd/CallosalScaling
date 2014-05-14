@@ -27,6 +27,6 @@ function ndens = predict_ndens(brwt, bvol)
         fprintf('Neuron density (Tower, 1954): %5.3e * brwt^%5.3f, r^2=%5.3f\n', 10.^p_ndens(2), p_ndens(1), rsq{1});
     end;
 
-    ndens = g_ndens.y(brwt);  % neurons / mm^3
+    ndens = g_ndens.y(brwt);  % neurons / g
 
 

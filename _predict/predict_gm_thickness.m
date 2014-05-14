@@ -15,7 +15,7 @@ function gmt = predict_gm_thickness(brwt, bvol)
     if ~exist('bvol','var') || isempty(bvol), bvol = predict_bvol(brwt); end;
 
     if isempty(g_gmt) || true
-        g_gmt.y = @(bvol) 10*(0.0258 * log(bvol) + 0.084); % where are these from?
+        g_gmt.y = @(bvol) 10*(0.0258 * log(bvol) + 0.084); %Hofman, 1989, in cm
     end;
 
     gmt = g_gmt.y(bvol);  % cm

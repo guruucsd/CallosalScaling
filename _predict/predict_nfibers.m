@@ -32,8 +32,8 @@ function [nwm,ncc,nintra] = predict_nfibers(brwt, bvol, gmv, ndens, ccdens, cca,
 
     % send both weight and volume, it will pick the native one
     if ~exist('gmv','var') || isempty(gmv),          gmv      = predict_gm_volume(brwt, bvol); end;  % cc^3  default collation (species)
-    if ~exist('ndens','var') || isempty(ndens),      ndens    = predict_ndens(brwt, bvol); end;  % mm^3
-    if ~exist('ccdens','var') || isempty(ccdens),    ccdens   = predict_cc_density(brwt, bvol); end;  %axons/mm^2
+    if ~exist('ndens','var') || isempty(ndens),      ndens    = predict_ndens(brwt, bvol); end;  % cm^3
+    if ~exist('ccdens','var') || isempty(ccdens),    ccdens   = predict_cc_density(brwt, bvol); end;  % axons/mm^2
     if ~exist('cca','var') || isempty(cca)           cca      = predict_cc_area(brwt, bvol); end;
     if ~exist('pct_proj','var') || isempty(pct_proj),pct_proj = predict_pct_proj(brwt, bvol); end;
 
