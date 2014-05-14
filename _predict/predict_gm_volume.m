@@ -1,5 +1,5 @@
 function [gmv] = predict_gm_volume(brwt, bvol, collation)
-%function [gmv] = predict_gm_volume(brwt, bvol)
+%function [gmv] = predict_gm_volume(brwt, bvol, collation)
 %
 % Predict grey matter volume (cm^3) via data from Rilling & Insel (1999a/b)
 %   and potentially others.
@@ -45,7 +45,7 @@ function [gmv] = predict_gm_volume(brwt, bvol, collation)
         case 'species'
             gmv = g_gmv.y(bvol);  % cm^3
         otherwise
-            gma = predict_gm_area(brwt, bvol, 'total', collation);
+            gma = predict_gm_area(brwt, bvol, collation);
             gmt = predict_gm_thickness(brwt, bvol);
             gmv = gma .* gmt;     % cm^2 * cm
     end;

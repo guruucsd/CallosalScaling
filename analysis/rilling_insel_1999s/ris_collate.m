@@ -39,7 +39,7 @@ function [bvols, ccas, gmas] = ris_collate(collation)
                 idxb = fi==famidxb;
                 bvols(fi) = mean(rib_fig1b_brain_volumes(idxb));
                 ccas(fi) = mean(rib_fig2_ccas(idxb));
-                gmas(fi) = mean(rib_fig2_gmas(idxb)).*mean(ria_table6_gi(idxa));
+                gmas(fi) = mean(rib_fig2_gmas(idxb));%.*mean(ria_table6_gi(idxa));
             end;
 
         case 'family-s' %from species
@@ -57,7 +57,7 @@ function [bvols, ccas, gmas] = ris_collate(collation)
         case 'species'
             bvols = rib_table1_brainvol;%rib_fig1b_brain_volumes;
             ccas = rib_table1_ccarea;%rib_fig2_ccas;
-            gmas = ria_table1_gmvol./predict_gm_thickness([], bvols);
+            gmas = ria_table1_gmvol ./ predict_gm_thickness([], bvols);
 
         case 'individual'
             bvols = rib_fig1b_brain_volumes;
@@ -69,7 +69,10 @@ function [bvols, ccas, gmas] = ris_collate(collation)
                 gis(famidxb==fi) = mean(ria_table6_gi(famidxa==fi));
             end;
 
-            gmas = rib_fig2_gmas.*gis;
+            gmas = rib_fig2_gmas;%.*gis;
+            %keyboard
 
         otherwise, error('Unknown collation: %s', collation)
     end;
+    
+    %collation(:)', bvols(:)', ccas(:)', gmas(:)'

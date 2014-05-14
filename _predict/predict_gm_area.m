@@ -1,4 +1,4 @@
-function [gma] = predict_gm_area(brwt, bvol, area_type, collation)
+function [gma] = predict_gm_area(brwt, bvol, collation, area_type)
 %function [gma] = predict_gm_area(brwt, bvol)
 %
 % Predict grey matter volume, based on Rilling & Insel (1999a, 1999b)
@@ -26,9 +26,11 @@ function [gma] = predict_gm_area(brwt, bvol, area_type, collation)
 
     global g_gmas g_gma_collations;
 
-    if ~exist('area_type','var'), area_type = 'total'; end;
-    if ~exist('collation','var'), collation = 'family'; end;
+    collation = 'species';
+
     if ~exist('bvol','var') || isempty(bvol), bvol = predict_bvol(brwt); end;
+    if ~exist('collation','var') || isempty(collation), collation = 'species'; end;
+    if ~exist('area_type','var') || isempty(area_type), area_type = 'total'; end;
     if isempty(g_gmas), g_gmas = {}; g_gma_collations = {}; end;
 
     if ~strcmp(area_type, 'total'), error('Area type "%s" is NYI.', area_type); end;
@@ -58,15 +60,15 @@ function [gma] = predict_gm_area(brwt, bvol, area_type, collation)
                     idxa = fi==famidxa;
                     idxb = fi==famidxb;
                     bvols(fi) = mean(rib_fig1b_brain_volumes(idxb));
-                    gmas(fi) = mean(rib_fig2_gmas(idxb)).*mean(ria_table6_gi(idxa));  % cm^2
+                    gmas(fi) = mean(rib_fig2_gmas(idxb));% .* mean(ria_table6_gi(idxa));  % cm^2
                 end;
 
             case 'species'
                 % We get the species volume, then divide by the estimated
                 % thickness.
-                error('Species computation doesn''t yet use GI');
                 bvols = rib_table1_brainvol;%rib_fig1b_brain_volumes;
                 gmas = ria_table1_gmvol./predict_gm_thickness([], bvols);
+                %error('Species computation doesn''t yet use GI');
 
             case 'individual'
                 % We get the GMA from 1999b Fig 2, multiply by GI.
@@ -78,13 +80,16 @@ function [gma] = predict_gm_area(brwt, bvol, area_type, collation)
                     gis(famidxb==fi) = mean(ria_table6_gi(famidxa==fi));
                 end;
 
-                gmas = rib_fig2_gmas .* gis;  % cm^2
+                gmas = rib_fig2_gmas;% .* gis;  % cm^2
         end;
-
+        %gmas(:)'
+        %bvols(:)'
         % Now, do the regression
         [p_gma, g_gmas{end+1}, rsq] = allometric_regression(bvols, gmas);
+        %allometric_plot2(bvols, gmas, p_gma, g_gmas{end}, {'loglog', 'linear'});
+
         g_gma_collations{end+1} = collation;
-        fprintf('Grey matter surface area (%s) (Rilling & Insel, 1999a/b): %5.3f * bvol^%5.3f, r^2=%5.3f\n', collation, 10.^p_gma(2), p_gma(1), rsq);
+        fprintf('Grey matter surface area (%s) (Rilling & Insel, 1999a/b): %5.3f * bvol^%5.3f, r^2=%5.3f\n', collation, 10.^p_gma(2), p_gma(1), rsq{1});
     end;
 
     % Now use the functions to compute # cc fibers and # neurons
