@@ -39,16 +39,24 @@ function vars = rib_data(validate_data, visualize_data)
     data_xpix_b = [data_xpix_b(1:10); data_xpix_b(9:end)]; %duplicate two overlapping ones
     data_ypix_b = [data_ypix_b(1:10); data_ypix_b(9:end)]; %duplicate two overlapping ones
 
-    data_ypix = [data_ypix_r; data_ypix_g; data_ypix_b];
-    data_xpix = [data_xpix_r; data_xpix_g; data_xpix_b];
+    data_ypix = [data_ypix_g; data_ypix_r; data_ypix_b];
+    data_xpix = [data_xpix_g; data_xpix_r; data_xpix_b];
 
     % get family indices
     rib_families = {'cebids'    'cercopithecids'    'hylobatids'    'pongids' 'humans'};
-    [idx,c] = kmeans(data_xpix_b, 3);
+    [idx,c] = kmeans(data_xpix_b, 3);  % separate pongids, humans, and everybody else
     [~,idx2] = sort(c);
     for ci=1:length(c), b_fam_idx(idx==idx2(ci))=ci; end;
-    rib_fig1b_fam_idx = [1*ones(1, length(data_xpix_r)) 2*ones(1, length(data_xpix_g)) 2+b_fam_idx];
+    rib_fig1b_fam_idx = [1*ones(1, length(data_xpix_g)) 2*ones(1, length(data_xpix_r)) 2+b_fam_idx];
     rib_fig1b_families = rib_families(rib_fig1b_fam_idx);
+    if validate_data
+        % taken from fig 1 caption
+        guru_assert(8 == sum(strcmp('cebids', rib_fig1b_families)), 'Wrong cebid count');
+        guru_assert(9 == sum(strcmp('cercopithecids', rib_fig1b_families)), 'Wrong cercopithecid count');
+        guru_assert(4 == sum(strcmp('hylobatids', rib_fig1b_families)), 'Wrong hylobatid count');
+        guru_assert(16 == sum(strcmp('pongids', rib_fig1b_families)), 'Wrong pongid count');
+        guru_assert(6 == sum(strcmp('humans', rib_fig1b_families)), 'Wrong human count');
+    end;
 
     % Get the (b&w) axes
     [yaxis_idx,yaxis_width]=get_groups(sum(img,1)>0.75*size(img,1));
@@ -63,7 +71,7 @@ function vars = rib_data(validate_data, visualize_data)
     rib_fig1b_ccas = 10.^(1.5+(yticks(end)-data_ypix)/mean(diff(yticks))*0.5);
 
     % Re-create the plot!
-    p_cca = polyfit(log10(rib_fig1b_brain_volumes), log10(rib_fig1b_ccas), 1);
+    p_cca = polyfit(log10(rib_fig1b_brain_volumes), log10(rib_fig1b_ccas), 1);  % Rilling & Insel used regular linear regression
     if validate_data
         p_cca_reported = [0.70, 0.65];
         cca_error_estimate = abs(100 * (p_cca - p_cca_reported) ./ ((p_cca + p_cca_reported) / 2));
@@ -73,8 +81,8 @@ function vars = rib_data(validate_data, visualize_data)
         figure; set(gcf, 'Position', [19         303        1122         381]);
         subplot(1,2,1);
         imshow(~img); hold on;
-        plot(data_xpix_r, data_ypix_r, 'r*');
         plot(data_xpix_g, data_ypix_g, 'g*');
+        plot(data_xpix_r, data_ypix_r, 'r*');
         plot(data_xpix_b, data_ypix_b, 'b*');
 
         subplot(1,2,2);
@@ -84,7 +92,7 @@ function vars = rib_data(validate_data, visualize_data)
         xlabel('log(brain volume) (g)'); ylabel('log(cca) (mm^2)');
         title(sprintf('Regression: %4.2fX + %4.2f', p_cca));
     end;
-    
+
 
     %% Fig 2
     [data_ypix_cca,data_xpix_cca] = get_pixels_by_color(fullfile(RIB_img_dirpath, 'Fig2_reddot.png'), 'r');
@@ -110,15 +118,15 @@ function vars = rib_data(validate_data, visualize_data)
         figure; imshow(img); hold on; plot(yaxis_idx(1), yticks_cca, 'r*');
         plot(yaxis_idx(2), yticks_wmv, 'g*'); plot(xticks, xaxis_idx(2), 'b*');
     end;
-    
+
     % Convert the datapoints from pixels to data(x,y) values
     rib_fig2_gmas = 10.^(0+((data_xpix_cca+data_xpix_wmv)/2 - xticks(1))/mean(diff(xticks))*1); % average over cca and wmv; should have same xval!
-    rib_fig2_ccas = 10.^(0+(yticks_cca(end)-data_ypix_cca)/mean(diff(yticks_cca))*1);
-    rib_fig2_wmvs = 10.^(0+(yticks_wmv(end)-data_ypix_wmv)/mean(diff(yticks_wmv))*1);
+    rib_fig2_ccas = 10.^(0+(yticks_cca(end)-data_ypix_cca)/mean(diff(yticks_cca))*1);  % y axis starts at zero, each tick represents 1
+    rib_fig2_wmvs = 10.^(0+(yticks_wmv(end)-data_ypix_wmv)/mean(diff(yticks_wmv))*1);  % y axis starts at zero, each tick represents 1
 
     % Re-create the plot!
-    p_cca = polyfit(log10(rib_fig2_gmas), log10(rib_fig2_ccas), 1);
-    p_wmv = polyfit(log10(rib_fig2_gmas), log10(rib_fig2_wmvs), 1);
+    p_cca = polyfit(log10(rib_fig2_gmas), log10(rib_fig2_ccas), 1);  % Rilling & Insel used regular linear regression
+    p_wmv = polyfit(log10(rib_fig2_gmas), log10(rib_fig2_wmvs), 1);  % Rilling & Insel used regular linear regression
     if validate_data
         p_cca_reported = [0.88, 0.84];
         cca_error_estimate = abs(100 * (p_cca - p_cca_reported) ./ ((p_cca + p_cca_reported) / 2));
@@ -128,6 +136,7 @@ function vars = rib_data(validate_data, visualize_data)
         wmv_error_estimate = abs(100 * (p_wmv - p_wmv_reported) ./ ((p_wmv + p_wmv_reported) / 2));
         fprintf('WMV (Fig 2) error estimate: %4.2f - %4.2f%%\n', wmv_error_estimate);
     end;
+
     if visualize_data
         figure; set(gcf, 'Position', [49         290        1194         394]);
         subplot(1,2,1);
@@ -146,10 +155,10 @@ function vars = rib_data(validate_data, visualize_data)
         xlabel('log(grey matter surface area) (g)'); ylabel('log(cca) (mm^2)');
         title(sprintf('Regressions: %4.2fX + %4.2f\n\t%4.2fX+%4.2f', p_cca, p_wmv));
     end;
-        
+
     % now build a database
     [rib_fig1b_ccas,idx1] = sort(rib_fig1b_ccas); rib_fig1b_brain_volumes = rib_fig1b_brain_volumes(idx1);
-    [rib_fig2_ccas,idx2]  = sort(rib_fig2_ccas);  rib_fig2_gmas = rib_fig2_gmas(idx2); rib_fig2_wmvs = rib_fig2_wmvs(idx2);
+    [rib_fig2_ccas, idx2] = sort(rib_fig2_ccas);  rib_fig2_gmas = rib_fig2_gmas(idx2); rib_fig2_wmvs = rib_fig2_wmvs(idx2);
 
     rib_data_names = {'CCA (fig1b)' 'CCA (fig2)' 'Brain Volume' 'Grey Matter Volume' 'White Matter Volume'};
     rib_database = [rib_fig1b_ccas rib_fig2_ccas rib_fig1b_brain_volumes rib_fig2_gmas rib_fig2_wmvs]; % the database
