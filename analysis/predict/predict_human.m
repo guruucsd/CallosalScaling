@@ -8,19 +8,21 @@ if ~iscell(figs), figs = {figs}; end;
 pdh_dir = fileparts(which(mfilename));
 analysis_dir = fullfile(pdh_dir, '..');
 
-
-%% Validation 1: Aboitiz et al, 1992
+%% Load data
 load(fullfile(analysis_dir, 'aboitiz_etal_1992', 'ab_data.mat'));
 human_brain_weight = get_human_brain_weight();
+ab_fig4_xbin_vals = ab_fig4_xbin_vals / 0.65;
 
-xvals = guru_newbins( ab_fig4_xbin_vals, 1 );
+
+%% Validation 1: Aboitiz et al, 1992
+xvals = guru_newbins( ab_fig4_xbin_vals, 5 );
 [ab_overall_distn, ab_fig4_xbin_vals] = rebin_distn(ab_overall_distn./sum(ab_overall_distn), ab_fig4_xbin_vals, xvals, (ismember('rebin',figs) || ismember('all',figs)));
 %[ab_overall_distn, ab_fig4_xbin_vals] = rebin_distn(ab_overall_distn./sum(ab_overall_distn), ab_fig4_xbin_vals, [0 ab_fig4_xbin_vals]);
 %[ab_overall_distn, ab_fig4_xbin_vals] = smooth_distn(ab_overall_distn, ab_fig4_xbin_vals, 2, 2, true);
 
 %% Predict distribution parameters, for humans
 %% Predict the % myelination
-[cc_add, cc_add_mye, cc_add_unmye, pct_mye, xvals] = predict_cc_add([], 1289, ab_fig4_xbin_vals, [], fit_fn, frac)
+[cc_add, cc_add_mye, cc_add_unmye, pct_mye, xvals] = predict_cc_add([], 1289, ab_fig4_xbin_vals, [], fit_fn, frac);
 %close(gcf); f_regress = gcf;
 
 % Fit that data directly, plot it
@@ -60,7 +62,7 @@ if ismember('predict_ab',figs) || ismember('all',figs)
     hold on;
     bar(xvals, cc_add_mye, 1, 'b', 'EdgeColor','b');
     ch = get(bh,'child');
-    set(ch,'facea',.5)
+    set(ch, 'facea', .5)
 
     axis tight;%set(gca, 'ylim', [0 0.60], 'xlim', [0 4]);
     set(gca, 'xlim', [0 4]);
@@ -80,23 +82,27 @@ if ismember('predict_ab',figs) || ismember('all',figs)
     title('Predicted (combined) histograms vs. data');
     xlabel('axon diameter (\mu m)'); ylabel('proportion');
 
-    % subplot 3
+    % subplot 3: compare the measured and predicted distributions
     subplot(1,3,3);
-    dff = ab_overall_distn - cc_add;
-    dff = pmffn(ab_fig4_xbin_vals, pab) - cc_add;
+    %dff = ab_overall_distn - pmffn(ab_fig4_xbin_vals, pab);  % compare actual data
+    dff = ab_overall_distn - cc_add;  % compare fit data
     bar(xvals, dff);
     axis tight;
-    [~,idx] = max(abs(dff))
-    idx = find(dff(idx:end)>0, 1,'first') + idx-1;
-    title(sprintf('%f%%', sum(dff(1:idx-1))*-100));
+    [~,idx] = max(abs(dff))   % find the peak point of difference
+    idx = find(dff(idx:end)>0, 1,'first') + idx-1;  % find starting positive point
+    pct_diff = sum(dff(1:idx-1));  % should be same as sum(dff(idx:end))
+    title(sprintf('%5.2f%% difference', 100 * -sum(dff(1:idx-1))));  % 
     sum(cc_add(xvals<=1))
     sum(ab_overall_distn(xvals<=1))
     hold on;
     plot(xvals(idx),0,'r*');
+    %keyboard
 end;
 
-fprintf('Aboitiz effective density: %f\n', calc_fiber_density(xvals, (ab_overall_distn.*(xvals>0.4))./sum((ab_overall_distn.*(xvals>0.3))), xvals, cc_add_unmye, pct_mye));
-fprintf('Predicted distribution''s effective fiber density: %f\n', calc_fiber_density(xvals, cc_add_mye, xvals, cc_add_unmye, pct_mye));
+fprintf('Aboitiz effective density: %f\n', calc_fiber_density(xvals, -ab_overall_distn + pmffn(xvals, pab), xvals, cc_add_unmye, 1));
+fprintf('Aboitiz effective density: %f\n', calc_fiber_density(xvals, ab_overall_distn, xvals, cc_add_unmye, 1));
+%fprintf('Aboitiz effective density: %f\n', calc_fiber_density(xvals, (ab_overall_distn.*(xvals>0.4))./sum((ab_overall_distn.*(xvals>0.3))), xvals, cc_add_unmye, pct_mye));
+fprintf('Predicted distribution''s effective fiber density: %f\n', calc_fiber_density(xvals, cc_add_mye, xvals, cc_add_unmye, 1));
 
 
 
