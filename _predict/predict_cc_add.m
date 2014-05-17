@@ -1,4 +1,4 @@
-function [cc_add, c_add_mye, c_add_unmye, pct_mye, xvals] = predict_cc_add(brwt, bvol, xvals, pct_mye, fit_distn, frac, regress_type)
+function [cc_add, c_add_mye, c_add_unmye, pct_mye, xvals] = predict_cc_add(brwt, bvol, xvals, pct_mye, fit_distn, frac)
 %function [cc_add, c_add_mye, c_add_unmye, pct_mye, xvals] = predict_cc_add(brwt, bvol, xvals, fit_distn, frac, regress_type)
 %
 % Fit Wang et al. (2008) data (myelinated & unmyelinated ADD),
@@ -31,8 +31,8 @@ function [cc_add, c_add_mye, c_add_unmye, pct_mye, xvals] = predict_cc_add(brwt,
     global g_params_mye g_params_unmye
 
     if ~exist('fit_distn',   'var') || isempty(fit_distn),   fit_distn   =guru_iff(isempty(g_cc_fit_distn),   'gamma', g_cc_fit_distn); end;
-    if ~exist('frac',        'var')  || isempty(frac),        frac        =guru_iff(isempty(g_cc_frac),        1/20, g_cc_frac); end;
-    if ~exist('regress_type','var')  || isempty(regress_type),regress_type=guru_iff(isempty(g_cc_regress_type), 'linear', g_cc_regress_type); end;
+    if ~exist('frac',        'var') || isempty(frac),        frac        =guru_iff(isempty(g_cc_frac),        1/20, g_cc_frac); end;
+    if ~exist('regress_type','var') || isempty(regress_type),regress_type=guru_iff(isempty(g_cc_regress_type), 'linear', g_cc_regress_type); end;
 
     % Fit the distributions
     if isempty(g_cc_add) || ~strcmp(g_cc_fit_distn, fit_distn) || (isempty(g_cc_frac) || frac ~= g_cc_frac)
@@ -133,23 +133,17 @@ function [gmpm gmps gupm gups] = regress_cc_add_params(uparams, mparams, fit_dis
             switch fit_distn
                 case {'IUBD','gamma'}
 
-                    [pmpm,Rmpm] = polyfit(log10([w_fig4_brain_weights])', log10([mparams(1,:)]'), 1);
-                    [pmps,Rmps] = polyfit(log10([w_fig4_brain_weights])', log10([mparams(2,:)]'), 1);
-                    [pupm,Rupm] = polyfit(log10(w_fig4_brain_weights)', log10(uparams(1,:)'), 1);
-                    [pups,Rups] = polyfit(log10(w_fig4_brain_weights)', log10(uparams(2,:)'), 1);
-
-                    gmpm = @(wt) 10.^(polyval(pmpm, log10(wt)));
-                    gmps = @(wt) 10.^(polyval(pmps, log10(wt), Rmps));
-                    gupm = @(wt) 10.^(polyval(pupm, log10(wt), Rupm));
-                    gups = @(wt) 10.^(polyval(pups, log10(wt), Rups));
-
+                    [~, gmpm] = allometric_regression(w_fig4_brain_weights, mparams(1,:)); gmpm = gmpm.y;
+                    [~, gmps] = allometric_regression(w_fig4_brain_weights, mparams(2,:)); gmps = gmps.y;
+                    [~, gupm] = allometric_regression(w_fig4_brain_weights, uparams(1,:)); gupm = gupm.y;
+                    [~, gups] = allometric_regression(w_fig4_brain_weights, uparams(2,:)); gups = gups.y;
 
                 case {'lognormal'}
 
-                    [pmpm,Rmpm] = polyfit(log10([w_fig4_brain_weights])', ([mparams(1,:)]'), 1);
-                    [pmps,Rmps] = polyfit(log10([w_fig4_brain_weights])', ([mparams(2,:)]'), 1);
-                    [pupm,Rupm] = polyfit(log10(w_fig4_brain_weights)', (uparams(1,:)'), 1);
-                    [pups,Rups] = polyfit(log10(w_fig4_brain_weights)', (uparams(2,:)'), 1);
+                    [pmpm, Rmpm] = polyfit(log10([w_fig4_brain_weights])', ([mparams(1,:)]'), 1);
+                    [pmps, Rmps] = polyfit(log10([w_fig4_brain_weights])', ([mparams(2,:)]'), 1);
+                    [pupm, Rupm] = polyfit(log10(w_fig4_brain_weights)', (uparams(1,:)'), 1);
+                    [pups, Rups] = polyfit(log10(w_fig4_brain_weights)', (uparams(2,:)'), 1);
 
                     gmpm = @(wt) (polyval(pmpm, log10(wt)));
                     gmps = @(wt) (polyval(pmps, log10(wt), Rmps));
