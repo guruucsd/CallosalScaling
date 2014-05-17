@@ -63,8 +63,10 @@ function collect_all(datasets, force, validate_data, visualize_data)
                 % Run the data collection; output is a struct
                 fprintf('Running "%s" ... ', fullfile(dataset, data_mfile.name));
                 vars = eval(sprintf('%s(validate_data, visualize_data);', data_mfile.name(1:end-2))); % run as a matlab script
-                close all;  % in case any plots were generated
-
+                if ~visualize_data
+                    close all;  % in case any plots were generated
+                end;
+                
                 % Save the variables by decomposing the struct,
                 %   assigning the vars locally, saving,
                 %   then cleaning up.
