@@ -33,10 +33,8 @@ function vars = w_data(validate_data, visualize_data)
     w_brain_weights = [0.14 0.4 1.6 nan 31 89 nan nan nan nan 936 1300 1824 7500]; %g
     w_brain_diameters = [0.6 0.9 1.4 2.4 3.8 5.5 8.6 8.9 9.7 9.7 12.0 14.5 14.9 22.7]; %cm
 
-    plog = polyfit(log10(w_brain_diameters(~isnan(w_brain_weights)).^3), log10(w_brain_weights(~isnan(w_brain_weights))), 1);
-%    plin = polyfit(w_brain_diameters(~isnan(w_brain_weights)).^3, w_brain_weights(~isnan(w_brain_weights)), 1);
-    est_brain_weights = 10.^(plog(1)*log10(w_brain_diameters.^3) + plog(2));
-%    est_brain_weights = plin(1)*w_brain_diameters.^3 + plin(2);
+    [plog, glog, rsqlog] = allometric_regression(w_brain_diameters(~isnan(w_brain_weights)).^3, w_brain_weights(~isnan(w_brain_weights)));
+    est_brain_weights = glog.y(w_brain_diameters.^3);
 
     % retrofit the weights
     if visualize_data
@@ -95,32 +93,30 @@ function vars = w_data(validate_data, visualize_data)
 
 
     %% Fig 1c: Create diameter => weight mapping function (v2 now obsolete)
-    img = scrub_image(fullfile(W_img_dirpath, 'Fig1c_xaxis.png'));
-
-    % Find x axes
-    g = get_groups(sum(img,2) > size(img,2)*0.75);
-
-    % Get x ticks after that
-    xticks_diam = get_groups(img(round(g(1)+2),:));
-    xticks_wt   = get_groups(img(round(g(2)+2),:));
-
-    % Compute the diameter from the pix
-    diam_cm = @(px) (2*(px-xticks_diam(1))/mean(diff(xticks_diam)));
-    diam2wt_pts = diam_cm(xticks_wt); %these correspond to 1,10,100gm
-
-    pw = polyfit(diam_cm(xticks_wt),log10([1 10 100]),1);
-    gw = @(cm) (10.^(pw(2)+pw(1)*cm));
-
-    wts = [1 10 100]; wts2 = min(wts):max(wts);
-    p = polyfit(log10(wts), diam2wt_pts, 2);
-    diam2wt = @(wt) (p(1)*log10(wt).^2 + p(2).*log10(wt) + p(3));
-
-    if visualize_data
-        % Plot to show fitting function
-        figure;    hold on;
-        plot(log10(wts), diam2wt_pts, 'o');
-        plot(log10(wts2), diam2wt(wts2));
-    end;
+%     img = scrub_image(fullfile(W_img_dirpath, 'Fig1c_xaxis.png'));
+% 
+%     % Find x axes
+%     g = get_groups(sum(img,2) > size(img,2)*0.75);
+% 
+%     % Get x ticks after that
+%     xticks_diam = get_groups(img(round(g(1)+2),:));
+%     xticks_wt   = get_groups(img(round(g(2)+2),:));
+% 
+%     % Compute the diameter from the pix
+%     diam_cm = @(px) (2*(px-xticks_diam(1))/mean(diff(xticks_diam)));
+%     diam2wt_pts = diam_cm(xticks_wt); %these correspond to 1,10,100gm
+% 
+%     % Some points for comparison
+%     wts = [1 10 100]; wts2 = min(wts):max(wts);
+%     p = polyfit(log10(wts), diam2wt_pts, 2);
+%     diam2wt = @(wt) (p(1)*log10(wt).^2 + p(2).*log10(wt) + p(3));
+% 
+%     if visualize_data
+%         % Plot to show fitting function
+%         figure;    hold on;
+%         plot(log10(wts), diam2wt_pts, 'o');
+%         plot(log10(wts2), diam2wt(wts2));
+%     end;
 
 
     %% Grab points from Fig 1e
@@ -172,17 +168,16 @@ function vars = w_data(validate_data, visualize_data)
     diam_cm_ticks = (xticks -xticks(1)) / mean(diff(xticks)); %0 :6 on linear scale
     diam_cm_fn = @(xp) ((xp-xticks(1))/mean(diff(xticks)));
     diam_cm_data = diam_cm_fn(gx);
-    wt_g_data = diam2wt(diam_cm_data);
 
     % assume a log scale on y-axis, and find the pix=>density scale factor
-    pg = polyfit(yticks(end:-1:1),log10([0.3 1 2 3 4 5 6]),1) ;
-    gg = @(y) (10.^(pg(2)+pg(1)*y));
+    [pg, gg, rsqgg] = allometric_regression(10.^yticks(end:-1:1), [0.3 1 2 3 4 5 6]);
+    %gg = @(y) (10.^(pg(2)+pg(1)*y));
 
     % hardcoded species names & weights
     w_fig1e_species = {'least shrew' 'mouse' 'rat' 'marmoset' 'cat' 'macaque'};
-    [~,species_idx] = ismember(w_fig1e_species, w_species);
+    [~, species_idx] = ismember(w_fig1e_species, w_species);
     w_fig1e_weights = w_brain_weights(species_idx);
-    w_fig1e_dens_est = [gg(gy)];% log10(3.8)];  % axons / um^2
+    w_fig1e_dens_est = gg.y(gy);% log10(3.8)];  % axons / um^2
 
     if visualize_data
         figure; hold on;
