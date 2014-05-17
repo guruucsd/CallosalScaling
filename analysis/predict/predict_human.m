@@ -10,8 +10,8 @@ analysis_dir = fullfile(pdh_dir, '..');
 
 %% Load data
 load(fullfile(analysis_dir, 'aboitiz_etal_1992', 'ab_data.mat'));
+ab_fig4_xbin_vals = ab_fig4_xbin_vals / 0.65 / 1.2 / 1.2;  % fake the corrections
 human_brain_weight = get_human_brain_weight();
-ab_fig4_xbin_vals = ab_fig4_xbin_vals / 0.65;
 
 
 %% Validation 1: Aboitiz et al, 1992
