@@ -1,4 +1,4 @@
-function [nwm,ncc,nintra] = predict_nfibers(brwt, bvol, gmv, ndens, ccdens, cca, pct_proj)
+function [nwm,ncc,nintra] = predict_nfibers(brwt, bvol, collation, gmv, ndens, ccdens, cca, pct_proj)
 % Predicts the total # of fibers and # callosal fibers,
 %   then subtracts them to return the # of intrahemispheric fibers.
 %
@@ -29,9 +29,6 @@ function [nwm,ncc,nintra] = predict_nfibers(brwt, bvol, gmv, ndens, ccdens, cca,
     if exist('ccdens','var')   && isempty(ccdens),   clear('ccdens'); end;
     if exist('cca','var')      && isempty(cca),      clear('cca'); end;
     if exist('pct_proj','var') && isempty(pct_proj), clear('pct_proj'); end;
-
-    % Collation
-    collation = 'species'
 
     % send both weight and volume, it will pick the native one
     if ~exist('gmv','var') || isempty(gmv),          gmv      = predict_gm_volume(brwt, bvol, collation); end;  % cm^3  default collation (species)

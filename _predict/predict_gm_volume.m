@@ -17,7 +17,7 @@ function [gmv] = predict_gm_volume(brwt, bvol, collation)
 
     global g_gmv
 
-    if isempty(g_gmv) && strcmp(collation, 'species')
+    if isempty(g_gmv) && strcmp(collation, 'species')  % only for species collation
         an_dir = fullfile(fileparts(which(mfilename)), '..', 'analysis');
 
         %
