@@ -33,7 +33,7 @@ function vars = hh_2007_data(validate_data, visualize_data)
     % Cerebellum
     hh_2007_tabS2_cerebellum_M = [0.326 0.730 1.196 1.732 4.30 4.60 7.694]';
     hh_2007_tabS2_cerebellum_Nn = 1E6*[185.28 361.37 743.50 1040 1820 2490 4550]';
-    hh_2007_tabS2_cerebellum_Dn = 1E3*[571.46 494.97 623.08 605.08 424.0 540.31 590.80]';
+    hh_2007_tabS2_cerebellum_Dn = 1E6*[571.46 494.97 623.08 605.08 424.0 540.31 590.80]';
     hh_2007_tabS2_cerebellum_No = 1E6*[19.98 49.49 65.96 145.27 133.02 245.81 931.03]';
     hh_2007_tabS2_cerebellum_Do = 1E3*[61.60 68.17 54.46 82.89 30.94 53.44 121.01]';
 
