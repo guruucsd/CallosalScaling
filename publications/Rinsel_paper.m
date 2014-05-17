@@ -1,4 +1,4 @@
-function Rinsel_paper(fig_list, out_path)
+function Rinsel_paper(fig_list, out_path, collation)
 %
 
     script_dir  = fileparts(which(mfilename));
@@ -27,7 +27,7 @@ function Rinsel_paper(fig_list, out_path)
 
     % Which corresponds to human datapoints?
     switch collation
-        case {'family' 'species'}, [~, human_idx] = max(bvols);
+        case {'family' 'species', 'family-s'}, [~, human_idx] = max(bvols);
         case 'individual', human_idx = length(bvols) - [0:4];
     end;
 
@@ -35,10 +35,10 @@ function Rinsel_paper(fig_list, out_path)
 
     %
     human_dens_pred = 1000 * predict_cc_density(human_brain_weight, mean(bvols(human_idx))); % 1000 converts units to same scale as aboitiz
-    human_dens_ab_raw = 100*3.7*(1-0.35)^(1); %correct for shrinkage
+    human_dens_ab_raw = 100*3.717*(1-0.35)^(1); %correct for shrinkage
     human_dens_ab   = human_dens_ab_raw * 1.20;  %  correct for 20% missing fibers
     human_dens_abcor= human_dens_ab * 1.2;       % correct for age
-human_dens_pred, human_dens_abcor
+
     %chimp_idx = strcmp('p. troglodytes', rib_table1_species);
     %chimp_brain_vol = rib_table1_brainvol(chimp_idx);
     %chimp_dens = 1000*predict_cc_density([], chimp_brain_vol);
@@ -51,7 +51,7 @@ human_dens_pred, human_dens_abcor
 
     for fi = 1:length(fig_list)
         if ismember('all', fig_list) || strcmp(fig_list{fi}, 'ri_connection_compare')
-            for col = {'individual', 'species', 'family'}
+            for col = {collation}  %{'individual', 'species', 'family'}
                 rib_response(col{1}, {'prop_fibers_vs_prop_aa_cxns', 'prop_fibers_vs_prop_aa_cxns_linear'});
                 set(gcf, 'name', sprintf('./ri_intra_vs_cc_scaling_connection_%s', col{1}));
             end;
@@ -60,11 +60,13 @@ human_dens_pred, human_dens_abcor
         %% Rilling & Insel redo: brain volume vs. interhemispheric connections
         % regression
         if ismember('all', fig_list) || strcmp(fig_list{fi}, 'ri_basic_compare')
-            rib_response('species', 'wm_cxns_vs_cc_cxns');  % hard-code 'individual'
-            set(gcf, 'name', 'ri_bv_vs_cc_cxns');  % used as filename.
+            for col = unique({'individual', collation})
+                rib_response(col{1}, 'wm_cxns_vs_cc_cxns');  % hard-code individual
+                set(gcf, 'name', sprintf('ri_bv_vs_cc_cxns_%s', col{1}));  % used as filename.
 
-            rib_response('species', 'wm_cxns_vs_cc_cxns_withrinsel');  % hard-code 'individual'
-            set(gcf, 'name', 'ri_bv_vs_cc_cxns_withrinsel');  % used as filename.
+                rib_response(col{1}, 'wm_cxns_vs_cc_cxns_withrinsel');  % hard-code individual
+                set(gcf, 'name', sprintf('ri_bv_vs_cc_cxns_withrinsel_%s', col{1}));  % used as filename.
+            end;
         end;
 
 
@@ -100,9 +102,9 @@ human_dens_pred, human_dens_abcor
 
         % Rilling & Insel connection strength comparison; species
         if ismember('all', fig_list) || strcmp(fig_list{fi}, 'ri_strength_compare')
-            for col = {'individual', 'species', 'family'}
+            for col = {'species'}%{'individual', 'species', 'family'}
                 rib_response(col{1}, {'intra_vs_cc_scaling', 'intra_vs_cc_scaling_linear'});
-                set(gcf, 'name', sprintf('./ri_intra_vs_cc_scaling_linear_%s', col{1}));
+                set(gcf, 'name', sprintf('ri_intra_vs_cc_scaling_linear_%s', col{1}));
             end;
         end;
 
@@ -304,7 +306,7 @@ human_dens_pred, human_dens_abcor
         end;
 
         if ismember('all',fig_list) || strcmp(fig_list{fi}, 'lms_dens_regression')
-            [p1,g1,rsquared] = allometric_regression(lra_cc_age, lra_cc_density, 'log', 1, true)
+            [p1, g1, rsquared] = allometric_regression(lra_cc_age, lra_cc_density, 'log', 1, true);
             allometric_plot2(lra_cc_age, lra_cc_density, p1, g1, {'loglog'});
 
             legend('Location', 'NorthEast');
@@ -331,7 +333,6 @@ human_dens_pred, human_dens_abcor
             ylabel('fiber density (fibers/cm^2)')
             hold on;
             plot(get(gca, 'xlim'), polyval(polyfit(ab_thesis_appendix3_data(idx8to2,1), ab_thesis_total_density, 1), get(gca, 'xlim')), 'b.-', 'LineWidth', 2);
-
             set(gcf, 'Name', 'ab_dens');
         end;
 
