@@ -1,5 +1,5 @@
-function [bvols, ccas, gmas] = ris_collate(collation)
-%function [bvols, ccas, gmas] = ris_collate(collation)
+function [bvols, ccas, gmas, gmvs] = ris_collate(collation)
+%function [bvols, ccas, gmas, gmvs] = ris_collate(collation)
 %
 %
 
@@ -24,40 +24,41 @@ function [bvols, ccas, gmas] = ris_collate(collation)
     [~,famidxb] = ismember(rib_fig1b_families, rib_families);
     families      = unique(famidxb);
     nfamilies     = length(families);
+    cross_table_idx = abs(rib_table1_brainvol - ria_table1_brainvol) < eps ;
 
     switch collation
-        case {'family' 'family-i'} % from individual
-            [~,famidxa] = ismember(ria_table1_families, rib_families);
-            [~,famidxb] = ismember(rib_fig1b_families, rib_families);
-            unfamidx      = unique(famidxb);
-            nfamilies     = length(families);
+        case {'family' 'family-i', 'family-s'} % from individual
             bvols = zeros(nfamilies, 1);%size(famidxb));
             ccas = zeros(nfamilies, 1);
             gmas = zeros(nfamilies, 1);
+            gmvs = zeros(nfamilies, 1);
             for fi=families
-                idxa = fi==famidxa;
-                idxb = fi==famidxb;
-                bvols(fi) = mean(rib_fig1b_brain_volumes(idxb));
-                ccas(fi) = mean(rib_fig2_ccas(idxb));
-                gmas(fi) = mean(rib_fig2_gmas(idxb));%.*mean(ria_table6_gi(idxa));
-            end;
+                
+                if strcmp(collation, 'family-s')
+                    [~,famidx] = ismember(ria_table1_families, rib_families);
+                    idx = fi==famidx & cross_table_idx;
+                    bvols(fi) = mean(ria_table1_brainvol(idx));
+                    ccas(fi) = mean(rib_table1_ccarea(idx));
+                    gmas(fi) = mean(ria_table1_gmvol(idx)./predict_gm_thickness([], ria_table1_brainvol(idx)));
+                    gmvs(fi) = mean(ria_table1_gmvol(idx));
 
-        case 'family-s' %from species
-            error('must account for GI');
-            bvols = zeros(size(nfamilies, 1));
-            ccas = zeros(size(nfamilies, 1));
-            gmas = zeros(size(nfamilies, 1));
-            for fi=families
-                fidx = ria_fam_idx==unfamidx(fi);
-                bvols(fi) = mean(ria_table1_brainvol(fidx));
-                ccas(fi) = mean(rib_table1_ccarea(fidx));
-                gmas(fi) = mean(ria_table1_gmvol(fidx)./g_gmt(ria_table1_brainvol(fi)));
+                else  % everything comes from rib, figure 2
+                    [~,famidxb] = ismember(rib_fig1b_families, rib_families);
+                    idxb = fi==famidxb;
+                    bvols(fi) = mean(rib_fig1b_brain_volumes(idxb));
+                    ccas(fi) = mean(rib_fig2_ccas(idxb));
+                    gmas(fi) = mean(rib_fig2_gmas(idxb));%.*mean(ria_table6_gi(idxa));
+                    gmvs(fi) = mean(rib_fig2_gmas(idxb) .* predict_gm_thickness([], rib_fig1b_brain_volumes(idxb)));%.*mean(ria_table6_gi(idxa));
+                end;
             end;
 
         case 'species'
-            bvols = rib_table1_brainvol;%rib_fig1b_brain_volumes;
-            ccas = rib_table1_ccarea;%rib_fig2_ccas;
-            gmas = ria_table1_gmvol ./ predict_gm_thickness([], bvols);
+            % Mixed tables
+            bvols = rib_table1_brainvol(cross_table_idx);
+            ccas = rib_table1_ccarea(cross_table_idx);
+            gmas = ria_table1_gmvol(cross_table_idx) ./ predict_gm_thickness([], bvols);
+            gmvs = ria_table1_gmvol(cross_table_idx);
+            
 
         case 'individual'
             bvols = rib_fig1b_brain_volumes;
@@ -69,7 +70,8 @@ function [bvols, ccas, gmas] = ris_collate(collation)
                 gis(famidxb==fi) = mean(ria_table6_gi(famidxa==fi));
             end;
 
-            gmas = rib_fig2_gmas;%.*gis;
+            gmas = rib_fig2_gmas;
+            gmvs = rib_fig2_gmas .* predict_gm_thickness([], rib_fig1b_brain_volumes);
             %keyboard
 
         otherwise, error('Unknown collation: %s', collation)
