@@ -205,6 +205,46 @@ function Rinsel_paper(fig_list, out_path, collation)
         end;
 
 
+
+        %% Total cc fibers vs. brain volume on cartesian axis
+        if ismember('all',fig_list) || strcmp(fig_list{fi}, 'nwm_lin')
+            [p,g] = allometric_regression(bvols, nwm_fibers, 'log', 1, false, '');
+            allometric_plot2(bvols, nwm_fibers, p, g, 'linear');
+
+            % Mark Aboitiz data (corrected)
+            human_nwm_fibers = (human_dens_abcor./human_dens_pred) * human_nwm_fibers(human_idx);
+            dh = plot(mean(bvols(human_idx)), human_nwm_fibers, 'g*', 'MarkerSize', 10, 'LineWidth',5);
+
+            % Update legend and labels
+            [~,~,ph,pt] = legend(gca); legend([ph; dh], [pt {' Human^* (Aboitiz et al., 1992)'}], 'Location', 'SouthEast');
+            guru_updatelegend(gca, 1, '[Computed]');
+            xlabel('Brain volume (cm^3)'); ylabel('[# white matter fibers]');
+            axis tight;
+
+            set(gcf, 'Name', 'nwmh_lin');
+        end;
+
+        % Total cc fibers vs. brain volume on log-log axis
+        if ismember('all',fig_list) || strcmp(fig_list{fi}, 'nwm_log')
+            [p,g] = allometric_regression(bvols, nwm_fibers, 'log', 1, false, '');
+            allometric_plot2(bvols, nwm_fibers, p, g, 'loglog');
+
+            % Add human data point
+            human_nwm_fibers = (human_dens_abcor./human_dens_pred) * predict_nfibers(human_brain_weight);
+            dh = loglog(mean(bvols(human_idx)), human_nwm_fibers, 'g*', 'MarkerSize', 10, 'LineWidth',5);
+
+            % Update legend and axis labels
+            [lh,~,ph,pt] = legend(gca); legend([ph; dh], [pt {' Human^* (Aboitiz et al., 1992)'}], 'Location', 'NorthWest');
+
+            guru_updatelegend(gca, 1, '[Computed]');
+            set(legend(gca), 'FontSize', 12);
+            xlabel('Brain volume (cm^3)'); ylabel('[# white matter fibers]');
+            axis tight;
+
+            set(gcf, 'Name', 'nwmh_log');
+        end;
+
+
         %%if ismember('all',fig_list) || strcmp(fig_list{fi}, 'nwmfib_vs_cch_log')
         %    [p,g,rsq] = allometric_regression(bvols, ncc_fibers./nintra_fibers, 'log', 1, false, '');
         %    allometric_plot2(bvols, ncc_fibers./nintra_fibers, p, g, 'log');
