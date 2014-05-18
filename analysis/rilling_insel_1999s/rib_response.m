@@ -56,8 +56,10 @@ function rib_response(collation, figs)
 
         % Now go back and plot Ringo results
         p_rinsel = [0.88, 0.84]; % From Rilling & Insel (1999a) Figure 2
-        y_rinsel = p_rinsel(2) * nwm_fibers.^p_rinsel(1);
-        subplot(1,2,2); hold on; rh = plot(nwm_fibers, y_rinsel, '-', 'Color', 0.85*[1 1 1], 'LineWidth', 12);
+        y_rinsel = @(x) p_rinsel(2) * x.^p_rinsel(1);
+        xl = get(gca, 'xlim');
+        xvals = linspace(xl(1), xl(2), 100);
+        subplot(1,2,2); hold on; rh = plot(xvals, y_rinsel(xvals), '-', 'Color', 0.85*[1 1 1], 'LineWidth', 12);
 
         % Now re-plot the above, but on top
         allometric_plot2(nwm_fibers, ncc_fibers, p, g, {'loglog','linear'}, gcf);
