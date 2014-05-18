@@ -65,52 +65,26 @@ function vars = w_data(validate_data, visualize_data)
     w_fig1c_pctmye = w_fig1c_pctmye';
 
 
-    %% Fig. 4: Get the unmyelinated and myelinated axon distribution histograms!
-    w_fig4_species = {'least shrew', 'mouse', 'rat', 'marmoset', 'cat', 'macaque'};
-    for si=1:length(w_fig4_species)
-        img_filepath = fullfile(W_img_dirpath, ['Fig4_' w_fig4_species{si} '.png']);
-        [um,m,xvals] = w_process_histogram(img_filepath, visualize_data);
-        w_fig4_unmyelinated(si,1:length(xvals)) = um;
-        w_fig4_myelinated(si,1:length(xvals))   = m;
-        w_fig4_xvals(1:length(xvals)) = xvals;
-    end;
-    %w_fig4_myelinated_orig = w_fig4_myelinated;
-    %w_fig4_unmyelinated_orig = w_fig4_unmyelinated;
-    w_fig4_brain_weights = w_brain_weights(ismember(w_species, w_fig4_species));
-
-
-    %% Create diameter => weight mapping function (v1 now obsolete)
-    %img = scrub_image(fullfile(W_img_dirpath, 'Fig1c_neutered.png'));
-    %
-    %% Find x axes
-    %[gx,gxs] = get_groups(sum(img,2) > size(img,2)*0.5, 'right');
-    %[gy,gys] = get_groups(sum(img,1) > size(img,1)*0.5, 'left');
-    %
-    % Get x ticks after that
-    %xticks_diam = get_groups(img(gx(1)+1,:));
-    %xticks_wt   = get_groups(img(gx(2)+1,:));
-    %data_pix = img(1:floor(gx(1)-gxs(1)/2)-2, ceil(gy+gys/2)+1:end);
-
 
     %% Fig 1c: Create diameter => weight mapping function (v2 now obsolete)
 %     img = scrub_image(fullfile(W_img_dirpath, 'Fig1c_xaxis.png'));
-% 
+%
 %     % Find x axes
 %     g = get_groups(sum(img,2) > size(img,2)*0.75);
-% 
+%
 %     % Get x ticks after that
 %     xticks_diam = get_groups(img(round(g(1)+2),:));
 %     xticks_wt   = get_groups(img(round(g(2)+2),:));
-% 
+%
 %     % Compute the diameter from the pix
 %     diam_cm = @(px) (2*(px-xticks_diam(1))/mean(diff(xticks_diam)));
 %     diam2wt_pts = diam_cm(xticks_wt); %these correspond to 1,10,100gm
-% 
+%
 %     % Some points for comparison
 %     wts = [1 10 100]; wts2 = min(wts):max(wts);
 %     p = polyfit(log10(wts), diam2wt_pts, 2);
 %     diam2wt = @(wt) (p(1)*log10(wt).^2 + p(2).*log10(wt) + p(3));
-% 
+%
 %     if visualize_data
 %         % Plot to show fitting function
 %         figure;    hold on;
@@ -131,7 +105,9 @@ function vars = w_data(validate_data, visualize_data)
     % find x and y ticks
     yticks = get_groups(img(1:xaxis_last,yaxis_first-2));
     xticks = get_groups(img(xaxis_last+2, yaxis_first:end));
-
+    yticks_orig = yticks + yaxis_first - 2;
+    xticks_orig = xticks + xaxis_last + 2;
+    
     % Grab data pixels, and find boxes
     data_pix = img(1:xaxis_first-1, yaxis_last+1:end);
 
@@ -158,10 +134,18 @@ function vars = w_data(validate_data, visualize_data)
     end;
 
     if visualize_data
-        figure;
+        densh = figure;
         imshow(data_pix)
         hold on;
-        plot(gx,gy,'g*');
+        for xi=1:numel(gx)
+            plot(gx(xi) * [1 1], [gy(xi) size(data_pix,1)],'r--', 'LineWidth', 2);  % x
+            plot([0 gx(xi)], gy(xi) * [1 1],'r--', 'LineWidth', 2);  % y
+        end;
+        axis on; set(gca, 'FontSize', 14);
+        set(gca, 'ytick', yticks, 'yticklabel', [6 5 4 3 2 1 0.3]);
+        set(gca, 'xtick', xticks, 'xticklabel', [0 1 2 3 4 5 6]);
+        title('Data parsed from Wang et al. (2008) Figure 1e');
+        xlabel('brain diameter (cm)'); ylabel('density (axons/{\mu}m^2')
     end;
 
     % Convert from pixels to data
@@ -170,18 +154,18 @@ function vars = w_data(validate_data, visualize_data)
     diam_cm_data = diam_cm_fn(gx);
 
     % assume a log scale on y-axis, and find the pix=>density scale factor
-    [pg, gg, rsqgg] = allometric_regression(10.^yticks(end:-1:1), [0.3 1 2 3 4 5 6]);
-    %gg = @(y) (10.^(pg(2)+pg(1)*y));
+    pg = polyfit(yticks(end:-1:1),log10([0.3 1 2 3 4 5 6]),1) ;
+    gg = @(y) (10.^(pg(2)+pg(1)*y));
 
     % hardcoded species names & weights
     w_fig1e_species = {'least shrew' 'mouse' 'rat' 'marmoset' 'cat' 'macaque'};
     [~, species_idx] = ismember(w_fig1e_species, w_species);
     w_fig1e_weights = w_brain_weights(species_idx);
-    w_fig1e_dens_est = gg.y(gy);% log10(3.8)];  % axons / um^2
+    w_fig1e_dens_est = gg(gy);% log10(3.8)];  % axons / um^2
 
     if visualize_data
         figure; hold on;
-        plot(yticks(end:-1:1),[0.3 1 2 3 4 5 6],'o');
+        plot(yticks(end:-1:1), [0.3 1 2 3 4 5 6],'o');
         plot(yticks(end:-1:1), gg(yticks(end:-1:1)));
     end;
 
@@ -192,6 +176,33 @@ function vars = w_data(validate_data, visualize_data)
     end;
 
 
+    %% Fig. 4: Get the unmyelinated and myelinated axon distribution histograms!
+    w_fig4_species = {'least shrew', 'mouse', 'rat', 'marmoset', 'cat', 'macaque'};
+    for si=1:length(w_fig4_species)
+        img_filepath = fullfile(W_img_dirpath, ['Fig4_' w_fig4_species{si} '.png']);
+        [um,m,xvals] = w_process_histogram(img_filepath, visualize_data);
+        w_fig4_unmyelinated(si,1:length(xvals)) = um;
+        w_fig4_myelinated(si,1:length(xvals))   = m;
+        w_fig4_xvals(1:length(xvals)) = xvals;
+    end;
+    %w_fig4_myelinated_orig = w_fig4_myelinated;
+    %w_fig4_unmyelinated_orig = w_fig4_unmyelinated;
+    w_fig4_brain_weights = w_brain_weights(ismember(w_species, w_fig4_species));
+
+
+    %% Create diameter => weight mapping function (v1 now obsolete)
+    %img = scrub_image(fullfile(W_img_dirpath, 'Fig1c_neutered.png'));
+    %
+    %% Find x axes
+    %[gx,gxs] = get_groups(sum(img,2) > size(img,2)*0.5, 'right');
+    %[gy,gys] = get_groups(sum(img,1) > size(img,1)*0.5, 'left');
+    %
+    % Get x ticks after that
+    %xticks_diam = get_groups(img(gx(1)+1,:));
+    %xticks_wt   = get_groups(img(gx(2)+1,:));
+    %data_pix = img(1:floor(gx(1)-gxs(1)/2)-2, ceil(gy+gys/2)+1:end);
+    
+    
     %% Construct outputs
     varnames = who('w_*');
     varvals = cellfun(@eval, varnames, 'UniformOutput', false);
