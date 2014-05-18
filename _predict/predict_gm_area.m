@@ -26,7 +26,7 @@ function [gma] = predict_gm_area(brwt, bvol, collation, area_type)
 
     global g_gmas g_gma_collations;
 
-    collation = 'species';
+    %collation = 'species';
 
     if ~exist('bvol','var') || isempty(bvol), bvol = predict_bvol(brwt); end;
     if ~exist('collation','var') || isempty(collation), collation = 'species'; end;

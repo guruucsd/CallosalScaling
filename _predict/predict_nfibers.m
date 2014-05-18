@@ -22,8 +22,9 @@ function [nwm,ncc,nintra] = predict_nfibers(brwt, bvol, collation, gmv, ndens, c
 
 
     % convert to native units
-    if ~exist('bvol','var'), bvol = predict_bvol(brwt); end;
     if ~exist('brwt','var'), brwt = predict_brwt(bvol); end;
+    if ~exist('bvol','var'), bvol = predict_bvol(brwt); end;
+    if ~exist('collation','var'), collation = 'species'; end;
     if exist('gmv','var')      && isempty(gmv),      clear('gmv'); end;
     if exist('ndens','var')    && isempty(ndens),    clear('ndens'); end;
     if exist('ccdens','var')   && isempty(ccdens),   clear('ccdens'); end;
