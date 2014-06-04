@@ -50,25 +50,6 @@ function Rinsel_paper(fig_list, out_path, collation)
 
 
     for fi = 1:length(fig_list)
-        if ismember('all', fig_list) || strcmp(fig_list{fi}, 'ri_connection_compare')
-            for col = {collation}  %{'individual', 'species', 'family'}
-                rib_response(col{1}, {'prop_fibers_vs_prop_aa_cxns', 'prop_fibers_vs_prop_aa_cxns_linear'});
-                set(gcf, 'name', sprintf('./ri_intra_vs_cc_scaling_connection_%s', col{1}));
-            end;
-        end;
-
-        %% Rilling & Insel redo: brain volume vs. interhemispheric connections
-        % regression
-        if ismember('all', fig_list) || strcmp(fig_list{fi}, 'ri_basic_compare')
-            for col = unique({'individual', collation})
-                rib_response(col{1}, 'wm_cxns_vs_cc_cxns');  % hard-code individual
-                set(gcf, 'name', sprintf('ri_bv_vs_cc_cxns_%s', col{1}));  % used as filename.
-
-                rib_response(col{1}, 'wm_cxns_vs_cc_cxns_withrinsel');  % hard-code individual
-                set(gcf, 'name', sprintf('ri_bv_vs_cc_cxns_withrinsel_%s', col{1}));  % used as filename.
-            end;
-        end;
-
 
         % Literally Recreate figure 1
         %if ismember('all',fig_list) || strcmp(fig_list{fi}, 'ril_fig1')
@@ -85,20 +66,28 @@ function Rinsel_paper(fig_list, out_path, collation)
         %    set(gcf, 'Name', 'ril_fig1');
         %end;
 
+        
+        %% Rilling & Insel redo: brain volume vs. interhemispheric connections
+        % regression
+        if ismember('all', fig_list) || strcmp(fig_list{fi}, 'ri_basic_compare')
+            for col = unique({'individual', collation})
+                rib_response(col{1}, 'wm_cxns_vs_cc_cxns');  % hard-code individual
+                set(gcf, 'name', sprintf('ri_bv_vs_cc_cxns_%s', col{1}));  % used as filename.
 
-        %% Rilling & Insel connectivity scaling comparison
-        if ismember('all', fig_list) || strcmp(fig_list{fi}, 'ri_scaling_compare1')
-            rib_response(collation, 'prop_fibers_vs_prop_aa_cxns');
-            set(gcf, 'name', sprintf('ri_prop_fibers_vs_prop_aa_cxns_%s', collation));
+                rib_response(col{1}, 'wm_cxns_vs_cc_cxns_withrinsel');  % hard-code individual
+                set(gcf, 'name', sprintf('ri_bv_vs_cc_cxns_withrinsel_%s', col{1}));  % used as filename.
+            end;
         end;
 
-        % Rilling & Insel connection strength comparison; individual
-        %if ismember('all', fig_list) || strcmp(fig_list{fi}, 'ri_strength_compare')
-        %    addpath(genpath(fullfile(analysis_dir, 'rilling_insel_1999s')));
-        %    collation = 'individual';
-        %    rib_response(collation, 'intra_vs_cc_scaling_linear');
-        %    set(gcf, 'name', sprintf('./ri_intra_vs_cc_scaling_linear_%s', collation));
-        %end;
+
+        % Rilling & Insel: check if fiber and inter-area connections scale together
+        if ismember('all', fig_list) || strcmp(fig_list{fi}, 'ri_connection_compare')
+            for col = {collation}  %{'individual', 'species', 'family'}
+                rib_response(col{1}, {'prop_fibers_vs_prop_aa_cxns', 'prop_fibers_vs_prop_aa_cxns_linear'});
+                set(gcf, 'name', sprintf('./ri_intra_vs_cc_scaling_connection_%s', col{1}));
+            end;
+        end;
+
 
         % Rilling & Insel connection strength comparison; species
         if ismember('all', fig_list) || strcmp(fig_list{fi}, 'ri_strength_compare')
@@ -172,7 +161,7 @@ function Rinsel_paper(fig_list, out_path, collation)
             allometric_plot2(bvols, ncc_fibers, p, g, 'linear');
 
             % Mark Aboitiz data (corrected)
-            human_ncc_fibers = (human_dens_abcor./human_dens_pred) * ncc_fibers(human_idx);
+            human_ncc_fibers = (human_dens_abcor./human_dens_pred) * predict_ncc_fibers(human_brain_weight);
             dh = plot(mean(bvols(human_idx)), human_ncc_fibers, 'g*', 'MarkerSize', 10, 'LineWidth',5);
 
             % Update legend and labels
@@ -212,7 +201,7 @@ function Rinsel_paper(fig_list, out_path, collation)
             allometric_plot2(bvols, nwm_fibers, p, g, 'linear');
 
             % Mark Aboitiz data (corrected)
-            human_nwm_fibers = (human_dens_abcor./human_dens_pred) * human_nwm_fibers(human_idx);
+            human_nwm_fibers = (human_dens_abcor./human_dens_pred) * predict_nfibers(human_brain_weight);
             dh = plot(mean(bvols(human_idx)), human_nwm_fibers, 'g*', 'MarkerSize', 10, 'LineWidth',5);
 
             % Update legend and labels

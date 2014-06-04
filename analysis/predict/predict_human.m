@@ -10,19 +10,29 @@ analysis_dir = fullfile(pdh_dir, '..');
 
 %% Load data
 load(fullfile(analysis_dir, 'aboitiz_etal_1992', 'ab_data.mat'));
-ab_fig4_xbin_vals = ab_fig4_xbin_vals / 0.65 / 1.2 / 1.2;  % fake the corrections
 human_brain_weight = get_human_brain_weight();
+
+%% Correct data
+% Space out
+%xvals = guru_newbins( ab_fig4_xbin_vals, 5 );
+%[ab_overall_distn, ab_fig4_xbin_vals] = rebin_distn(ab_overall_distn./sum(ab_overall_distn), ab_fig4_xbin_vals, xvals, (ismember('rebin',figs) || ismember('all',figs)));
+
+% Smooth
+[ab_overall_distn, ab_fig4_xbin_vals] = smooth_distn(ab_overall_distn, ab_fig4_xbin_vals, 5, 10, true);
+
+area_distn = cumsum(ab_overall_distn.^2)./sum(ab_overall_distn.^2);  % 1.2%
+keyboard
+ab_fig4_xbin_vals = ab_fig4_xbin_vals / sqrt(0.65) / 1.2 / sqrt(1.2);  % fake the corrections
 
 
 %% Validation 1: Aboitiz et al, 1992
-xvals = guru_newbins( ab_fig4_xbin_vals, 5 );
-[ab_overall_distn, ab_fig4_xbin_vals] = rebin_distn(ab_overall_distn./sum(ab_overall_distn), ab_fig4_xbin_vals, xvals, (ismember('rebin',figs) || ismember('all',figs)));
+%xvals = guru_newbins( ab_fig4_xbin_vals, 5 );
+%[ab_overall_distn, ab_fig4_xbin_vals] = rebin_distn(ab_overall_distn./sum(ab_overall_distn), ab_fig4_xbin_vals, xvals, (ismember('rebin',figs) || ismember('all',figs)));
 %[ab_overall_distn, ab_fig4_xbin_vals] = rebin_distn(ab_overall_distn./sum(ab_overall_distn), ab_fig4_xbin_vals, [0 ab_fig4_xbin_vals]);
-%[ab_overall_distn, ab_fig4_xbin_vals] = smooth_distn(ab_overall_distn, ab_fig4_xbin_vals, 2, 2, true);
 
 %% Predict distribution parameters, for humans
 %% Predict the % myelination
-[cc_add, cc_add_mye, cc_add_unmye, pct_mye, xvals] = predict_cc_add([], 1289, ab_fig4_xbin_vals, [], fit_fn, frac);
+[cc_add, cc_add_mye, cc_add_unmye, pct_mye, xvals] = predict_cc_add([], human_brain_weight, ab_fig4_xbin_vals, [], fit_fn, frac);
 %close(gcf); f_regress = gcf;
 
 % Fit that data directly, plot it
@@ -91,7 +101,7 @@ if ismember('predict_ab',figs) || ismember('all',figs)
     [~,idx] = max(abs(dff))   % find the peak point of difference
     idx = find(dff(idx:end)>0, 1,'first') + idx-1;  % find starting positive point
     pct_diff = sum(dff(1:idx-1));  % should be same as sum(dff(idx:end))
-    title(sprintf('%5.2f%% difference', 100 * -sum(dff(1:idx-1))));  % 
+    title(sprintf('%5.2f%% difference', 100 * -sum(dff(1:idx-1))));  %
     sum(cc_add(xvals<=1))
     sum(ab_overall_distn(xvals<=1))
     hold on;
@@ -137,3 +147,5 @@ if false
 
     % Make a density prediction, and compare it to 3.3
 end;
+
+keyboard

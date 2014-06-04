@@ -85,13 +85,14 @@ function rib_response(collation, figs)
     %
     fprintf('Regressing [proportion inter-fibers] vs. [proportion inter- area conns]...\n');
 
-    x1 = (ncc_fibers./nintra_fibers);
-    y1 = 1./(nareaconns-1);
-    [p1, g1, rsq1] = allometric_regression(x1, y1, 'log', 1, true);
+    y1 = (ncc_fibers./nintra_fibers);
+    x1 = 1./(nareaconns-1);
+    [p1, g1, rsq1] = allometric_regression_offset(x1, y1);%, 'log', 1, true);
+    rsq1 = {rsq1};
     fprintf('ALLOMETRIC r^2=%5.3f\n', rsq1{1})
 
-    x2 = ncc_fibers./nintra_fibers;
-    y2 =  1./(nareaconns-1);
+    y2 = ncc_fibers./nintra_fibers;
+    x2 =  1./(nareaconns-1);
     [p2, g2, rsq2] = allometric_regression(x2, y2, 'linear');
     fprintf('LINEAR r^2=%5.3f\n', rsq2{1})
 
@@ -99,24 +100,25 @@ function rib_response(collation, figs)
         fh = figure('position', [131         220        1161         564]);
 
         subplot(1,2,1)
-        allometric_plot2(x1, y1, p1, g1, 'loglog', fh);
-        ylabel('inter-area connection ratio'); xlabel('fiber count ratio');
+        allometric_plot2(x1, y1, p1, g1, 'linear', fh);
+        xlabel('inter-area connection ratio'); ylabel('fiber count ratio');
         title(sprintf('allometric version (r^2=%5.3f)', rsq1{1}));
 
         subplot(1,2,2)
         allometric_plot2(x2, y2, [1 p2], g2, 'linear', fh);
-        ylabel('inter-area connection ratio'); xlabel('fiber count ratio');
+        xlabel('inter-area connection ratio'); ylabel('fiber count ratio');
         title(sprintf('linear version (r^2=%5.3f)', rsq2{1}));
+        
 
     elseif ismember('all', figs) || ismember('prop_fibers_vs_prop_aa_cxns', figs)
-        allometric_plot2(x1, y1, p1, g1, {'linear', 'loglog'});
-        ylabel('inter-area connection ratio'); xlabel('fiber count ratio');
-        title('allometric version');
+        allometric_plot2(x1, y1, p1, g1, {'loglog'});
+        xlabel('inter-area connection ratio'); ylabel('fiber count ratio');
+        title(sprintf('allometric version (r^2=%5.3f)', rsq1{1}));
 
     elseif ismember('all', figs) || ismember('prop_fibers_vs_prop_aa_cxns_linear', figs)
         allometric_plot2(x2, y2, [1 p2], g2, 'linear');
-        ylabel('inter-area connection ratio'); xlabel('fiber count ratio');
-        title('linear version');
+        xlabel('inter-area connection ratio'); ylabel('fiber count ratio');
+        title(sprintf('linear version (r^2=%5.3f)', rsq2{1}));
     end;
 
     % Now look on a per-area basis, instead of a per- area connection basis
@@ -186,12 +188,13 @@ function rib_response(collation, figs)
     elseif ismember('all', figs) || ismember('intra_vs_cc_scaling', figs)
         allometric_plot2(x1, y1, p1, g1, {'linear','loglog'});
         ylabel('[# callosal fibers]'); xlabel('[# intra- fibers] / ([# inter-area cxns]-1)');
+        title(sprintf('allometric version (r^2=%5.3f)', rsq1{1}));
 
     % Just the linear plot
     elseif ismember('all', figs) || ismember('intra_vs_cc_scaling_linear', figs)
         allometric_plot2(x2, y2, [1 p2], g2, 'linear');
         ylabel('[# callosal fibers]'); xlabel('[# intra- fibers] / ([# inter-area cxns]-1)');
-        title('linear version');
+        title(sprintf('linear version (r^2=%5.3f)', rsq2{1}));
     end;
 
     %y-1 = ax-1b
