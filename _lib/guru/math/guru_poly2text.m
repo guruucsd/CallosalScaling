@@ -22,4 +22,3 @@ for oi=length(p)-1:-1:1
     else,                   reg_txt  = [cur_term ' + ' reg_txt];
     end;
 end;
-
