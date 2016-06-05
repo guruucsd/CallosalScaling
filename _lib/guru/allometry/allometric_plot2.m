@@ -8,7 +8,7 @@ if ~iscell(type), type={type}; end;
 nsubs = numel(type); % # sub-plots
 
 %
-if ~exist('fh','var'),
+if ~exist('fh','var') || isempty(fh)
     if   nsubs==1, fh = figure('Position',     [360   162   826   516]);
     else           fh = figure('Position', [16         139        1265         545]);
     end;

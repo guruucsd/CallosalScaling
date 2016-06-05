@@ -24,14 +24,14 @@ human_brain_age = mean([43.5 46.4]);
     plot(log10([w_fig1e_weights human_brain_weight]),gdens([w_fig1e_weights human_brain_weight]) );
     plot(log10(human_brain_weight), human_brain_dens, 'g*');
     plot(log10(w_fig1e_weights(end)), (lra_cc_density/100), 'k*');
-    title('Macaque Brain weight vs. density (semilog)');
+    title('Brain weight vs. density (semilog)');
 
     subplot(1,2,2);    hold on;
     plot(log10(w_fig1e_weights), log10(w_fig1e_dens_est),'o');
     plot(log10([w_fig1e_weights human_brain_weight]),log10(gdens([w_fig1e_weights human_brain_weight])) );
     plot(log10(human_brain_weight), log10(human_brain_dens), 'g*');
     plot(log10(w_fig1e_weights(end)), log10(lra_cc_density/100), 'k*');
-    title('Macaque Brain weight vs. density (loglog)');
+    title('Brain weight vs. density (loglog)');
 
 
     %% Regress macaque data on age, predict human data over lifespan
