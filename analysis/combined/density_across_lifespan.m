@@ -17,15 +17,15 @@ figure; set(gcf, 'Position', [ 69         258        1212         405]);
 for si=1:length(species)
     subplot(1,length(species),si);
     set(gca, 'FontSize', 14);
-    
+
     semilogx(str2date('P0',species{si})*[1 1], yl, 'r--', 'LineWidth', 2);
     hold on;
-    semilogx(ages{si}, dens{si}, 'o', 'MarkerSize', 4, 'LineWidth',4); 
+    semilogx(ages{si}, dens{si}, 'o', 'MarkerSize', 4, 'LineWidth',4);
     axis square;
     set(gca, 'xlim', [0 str2date('death', species{si})]);
     set(gca, 'ylim', yl);
     xlabel('Age (days since conception)');
     ylabel('million axons/mm^2');
-    title(species{si}, 'FontSize', 18); 
+    title(species{si}, 'FontSize', 18);
 
 end;

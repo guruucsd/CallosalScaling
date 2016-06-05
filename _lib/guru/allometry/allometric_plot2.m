@@ -29,9 +29,9 @@ for si=1:nsubs
             plot(xvsteps, gplt.y(xvsteps), 'LineWidth', 5);
             if pplt(1)==1 && length(pplt) == 3 && pplt(3) ~= 0  % linear with intercept
                 sgn = guru_iff(pplt(3) > 0, '+', '-');
-                data_label = sprintf(' %4.3fx %s %6.3e', pplt(2), sgn, abs(pplt(3))); 
+                data_label = sprintf(' %4.3fx %s %6.3e', pplt(2), sgn, abs(pplt(3)));
             elseif pplt(1)==1  % linear, no intercept specified
-                data_label = sprintf(' %4.3fx', pplt(2));   % exponent 1 means truly linear... never any intercept 
+                data_label = sprintf(' %4.3fx', pplt(2));   % exponent 1 means truly linear... never any intercept
             else
                 data_label = sprintf(' %4.3e * x^{%4.3f}', 10.^pplt(2), pplt(1));
             end;

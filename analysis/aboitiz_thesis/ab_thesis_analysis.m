@@ -11,7 +11,7 @@ function ab_thesis_analysis(vars, figs)
         eval(sprintf('%s = varvals{vi};', varnames{vi}))
     end;
 
-    ab_density_correction      = 0.65*1.20;
+    ab_density_correction      = 0.65*1.20;  % shrinkage and microscopy corrections
     ab_thesis_region_area_norm = ab_thesis_appendix8_data./repmat(sum(ab_thesis_appendix8_data,2),[1 size(ab_thesis_appendix8_data,2)]);
     ab_thesis_total_density    = sum(ab_thesis_appendix4_data.*ab_thesis_region_area_norm,2);
     ab_thesis_total_fibers     = sum(ab_thesis_appendix4_data.*ab_thesis_appendix8_data*1E2,2)/1E6*ab_density_correction;

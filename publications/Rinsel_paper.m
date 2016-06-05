@@ -66,7 +66,7 @@ function Rinsel_paper(fig_list, out_path, collation)
         %    set(gcf, 'Name', 'ril_fig1');
         %end;
 
-        
+
         %% Rilling & Insel redo: brain volume vs. interhemispheric connections
         % regression
         if ismember('all', fig_list) || strcmp(fig_list{fi}, 'ri_basic_compare')
@@ -82,7 +82,7 @@ function Rinsel_paper(fig_list, out_path, collation)
 
         % Rilling & Insel: check if fiber and inter-area connections scale together
         if ismember('all', fig_list) || strcmp(fig_list{fi}, 'ri_connection_compare')
-            for col = {collation}  %{'individual', 'species', 'family'}
+            for col = {collation}
                 rib_response(col{1}, {'prop_fibers_vs_prop_aa_cxns', 'prop_fibers_vs_prop_aa_cxns_linear'});
                 set(gcf, 'name', sprintf('./ri_intra_vs_cc_scaling_connection_%s', col{1}));
             end;
@@ -91,7 +91,7 @@ function Rinsel_paper(fig_list, out_path, collation)
 
         % Rilling & Insel connection strength comparison; species
         if ismember('all', fig_list) || strcmp(fig_list{fi}, 'ri_strength_compare')
-            for col = {'species'}%{'individual', 'species', 'family'}
+            for col = {collation}
                 rib_response(col{1}, {'intra_vs_cc_scaling', 'intra_vs_cc_scaling_linear'});
                 set(gcf, 'name', sprintf('ri_intra_vs_cc_scaling_linear_%s', col{1}));
             end;
@@ -153,8 +153,6 @@ function Rinsel_paper(fig_list, out_path, collation)
             set(gcf, 'Name', 'nwmfib_vs_cch_log');
         end;
 
-
-
         %% Total cc fibers vs. brain volume on cartesian axis
         if ismember('all',fig_list) || strcmp(fig_list{fi}, 'ncch_lin')
             [p,g] = allometric_regression(bvols, ncc_fibers, 'log', 1, false, '');
@@ -192,8 +190,6 @@ function Rinsel_paper(fig_list, out_path, collation)
 
             set(gcf, 'Name', 'ncch_log');
         end;
-
-
 
         %% Total cc fibers vs. brain volume on cartesian axis
         if ismember('all',fig_list) || strcmp(fig_list{fi}, 'nwm_lin')
@@ -233,7 +229,6 @@ function Rinsel_paper(fig_list, out_path, collation)
             set(gcf, 'Name', 'nwmh_log');
         end;
 
-
         %%if ismember('all',fig_list) || strcmp(fig_list{fi}, 'nwmfib_vs_cch_log')
         %    [p,g,rsq] = allometric_regression(bvols, ncc_fibers./nintra_fibers, 'log', 1, false, '');
         %    allometric_plot2(bvols, ncc_fibers./nintra_fibers, p, g, 'log');
@@ -266,7 +261,6 @@ function Rinsel_paper(fig_list, out_path, collation)
 
         %    set(gcf, 'Name', 'nwmfib_vs_cchc_lin');
         %end;
-
 
         %% Wang plot, showing human data
         if ismember('all',fig_list) || strcmp(fig_list{fi}, 'w_densh')            % Wang plot (w/ age-corrected human)
@@ -331,7 +325,6 @@ function Rinsel_paper(fig_list, out_path, collation)
             ylabel('axons/ \mu m^2');
             title('Axon density', 'FontSize', 18);
 
-            set(gcf, 'Name', 'lms_dens');
         end;
 
         if ismember('all',fig_list) || strcmp(fig_list{fi}, 'lms_dens_regression')
@@ -339,13 +332,11 @@ function Rinsel_paper(fig_list, out_path, collation)
             allometric_plot2(lra_cc_age, lra_cc_density, p1, g1, {'loglog'});
 
             legend('Location', 'NorthEast');
-            legend('Location', 'NorthEast');
 
             set(gcf, 'Name', 'lms_dens_regression');
         end;
 
-
-        %% Aboitiz scaling with age
+        % Aboitiz scaling with age
         if ismember('all',fig_list) || strcmp(fig_list{fi}, 'ab_dens')            % Aboitiz (1990): density decreases with age
             ab_density_correction      = 0.65*1.20;  % No correction for age
             ab_thesis_region_area_norm = ab_thesis_appendix8_data./repmat(sum(ab_thesis_appendix8_data,2),[1 size(ab_thesis_appendix8_data,2)]);
@@ -362,6 +353,7 @@ function Rinsel_paper(fig_list, out_path, collation)
             ylabel('fiber density (fibers/cm^2)')
             hold on;
             plot(get(gca, 'xlim'), polyval(polyfit(ab_thesis_appendix3_data(idx8to2,1), ab_thesis_total_density, 1), get(gca, 'xlim')), 'b.-', 'LineWidth', 2);
+
             set(gcf, 'Name', 'ab_dens');
         end;
 
