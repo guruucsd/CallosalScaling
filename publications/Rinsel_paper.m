@@ -1,5 +1,6 @@
-function Rinsel_paper(fig_list, out_path, collation)
+function Rinsel_paper(fig_list, out_path, collation, fh)
 %
+    if ~exist('fh', 'var'), fh = []; end;
 
     script_dir  = fileparts(which(mfilename));
     rilling_dir = fullfile(script_dir, '..');
@@ -34,10 +35,11 @@ function Rinsel_paper(fig_list, out_path, collation)
     human_brain_weight = predict_brwt(mean(bvols(human_idx)));%get_human_brain_weight();
 
     %
+    human_age_correction = calc_human_density_age_correction();
     human_dens_pred = 1000 * predict_cc_density(human_brain_weight, mean(bvols(human_idx))); % 1000 converts units to same scale as aboitiz
     human_dens_ab_raw = 100*3.717*(1-0.35)^(1); %correct for shrinkage
     human_dens_ab   = human_dens_ab_raw * 1.20;  %  correct for 20% missing fibers
-    human_dens_abcor= human_dens_ab * 1.2;       % correct for age
+    human_dens_abcor= human_dens_ab * human_age_correction;       % correct for age
 
     %chimp_idx = strcmp('p. troglodytes', rib_table1_species);
     %chimp_brain_vol = rib_table1_brainvol(chimp_idx);
@@ -267,7 +269,7 @@ function Rinsel_paper(fig_list, out_path, collation)
             [p,g] = allometric_regression(w_fig1e_weights, 1E3*w_fig1e_dens_est, 'log', 1, false, '');  % regress without human
 
             % Plot, then adjust size and labels
-            allometric_plot2([w_fig1e_weights human_brain_weight], [1E3*w_fig1e_dens_est human_dens_abcor], p, g, 'log');  % plot with human
+            allometric_plot2([w_fig1e_weights human_brain_weight], [1E3*w_fig1e_dens_est human_dens_abcor], p, g, 'log', fh);  % plot with human
             guru_updatelegend(gca, 1, ' Wang et. al (2008)');  % label the last entry as Wang data
             set(gcf,'Position',[235    40   743   644]);
             xlabel('Brain mass (g)'); ylabel('CC fiber density (fibers/ \mum^2)');
@@ -295,7 +297,7 @@ function Rinsel_paper(fig_list, out_path, collation)
             [p,g] = allometric_regression(w_fig1e_weights, 1E3*w_fig1e_dens_est, 'log', 1, false, '');
 
             % Plot, then adjust size and labels
-            allometric_plot2([w_fig1e_weights], [1E3*w_fig1e_dens_est], p, g, 'log');
+            allometric_plot2([w_fig1e_weights], [1E3*w_fig1e_dens_est], p, g, 'log', fh);
             guru_updatelegend(gca, 1, ' Wang et. al (2008)');  % label the last entry as Wang data
             set(gcf,'Position',[235    40   743   644]);
             xlabel('Brain mass (g)'); ylabel('CC fiber density (fibers/ \mum^2)');
@@ -315,7 +317,7 @@ function Rinsel_paper(fig_list, out_path, collation)
 
         %% Lamantia age vs. density
         if ismember('all',fig_list) || strcmp(fig_list{fi}, 'lms_dens')            % Lamantia & Rakic (1990a): density decreases with age
-            figure;
+            figure('name', 'lms_dens');
             semilogx(lrs_age, 1E4*lrs_dens, 'o', 'MarkerSize', 4, 'LineWidth',4); hold on;
             semilogx(156*[1 1], get(gca, 'ylim'), 'r--', 'LineWidth', 2); hold on;
 
@@ -324,7 +326,20 @@ function Rinsel_paper(fig_list, out_path, collation)
             xlabel('Age (days since conception)');
             ylabel('axons/ \mu m^2');
             title('Axon density', 'FontSize', 18);
+        end;
 
+        %% Lamantia age vs. density
+        if ismember('all',fig_list) || strcmp(fig_list{fi}, 'lms_dens_adult')            % Lamantia & Rakic (1990a): density decreases with age
+            % keyboard
+            figure('name', 'lms_dens');
+            semilogx(lrs_age, 1E4*lrs_dens, 'o', 'MarkerSize', 4, 'LineWidth',4); hold on;
+            semilogx(156*[1 1], get(gca, 'ylim'), 'r--', 'LineWidth', 2); hold on;
+
+            set(gca, 'FontSize', 14);
+            set(gca, 'xtick', 10.^[2:5]); axis square;
+            xlabel('Age (days since conception)');
+            ylabel('axons/ \mu m^2');
+            title('Axon density', 'FontSize', 18);
         end;
 
         if ismember('all',fig_list) || strcmp(fig_list{fi}, 'lms_dens_regression')
