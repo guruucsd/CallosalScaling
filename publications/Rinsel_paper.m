@@ -47,10 +47,6 @@ function Rinsel_paper(fig_list, out_path, collation, fh)
     %chimp_cca = rib_table1_ccarea(chimp_idx);
     %chimp_ncc = chimp_cca.*chimp_dens;
 
-
-
-
-
     for fi = 1:length(fig_list)
 
         % Literally Recreate figure 1
@@ -71,32 +67,31 @@ function Rinsel_paper(fig_list, out_path, collation, fh)
 
         %% Rilling & Insel redo: brain volume vs. interhemispheric connections
         % regression
-        if ismember('all', fig_list) || strcmp(fig_list{fi}, 'ri_basic_compare')
-            for col = unique({'individual', collation})
-                rib_response(col{1}, 'wm_cxns_vs_cc_cxns');  % hard-code individual
-                set(gcf, 'name', sprintf('ri_bv_vs_cc_cxns_%s', col{1}));  % used as filename.
-
-                rib_response(col{1}, 'wm_cxns_vs_cc_cxns_withrinsel');  % hard-code individual
-                set(gcf, 'name', sprintf('ri_bv_vs_cc_cxns_withrinsel_%s', col{1}));  % used as filename.
-            end;
+        if ismember('all', fig_list) || strcmp(fig_list{fi}, 'wm_cxns_vs_cc_cxns')
+            rib_response(collation, 'wm_cxns_vs_cc_cxns');
+            set(gcf, 'name', sprintf('ri_bv_vs_cc_cxns_%s', collation));  % used as filename.
+        end;
+        if ismember('all', fig_list) || strcmp(fig_list{fi}, 'wm_cxns_vs_cc_cxns_withrinsel')
+            rib_response(collation, 'wm_cxns_vs_cc_cxns_withrinsel');
+            set(gcf, 'name', sprintf('ri_bv_vs_cc_cxns_withrinsel_%s',collation));  % used as filename.
         end;
 
 
         % Rilling & Insel: check if fiber and inter-area connections scale together
         if ismember('all', fig_list) || strcmp(fig_list{fi}, 'ri_connection_compare')
-            for col = {collation}
-                rib_response(col{1}, {'prop_fibers_vs_prop_aa_cxns', 'prop_fibers_vs_prop_aa_cxns_linear'});
-                set(gcf, 'name', sprintf('./ri_intra_vs_cc_scaling_connection_%s', col{1}));
-            end;
+            rib_response(collation, {'prop_fibers_vs_prop_aa_cxns', 'prop_fibers_vs_prop_aa_cxns_linear'});
+            set(gcf, 'name', sprintf('./ri_intra_vs_cc_scaling_connection_%s', collation));
+        end;
+        if ismember('all', fig_list) || strcmp(fig_list{fi}, 'ri_connection_compare_allometric')
+            rib_response(collation, {'prop_fibers_vs_prop_aa_cxns'});
+            set(gcf, 'name', sprintf('./ri_intra_vs_cc_scaling_connection_%s', collation));
         end;
 
 
         % Rilling & Insel connection strength comparison; species
         if ismember('all', fig_list) || strcmp(fig_list{fi}, 'ri_strength_compare')
-            for col = {collation}
-                rib_response(col{1}, {'intra_vs_cc_scaling', 'intra_vs_cc_scaling_linear'});
-                set(gcf, 'name', sprintf('ri_intra_vs_cc_scaling_linear_%s', col{1}));
-            end;
+            rib_response(collation, {'intra_vs_cc_scaling', 'intra_vs_cc_scaling_linear'});
+            set(gcf, 'name', sprintf('ri_intra_vs_cc_scaling_linear_%s', collation));
         end;
 
         % Rilling & Insel connection strength comparison; familiy
@@ -344,7 +339,7 @@ function Rinsel_paper(fig_list, out_path, collation, fh)
 
         if ismember('all',fig_list) || strcmp(fig_list{fi}, 'lms_dens_regression')
             [p1, g1, rsquared] = allometric_regression(lra_cc_age, lra_cc_density, 'log', 1, true);
-            allometric_plot2(lra_cc_age, lra_cc_density, p1, g1, {'loglog'});
+            allometric_plot2(lra_cc_age, lra_cc_density, p1, g1, {'linear', 'loglog'});
 
             legend('Location', 'NorthEast');
 
