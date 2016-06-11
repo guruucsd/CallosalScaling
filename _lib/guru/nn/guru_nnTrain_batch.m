@@ -14,8 +14,8 @@ function [model,o_p] = guru_nnTrain_batch(model,X,Y)
       o_p       = zeros([model.MaxIterations nUnits nDatapts]);
   end;
 
-  if (~isfield(model,'Error'))
-    model.Error = model.AvgError*numel(Y);
+  if isfield(model,'AvgError')
+    model.Error = model.AvgError * numel(Y);
   end;
   guru_assert(model.Error>=0);
 
@@ -61,7 +61,7 @@ function [model,o_p] = guru_nnTrain_batch(model,X,Y)
 
     % Finished training
     if (isnan(currErr))
-        warning('NaN error; probably Eta is too large`');
+        warning('NaN error; probably Eta is too large');
 
 
     elseif (currErr <= model.Error)

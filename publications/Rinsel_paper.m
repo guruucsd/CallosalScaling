@@ -1,5 +1,6 @@
-function Rinsel_paper(fig_list, out_path, collation)
+function Rinsel_paper(fig_list, out_path, collation, fh)
 %
+    if ~exist('fh', 'var'), fh = []; end;
 
     script_dir  = fileparts(which(mfilename));
     rilling_dir = fullfile(script_dir, '..');
@@ -34,20 +35,17 @@ function Rinsel_paper(fig_list, out_path, collation)
     human_brain_weight = predict_brwt(mean(bvols(human_idx)));%get_human_brain_weight();
 
     %
+    human_age_correction = calc_human_density_age_correction();
     human_dens_pred = 1000 * predict_cc_density(human_brain_weight, mean(bvols(human_idx))); % 1000 converts units to same scale as aboitiz
     human_dens_ab_raw = 100*3.717*(1-0.35)^(1); %correct for shrinkage
     human_dens_ab   = human_dens_ab_raw * 1.20;  %  correct for 20% missing fibers
-    human_dens_abcor= human_dens_ab * 1.2;       % correct for age
+    human_dens_abcor= human_dens_ab * human_age_correction;       % correct for age
 
     %chimp_idx = strcmp('p. troglodytes', rib_table1_species);
     %chimp_brain_vol = rib_table1_brainvol(chimp_idx);
     %chimp_dens = 1000*predict_cc_density([], chimp_brain_vol);
     %chimp_cca = rib_table1_ccarea(chimp_idx);
     %chimp_ncc = chimp_cca.*chimp_dens;
-
-
-
-
 
     for fi = 1:length(fig_list)
 
@@ -66,35 +64,34 @@ function Rinsel_paper(fig_list, out_path, collation)
         %    set(gcf, 'Name', 'ril_fig1');
         %end;
 
-        
+
         %% Rilling & Insel redo: brain volume vs. interhemispheric connections
         % regression
-        if ismember('all', fig_list) || strcmp(fig_list{fi}, 'ri_basic_compare')
-            for col = unique({'individual', collation})
-                rib_response(col{1}, 'wm_cxns_vs_cc_cxns');  % hard-code individual
-                set(gcf, 'name', sprintf('ri_bv_vs_cc_cxns_%s', col{1}));  % used as filename.
-
-                rib_response(col{1}, 'wm_cxns_vs_cc_cxns_withrinsel');  % hard-code individual
-                set(gcf, 'name', sprintf('ri_bv_vs_cc_cxns_withrinsel_%s', col{1}));  % used as filename.
-            end;
+        if ismember('all', fig_list) || strcmp(fig_list{fi}, 'wm_cxns_vs_cc_cxns')
+            rib_response(collation, 'wm_cxns_vs_cc_cxns');
+            set(gcf, 'name', sprintf('ri_bv_vs_cc_cxns_%s', collation));  % used as filename.
+        end;
+        if ismember('all', fig_list) || strcmp(fig_list{fi}, 'wm_cxns_vs_cc_cxns_withrinsel')
+            rib_response(collation, 'wm_cxns_vs_cc_cxns_withrinsel');
+            set(gcf, 'name', sprintf('ri_bv_vs_cc_cxns_withrinsel_%s',collation));  % used as filename.
         end;
 
 
         % Rilling & Insel: check if fiber and inter-area connections scale together
         if ismember('all', fig_list) || strcmp(fig_list{fi}, 'ri_connection_compare')
-            for col = {collation}  %{'individual', 'species', 'family'}
-                rib_response(col{1}, {'prop_fibers_vs_prop_aa_cxns', 'prop_fibers_vs_prop_aa_cxns_linear'});
-                set(gcf, 'name', sprintf('./ri_intra_vs_cc_scaling_connection_%s', col{1}));
-            end;
+            rib_response(collation, {'prop_fibers_vs_prop_aa_cxns', 'prop_fibers_vs_prop_aa_cxns_linear'});
+            set(gcf, 'name', sprintf('./ri_intra_vs_cc_scaling_connection_%s', collation));
+        end;
+        if ismember('all', fig_list) || strcmp(fig_list{fi}, 'ri_connection_compare_allometric')
+            rib_response(collation, {'prop_fibers_vs_prop_aa_cxns'});
+            set(gcf, 'name', sprintf('./ri_intra_vs_cc_scaling_connection_%s', collation));
         end;
 
 
         % Rilling & Insel connection strength comparison; species
         if ismember('all', fig_list) || strcmp(fig_list{fi}, 'ri_strength_compare')
-            for col = {'species'}%{'individual', 'species', 'family'}
-                rib_response(col{1}, {'intra_vs_cc_scaling', 'intra_vs_cc_scaling_linear'});
-                set(gcf, 'name', sprintf('ri_intra_vs_cc_scaling_linear_%s', col{1}));
-            end;
+            rib_response(collation, {'intra_vs_cc_scaling', 'intra_vs_cc_scaling_linear'});
+            set(gcf, 'name', sprintf('ri_intra_vs_cc_scaling_linear_%s', collation));
         end;
 
         % Rilling & Insel connection strength comparison; familiy
@@ -153,8 +150,6 @@ function Rinsel_paper(fig_list, out_path, collation)
             set(gcf, 'Name', 'nwmfib_vs_cch_log');
         end;
 
-
-
         %% Total cc fibers vs. brain volume on cartesian axis
         if ismember('all',fig_list) || strcmp(fig_list{fi}, 'ncch_lin')
             [p,g] = allometric_regression(bvols, ncc_fibers, 'log', 1, false, '');
@@ -192,8 +187,6 @@ function Rinsel_paper(fig_list, out_path, collation)
 
             set(gcf, 'Name', 'ncch_log');
         end;
-
-
 
         %% Total cc fibers vs. brain volume on cartesian axis
         if ismember('all',fig_list) || strcmp(fig_list{fi}, 'nwm_lin')
@@ -233,7 +226,6 @@ function Rinsel_paper(fig_list, out_path, collation)
             set(gcf, 'Name', 'nwmh_log');
         end;
 
-
         %%if ismember('all',fig_list) || strcmp(fig_list{fi}, 'nwmfib_vs_cch_log')
         %    [p,g,rsq] = allometric_regression(bvols, ncc_fibers./nintra_fibers, 'log', 1, false, '');
         %    allometric_plot2(bvols, ncc_fibers./nintra_fibers, p, g, 'log');
@@ -267,13 +259,12 @@ function Rinsel_paper(fig_list, out_path, collation)
         %    set(gcf, 'Name', 'nwmfib_vs_cchc_lin');
         %end;
 
-
         %% Wang plot, showing human data
         if ismember('all',fig_list) || strcmp(fig_list{fi}, 'w_densh')            % Wang plot (w/ age-corrected human)
             [p,g] = allometric_regression(w_fig1e_weights, 1E3*w_fig1e_dens_est, 'log', 1, false, '');  % regress without human
 
             % Plot, then adjust size and labels
-            allometric_plot2([w_fig1e_weights human_brain_weight], [1E3*w_fig1e_dens_est human_dens_abcor], p, g, 'log');  % plot with human
+            allometric_plot2([w_fig1e_weights human_brain_weight], [1E3*w_fig1e_dens_est human_dens_abcor], p, g, 'log', fh);  % plot with human
             guru_updatelegend(gca, 1, ' Wang et. al (2008)');  % label the last entry as Wang data
             set(gcf,'Position',[235    40   743   644]);
             xlabel('Brain mass (g)'); ylabel('CC fiber density (fibers/ \mum^2)');
@@ -301,7 +292,7 @@ function Rinsel_paper(fig_list, out_path, collation)
             [p,g] = allometric_regression(w_fig1e_weights, 1E3*w_fig1e_dens_est, 'log', 1, false, '');
 
             % Plot, then adjust size and labels
-            allometric_plot2([w_fig1e_weights], [1E3*w_fig1e_dens_est], p, g, 'log');
+            allometric_plot2([w_fig1e_weights], [1E3*w_fig1e_dens_est], p, g, 'log', fh);
             guru_updatelegend(gca, 1, ' Wang et. al (2008)');  % label the last entry as Wang data
             set(gcf,'Position',[235    40   743   644]);
             xlabel('Brain mass (g)'); ylabel('CC fiber density (fibers/ \mum^2)');
@@ -321,7 +312,7 @@ function Rinsel_paper(fig_list, out_path, collation)
 
         %% Lamantia age vs. density
         if ismember('all',fig_list) || strcmp(fig_list{fi}, 'lms_dens')            % Lamantia & Rakic (1990a): density decreases with age
-            figure;
+            figure('name', 'lms_dens');
             semilogx(lrs_age, 1E4*lrs_dens, 'o', 'MarkerSize', 4, 'LineWidth',4); hold on;
             semilogx(156*[1 1], get(gca, 'ylim'), 'r--', 'LineWidth', 2); hold on;
 
@@ -330,22 +321,32 @@ function Rinsel_paper(fig_list, out_path, collation)
             xlabel('Age (days since conception)');
             ylabel('axons/ \mu m^2');
             title('Axon density', 'FontSize', 18);
+        end;
 
-            set(gcf, 'Name', 'lms_dens');
+        %% Lamantia age vs. density
+        if ismember('all',fig_list) || strcmp(fig_list{fi}, 'lms_dens_adult')            % Lamantia & Rakic (1990a): density decreases with age
+            % keyboard
+            figure('name', 'lms_dens');
+            semilogx(lrs_age, 1E4*lrs_dens, 'o', 'MarkerSize', 4, 'LineWidth',4); hold on;
+            semilogx(156*[1 1], get(gca, 'ylim'), 'r--', 'LineWidth', 2); hold on;
+
+            set(gca, 'FontSize', 14);
+            set(gca, 'xtick', 10.^[2:5]); axis square;
+            xlabel('Age (days since conception)');
+            ylabel('axons/ \mu m^2');
+            title('Axon density', 'FontSize', 18);
         end;
 
         if ismember('all',fig_list) || strcmp(fig_list{fi}, 'lms_dens_regression')
             [p1, g1, rsquared] = allometric_regression(lra_cc_age, lra_cc_density, 'log', 1, true);
-            allometric_plot2(lra_cc_age, lra_cc_density, p1, g1, {'loglog'});
+            allometric_plot2(lra_cc_age, lra_cc_density, p1, g1, {'linear', 'loglog'});
 
-            legend('Location', 'NorthEast');
             legend('Location', 'NorthEast');
 
             set(gcf, 'Name', 'lms_dens_regression');
         end;
 
-
-        %% Aboitiz scaling with age
+        % Aboitiz scaling with age
         if ismember('all',fig_list) || strcmp(fig_list{fi}, 'ab_dens')            % Aboitiz (1990): density decreases with age
             ab_density_correction      = 0.65*1.20;  % No correction for age
             ab_thesis_region_area_norm = ab_thesis_appendix8_data./repmat(sum(ab_thesis_appendix8_data,2),[1 size(ab_thesis_appendix8_data,2)]);
@@ -362,6 +363,7 @@ function Rinsel_paper(fig_list, out_path, collation)
             ylabel('fiber density (fibers/cm^2)')
             hold on;
             plot(get(gca, 'xlim'), polyval(polyfit(ab_thesis_appendix3_data(idx8to2,1), ab_thesis_total_density, 1), get(gca, 'xlim')), 'b.-', 'LineWidth', 2);
+
             set(gcf, 'Name', 'ab_dens');
         end;
 

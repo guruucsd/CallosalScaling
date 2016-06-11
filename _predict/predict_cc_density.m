@@ -23,14 +23,17 @@ function [ccdens] = predict_cc_density(brwt, bvol, use_human)
         % Function for computing cc density from brain weight
         an_dir = fullfile(fileparts(which(mfilename)), '..', 'analysis');
         load(fullfile(an_dir, 'wang_etal_2008', 'w_data.mat'));
+        load(fullfile(an_dir, 'lamantia_rakic_1990a', 'lra_data.mat'))
 
         if ~use_human
             all_br_wts = w_fig1e_weights;
             all_cc_dens = w_fig1e_dens_est;
         else
+            age_corr = calc_human_density_age_correction();
+
             human_dens_ab_raw = 3.717 * 1E5 * (1-0.35)^(1); % correct for shrinkage
-            human_dens_ab     = human_dens_ab_raw*1.20;     % correct for 20% missing fibers
-            human_dens_abcor  = human_dens_ab*1.2;          % correct for age; TODO: predict this directly, don't hard-code.
+            human_dens_ab     = human_dens_ab_raw * 1.20;     % correct for 20% missing fibers
+            human_dens_abcor  = human_dens_ab * age_corr;          % correct for age; TODO: predict this directly, don't hard-code.
 
             all_br_wts = [w_fig1e_weights get_human_brain_weight()];
             all_cc_dens = [w_fig1e_dens_est human_dens_abcor/1E6];  % 1E6 converts axons/mm^2 to axons/um^2

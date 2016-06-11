@@ -35,24 +35,25 @@ function rib_response(collation, figs)
     if ismember('all', figs) || ismember('bv_vs_cc_cxns', figs)
         allometric_plot2(bvols, ncc_fibers, p, g);
         ylabel('# cc fibers'); xlabel('brain volume (cm^3)');
+        set(gcf, 'Name', 'bv_vs_cc_cxns');
     end;
-    %keyboard;
 
     % # wm fibers vs. # cc fibers
     fprintf('Regressing # wm fibers vs. # cc fibers...');
     [p,g,rsq] = allometric_regression(nwm_fibers, ncc_fibers, 'log', 1, true);
-    %keyboard
 
     fprintf('r^2=%5.3f\n', rsq{1})
     if ismember('all', figs) || ismember('wm_cxns_vs_cc_cxns', figs)
         allometric_plot2(nwm_fibers, ncc_fibers, p, g);
         subplot(1,2,1); ylabel('total callosal fibers'); xlabel('total white matter fibers');
         subplot(1,2,2); xlabel('total white matter fibers');
+        set(gcf, 'Name', 'wm_cxns_vs_cc_cxns');
 
     elseif ismember('wm_cxns_vs_cc_cxns_withrinsel', figs)
         allometric_plot2(nwm_fibers, ncc_fibers, p, g);
         subplot(1,2,1); ylabel('total callosal fibers'); xlabel('total white matter fibers');
         subplot(1,2,2); xlabel('total white matter fibers');
+        set(gcf, 'Name', 'wm_cxns_vs_cc_cxns_withrinsel');
 
         % Now go back and plot Ringo results
         p_rinsel = [0.88, 0.84]; % From Rilling & Insel (1999a) Figure 2
@@ -98,6 +99,7 @@ function rib_response(collation, figs)
 
     if ismember('all', figs) || length(intersect(figs, {'prop_fibers_vs_prop_aa_cxns', 'prop_fibers_vs_prop_aa_cxns_linear'})) == 2
         fh = figure('position', [131         220        1161         564]);
+        set(fh, 'Name', 'prop_fibers_vs_prop_aa_cxns and prop_fibers_vs_prop_aa_cxns_linear')
 
         subplot(1,2,1)
         allometric_plot2(x1, y1, p1, g1, 'linear', fh);
@@ -108,17 +110,19 @@ function rib_response(collation, figs)
         allometric_plot2(x2, y2, [1 p2], g2, 'linear', fh);
         xlabel('inter-area connection ratio'); ylabel('fiber count ratio');
         title(sprintf('linear version (r^2=%5.3f)', rsq2{1}));
-        
+
 
     elseif ismember('all', figs) || ismember('prop_fibers_vs_prop_aa_cxns', figs)
         allometric_plot2(x1, y1, p1, g1, {'loglog'});
         xlabel('inter-area connection ratio'); ylabel('fiber count ratio');
         title(sprintf('allometric version (r^2=%5.3f)', rsq1{1}));
+        set(gcf, 'Name', 'prop_fibers_vs_prop_aa_cxns')
 
     elseif ismember('all', figs) || ismember('prop_fibers_vs_prop_aa_cxns_linear', figs)
         allometric_plot2(x2, y2, [1 p2], g2, 'linear');
         xlabel('inter-area connection ratio'); ylabel('fiber count ratio');
         title(sprintf('linear version (r^2=%5.3f)', rsq2{1}));
+        set(gcf, 'Name', 'prop_fibers_vs_prop_aa_cxns_linear')
     end;
 
     % Now look on a per-area basis, instead of a per- area connection basis
@@ -173,6 +177,7 @@ function rib_response(collation, figs)
     % Now combine the two graphs into a single one.
     if ismember('all', figs) || length(intersect(figs, {'intra_vs_cc_scaling', 'intra_vs_cc_scaling_linear'})) == 2
         fh = figure('position', [131         220        1161         564]);
+        set(fh, 'Name', 'intra_vs_cc_scaling and intra_vs_cc_scaling_linear');
 
         subplot(1,2,1);
         allometric_plot2(x1, y1, p1, g1, 'loglog', fh);
@@ -189,12 +194,14 @@ function rib_response(collation, figs)
         allometric_plot2(x1, y1, p1, g1, {'linear','loglog'});
         ylabel('[# callosal fibers]'); xlabel('[# intra- fibers] / ([# inter-area cxns]-1)');
         title(sprintf('allometric version (r^2=%5.3f)', rsq1{1}));
+        set(fh, 'Name', 'intra_vs_cc_scaling');
 
     % Just the linear plot
     elseif ismember('all', figs) || ismember('intra_vs_cc_scaling_linear', figs)
         allometric_plot2(x2, y2, [1 p2], g2, 'linear');
         ylabel('[# callosal fibers]'); xlabel('[# intra- fibers] / ([# inter-area cxns]-1)');
         title(sprintf('linear version (r^2=%5.3f)', rsq2{1}));
+        set(fh, 'Name', 'intra_vs_cc_scaling_linear');
     end;
 
     %y-1 = ax-1b
