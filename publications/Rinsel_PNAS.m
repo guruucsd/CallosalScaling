@@ -1,13 +1,15 @@
 close all;
 fig_list = {'w_densh', 'lms_dens_regression', 'wm_cxns_vs_cc_cxns_withrinsel', 'ri_connection_compare_allometric'};
-out_path = '';
 collation = 'species';
+out_path = '.';
 
 for fi=1:length(fig_list)
-    Rinsel_paper(fig_list(fi), out_path, collation);
+    Rinsel_paper(fig_list(fi), '', collation);
 
     if strcmp(fig_list{fi}, 'w_densh')  % 1
         set(gca, 'xtick', 10.^[0, 1, 2, 3]);
+
+        export_fig(gcf, fullfile(out_path, sprintf('%s.png', get(gcf, 'Name'))), '-transparent');
 
     elseif strcmp(fig_list{fi}, 'lms_dens_regression')  % 2
         subplot(1, 2, 1);
@@ -32,7 +34,10 @@ for fi=1:length(fig_list)
         text(1.02, 10^1.75, '10^{1.75}', 'FontSize', 18);
         text(1.02, 10^2.00, '10^{2.00}', 'FontSize', 18);
         text(1.02, 10^2.25, '10^{2.25}', 'FontSize', 18);
-        text(4, 13, 'Age (log(years))', 'FontSize', 18)
+        text(4, 13, 'Age (log(years))', 'FontSize', 18);
+
+        export_fig(gcf, fullfile(out_path, sprintf('%s.png', get(gcf, 'Name'))), '-transparent');
+
 
     elseif strcmp(fig_list{fi}, 'wm_cxns_vs_cc_cxns_withrinsel')  % 3
         subplot(1, 2, 1);
@@ -63,6 +68,8 @@ for fi=1:length(fig_list)
         labels{3} = ' Rinsel Regression';
         set(lh, 'String',  labels);
 
+        export_fig(gcf, fullfile(out_path, sprintf('%s.png', get(gcf, 'Name'))), '-transparent');
+
     elseif strcmp(fig_list{fi}, 'ri_connection_compare_allometric')  % 4
         set(gca, 'xtick', 10.^[-1.75, -1.5, -1.25])
         set(gca, 'xticklabel', [' ', ' ', ' ']);
@@ -75,5 +82,7 @@ for fi=1:length(fig_list)
         text(10^-2.025, 10^-1.25, '10^{-1.25}', 'FontSize', 18);
         text(10^-2.025, 10^-1.00, '10^{-1.00}', 'FontSize', 18);
         text(10^-2.025, 10^-0.75, '10^{-0.75}', 'FontSize', 18);
+
+        export_fig(gcf, fullfile(out_path, sprintf('%s.png', get(gcf, 'Name'))), '-transparent');
     end;
 end;
